@@ -13,8 +13,9 @@ declare(strict_types=1);
 
 use App\Auth\AuthController;
 use App\Auth\DashboardController;
+use App\Home\HomeController;
 
-$router->get('/', [AuthController::class, 'showLogin']);
+$router->get('/', [HomeController::class, 'index']);
 
 $router->get('/signup', [AuthController::class, 'showSignup']);
 $router->post('/signup', [AuthController::class, 'signup']);

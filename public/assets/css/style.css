@@ -424,6 +424,34 @@ svg {
     border-color: rgba(179, 38, 30, 0.18);
 }
 
+/* Simple hello page ----------------------------------------------------- */
+
+.hello {
+    display: grid;
+    place-items: center;
+    min-height: 50vh;
+    text-align: center;
+}
+
+.hello-inner h1 {
+    margin: 0;
+    font-size: clamp(2.5rem, 9vw, 4.5rem);
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.hello-inner p {
+    margin: 12px 0 0;
+    color: var(--muted);
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+}
+
 /* Dashboard ------------------------------------------------------------- */
 
 .dashboard {

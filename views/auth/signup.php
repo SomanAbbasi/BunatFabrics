@@ -25,7 +25,7 @@ use App\Core\Session;
             <p class="muted">It only takes a minute.</p>
         </header>
 
-        <form action="<?= e(url('/signup')) ?>" method="POST" novalidate>
+        <form action="<?= e(url('/signup')) ?>" method="POST">
             <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
 
             <div class="field">
@@ -69,6 +69,7 @@ use App\Core\Session;
                         name="password"
                         placeholder="Create a password"
                         autocomplete="new-password"
+                        minlength="8"
                         required
                     >
                     <button
@@ -107,6 +108,7 @@ use App\Core\Session;
                         name="password_confirmation"
                         placeholder="Repeat your password"
                         autocomplete="new-password"
+                        minlength="8"
                         required
                     >
                     <button

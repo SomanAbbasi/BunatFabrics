@@ -29,9 +29,6 @@ use App\Core\Session;
                     <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
                     <button type="submit" class="link-button">Sign out</button>
                 </form>
-            <?php else: ?>
-                <a class="nav-link" href="<?= e(url('/login')) ?>">Login</a>
-                <a class="button button-compact" href="<?= e(url('/signup')) ?>">Sign up</a>
             <?php endif; ?>
         </nav>
     </header>

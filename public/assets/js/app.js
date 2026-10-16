@@ -1,12 +1,15 @@
 /**
  * Bunat Fabrics — small progressive enhancements.
  *
- * Show / hide password toggles. A button with
- * [data-toggle-password="<input-id>"] flips the target input between
- * password and text.
+ *  1. Show / hide password toggles.
+ *  2. Simple client-side email validation on form submit.
  */
 (function () {
     'use strict';
+
+    var EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    /* Password visibility ------------------------------------------------- */
 
     document.addEventListener('click', function (event) {
         var toggle = event.target.closest('[data-toggle-password]');
@@ -31,5 +34,29 @@
         toggle.setAttribute('aria-label', reveal ? 'Hide password' : 'Show password');
 
         input.focus();
+    });
+
+    /* Email validation ---------------------------------------------------- */
+
+    document.addEventListener('submit', function (event) {
+        var form = event.target;
+
+        if (!(form instanceof HTMLFormElement)) {
+            return;
+        }
+
+        var email = form.querySelector('input[type="email"]');
+
+        if (!email) {
+            return;
+        }
+
+        email.setCustomValidity('');
+
+        if (!EMAIL_PATTERN.test(email.value.trim())) {
+            email.setCustomValidity('Please enter a valid email address.');
+            email.reportValidity();
+            event.preventDefault();
+        }
     });
 })();

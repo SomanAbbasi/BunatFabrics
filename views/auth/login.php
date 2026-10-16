@@ -25,7 +25,7 @@ use App\Core\Session;
             <p class="muted">Sign in to your account to continue.</p>
         </header>
 
-        <form action="<?= e(url('/login')) ?>" method="POST" novalidate>
+        <form action="<?= e(url('/login')) ?>" method="POST">
             <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
 
             <div class="field">
