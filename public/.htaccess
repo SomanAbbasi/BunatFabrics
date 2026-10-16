@@ -1,0 +1,16 @@
+# ---------------------------------------------------------------------------
+# Bunat Fabrics — front controller
+# ---------------------------------------------------------------------------
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Serve existing files and directories (assets, etc.) directly.
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Everything else goes through the front controller.
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+# Never list directory contents.
+Options -Indexes

@@ -1,0 +1,8 @@
+# Bunat Fabrics — local environment
+
+# Ignore the real environment file
+.env
+
+# Ignore local logs / caches
+*.log
+storage/cache/*
