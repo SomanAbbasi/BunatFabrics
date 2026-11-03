@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Auth;
 
 use App\Core\Session;
+use App\Core\View;
 
 /**
  * Session based authentication guard.
@@ -48,6 +49,25 @@ final class Guard
     public static function isAdmin(): bool
     {
         return (self::user()['role'] ?? null) === 'admin';
+    }
+
+    /** Require a current administrator before reading or changing admin data. */
+    public static function requireAdmin(): array
+    {
+        $user = self::user();
+
+        if ($user === null) {
+            self::logout();
+            redirect('/login');
+        }
+
+        if (! self::isAdmin()) {
+            http_response_code(403);
+            View::render('errors/403', ['title' => 'Access denied']);
+            exit;
+        }
+
+        return $user;
     }
 
     public static function login(array $user): void

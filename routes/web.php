@@ -12,6 +12,7 @@ declare(strict_types=1);
 /** @var App\Core\Router $router */
 
 use App\Auth\AuthController;
+use App\Admin\Dashboard\DashboardController as AdminDashboardController;
 use App\Auth\DashboardController;
 use App\Home\HomeController;
 
@@ -26,3 +27,4 @@ $router->post('/login', [AuthController::class, 'login']);
 $router->post('/logout', [AuthController::class, 'logout']);
 
 $router->get('/dashboard', [DashboardController::class, 'index']);
+$router->get('/admin', [AdminDashboardController::class, 'index']);

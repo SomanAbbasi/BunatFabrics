@@ -17,12 +17,19 @@ final class View
     /**
      * @param array<string, mixed> $data
      */
-    public static function render(string $view, array $data = []): void
+    public static function render(string $view, array $data = [], string $layout = 'layout'): void
     {
         $path = BASE_PATH . '/views/' . str_replace('.', '/', $view) . '.php';
 
         if (! is_file($path)) {
             throw new RuntimeException("View not found: {$view}");
+        }
+
+        // Layout names are supplied by controllers, never by request input.
+        $layoutPath = BASE_PATH . '/views/' . $layout . '.php';
+
+        if (! is_file($layoutPath)) {
+            throw new RuntimeException("Layout not found: {$layout}");
         }
 
         $title = (string) ($data['title'] ?? config('app.name'));
@@ -33,7 +40,7 @@ final class View
         require $path;
         $content = (string) ob_get_clean();
 
-        require BASE_PATH . '/views/layout.php';
+        require $layoutPath;
 
         Session::clearOldInput();
     }

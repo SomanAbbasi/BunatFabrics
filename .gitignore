@@ -6,3 +6,4 @@
 # Ignore local logs / caches
 *.log
 storage/cache/*
+AGENTS.md
