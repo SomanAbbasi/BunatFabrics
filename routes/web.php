@@ -15,8 +15,10 @@ use App\Auth\AuthController;
 use App\Admin\Dashboard\DashboardController as AdminDashboardController;
 use App\Auth\DashboardController;
 use App\Home\HomeController;
+use App\Home\ProductController as HomeProductController;
 
 $router->get('/', [HomeController::class, 'index']);
+$router->get('/product', [HomeProductController::class, 'show']);
 
 $router->get('/signup', [AuthController::class, 'showSignup']);
 $router->post('/signup', [AuthController::class, 'signup']);
@@ -42,3 +44,4 @@ $router->get('/admin/products/edit', [\App\Admin\Products\ProductController::cla
 $router->post('/admin/products/store', [\App\Admin\Products\ProductController::class, 'store']);
 $router->post('/admin/products/update', [\App\Admin\Products\ProductController::class, 'update']);
 $router->post('/admin/products/state', [\App\Admin\Products\ProductController::class, 'state']);
+$router->post('/admin/products/images/delete', [\App\Admin\Products\ProductController::class, 'deleteImage']);

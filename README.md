@@ -53,11 +53,12 @@ bcrypt hash. New customers can register from the signup page.
 ```
 config/        application and database configuration
 database/      schema.sql, seed.sql and the migrate.php runner
-public/        front controller, .htaccess and assets (web root)
+public/        front controller, .htaccess, assets and uploaded images
 routes/        route definitions
 src/Core/      framework pieces (Env, Database, Session, Router, ...)
+src/Admin/     admin dashboard, category and product management
 src/Auth/      authentication service, guard and controllers
-src/Home/      public landing page controller
+src/Home/      public catalog controllers and queries
 views/         page templates and layout
 ```
 
@@ -87,13 +88,18 @@ transactional: the initial CREATE TABLE migrations use `IF NOT EXISTS` so an
 interrupted run can resume. This is not a schema-drift repair tool; investigate
 unexpected pre-existing catalog tables before running it.
 
-The catalog follows PRD v1.0's composition, `width_inch` (DECIMAL(5,1)), GSM, and
-meter/yard unit fields. Optional specifications may be left blank. Prices, MOQ,
-stock, variants, images, and price tiers are intentionally deferred. Future
-variant/tier tables can reference the stable product ID; use DECIMAL values for
-money and quantities. Categories are hidden instead of deleted, and the foreign
-key restricts deletion of a category in use. Only published products in visible
-categories appear publicly. Lists use 20 admin rows or 12 public cards per page.
+The catalog stores composition, `width_inch` (DECIMAL(5,1)), GSM, meter/yard
+unit, and the wholesale `price_pkr` (DECIMAL(12,2)). Optional specifications may
+be left blank. Categories are hidden instead of deleted, and the foreign key
+restricts deletion of a category in use. Only published products in visible
+categories appear publicly.
+
+Product photos uploaded from the admin product form are stored under
+`public/uploads/catalog/{category_id}/product-{product_id}/`. The product id
+keeps the folder stable, and moving a product to another category moves its
+folder and rewrites the stored paths. JPG, PNG, and WebP files are accepted up
+to 2 MB each (six per product). Uploaded files are runtime data and are not
+committed to Git. Set the PHP upload limits to at least 2 MB before deployment.
 
 ## Catalog verification
 

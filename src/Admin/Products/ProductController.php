@@ -57,6 +57,23 @@ final class ProductController
         $this->save($user, $id);
     }
 
+    public function deleteImage(): void
+    {
+        Guard::requireAdmin();
+        CatalogInput::csrf();
+        $imageId = CatalogInput::id($_POST['image_id'] ?? null);
+        $productId = CatalogInput::id($_POST['product_id'] ?? null);
+        if ($imageId === null || $productId === null || (new ProductService())->find($productId) === null) {
+            CatalogInput::notFound();
+        }
+        if ((new ProductImageService())->delete($imageId, $productId)) {
+            Session::flash('status', 'Image removed.');
+        } else {
+            Session::flash('error', 'Image could not be removed.');
+        }
+        redirect('/admin/products/edit?id=' . $productId);
+    }
+
     public function state(): void
     {
         Guard::requireAdmin();
@@ -81,8 +98,13 @@ final class ProductController
 
     private function save(array $user, ?int $id = null): void
     {
+        $service = new ProductService();
+        $imageService = new ProductImageService();
+        $existing = $id === null ? null : $service->find($id);
+        $imageErrors = $imageService->validate($_FILES);
+
         try {
-            $result = (new ProductService())->save($_POST, $id);
+            $result = $service->save($_POST, $id);
         } catch (PDOException $exception) {
             error_log('Product save failed: ' . $exception->getCode());
             $data = array_map(static fn ($value) => is_string($value) ? $value : '', $_POST);
@@ -90,11 +112,29 @@ final class ProductController
             $this->form($user, $data, ['form' => 'Unable to save changes. Please try again.'], $id);
             return;
         }
-        if ($result['errors'] !== []) {
+
+        $errors = $result['errors'];
+        if ($imageErrors !== []) {
+            $errors['images'] = implode(' ', $imageErrors);
+        }
+        if ($errors !== []) {
             http_response_code(422);
-            $this->form($user, $result['data'], $result['errors'], $id);
+            $this->form($user, $result['data'], $errors, $id);
             return;
         }
+
+        $productId = (int) $result['id'];
+        $categoryId = (int) $result['data']['category_id'];
+
+        if ($existing !== null) {
+            $imageService->moveForCategory($productId, (int) $existing['category_id'], $categoryId);
+        }
+
+        $uploadErrors = $imageService->store($productId, $categoryId, $_FILES);
+        if ($uploadErrors !== []) {
+            Session::flash('error', implode(' ', $uploadErrors));
+        }
+
         Session::flash('status', 'Product saved.');
         redirect('/admin/products');
     }
@@ -106,6 +146,7 @@ final class ProductController
             'activeNav' => 'products', 'user' => $user, 'formData' => $data,
             'errors' => $errors, 'id' => $id,
             'categories' => (new \App\Admin\Categories\CategoryService())->options(),
+            'images' => $id === null ? [] : (new ProductImageService())->forProduct($id),
         ], 'admin/layout');
     }
 }

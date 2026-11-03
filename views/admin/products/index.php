@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Admin\Products\ProductImageService;
 use App\Core\Session;
 
 ?>
@@ -13,10 +14,12 @@ use App\Core\Session;
     <?php if ($items === []): ?><div class="empty"><h2 class="empty-title">No products to show</h2><p class="empty-subtitle text-secondary">Create a category, then add your first fabric. Drafts stay private until published.</p></div>
     <?php else: ?><div class="table-responsive"><table class="table table-vcenter card-table">
         <caption class="visually-hidden">Fabrics and publication controls</caption>
-        <thead><tr><th scope="col">Code</th><th scope="col">Product</th><th scope="col">Category</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead>
+        <thead><tr><th scope="col">Photo</th><th scope="col">Code</th><th scope="col">Product</th><th scope="col">Category</th><th scope="col">Price</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead>
         <tbody><?php foreach ($items as $product): ?><tr>
+            <td><?php if (! empty($product['image_path'])): ?><img class="admin-thumb" src="<?= e(ProductImageService::url((string) $product['image_path'])) ?>" alt=""><?php else: ?><span class="admin-thumb admin-thumb-empty" aria-hidden="true">B</span><?php endif; ?></td>
             <td><?= e($product['product_code']) ?></td><td class="catalog-title"><?= e($product['title']) ?></td>
             <td class="catalog-title"><?= e($product['category_name']) ?><?php if (! $product['category_active']): ?><small class="d-block text-secondary">Hidden category</small><?php endif; ?></td>
+            <td class="text-nowrap"><?= e('PKR ' . number_format((float) $product['price_pkr'], 2)) ?></td>
             <td><span class="badge <?= $product['status'] === 'published' ? 'bg-green-lt' : 'bg-secondary-lt' ?>"><?= e(ucfirst($product['status'])) ?></span></td>
             <td><div class="d-flex flex-wrap gap-2">
                 <a class="btn btn-sm" href="<?= e(url('/admin/products/edit?id=' . $product['id'])) ?>" aria-label="Edit <?= e($product['title']) ?>">Edit</a>
