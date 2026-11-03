@@ -26,12 +26,7 @@ $currentUser = Guard::user();
         <nav class="site-nav" aria-label="Site navigation">
             <a class="nav-link" href="<?= e(url('/')) ?>">Fabrics</a>
             <?php if ($currentUser !== null): ?>
-                <span class="nav-user">Hi, <?= e($currentUser['name']) ?></span>
-                <a class="nav-link" href="<?= e(url('/dashboard')) ?>">Dashboard</a>
-                <form action="<?= e(url('/logout')) ?>" method="POST" class="inline-form">
-                    <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
-                    <button type="submit" class="link-button">Sign out</button>
-                </form>
+                <?php $profileUser = $currentUser; require base_path('views/partials/profile-menu.php'); ?>
             <?php else: ?>
                 <a class="nav-link" href="<?= e(url('/login')) ?>">Sign in</a>
                 <a class="nav-cta" href="<?= e(url('/signup')) ?>">Create account</a>

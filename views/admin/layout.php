@@ -16,6 +16,7 @@ $activeNav = $activeNav ?? 'dashboard';
     <link rel="stylesheet" href="<?= e(url('/assets/vendor/tabler/tabler.min.css')) ?>">
     <link rel="stylesheet" href="<?= e(url('/assets/css/admin.css')) ?>">
     <script src="<?= e(url('/assets/vendor/tabler/tabler.min.js')) ?>" defer></script>
+    <script src="<?= e(url('/assets/js/app.js')) ?>" defer></script>
 </head>
 <body>
 <a class="admin-skip" href="#main-content">Skip to content</a>
@@ -44,12 +45,7 @@ $activeNav = $activeNav ?? 'dashboard';
         <div class="container-xl gap-3">
             <span class="text-secondary">Administration / <span class="text-body"><?= e($title) ?></span></span>
             <nav class="ms-auto d-flex align-items-center gap-3" aria-label="Account navigation">
-                <a class="text-secondary" href="<?= e(url('/')) ?>">View store</a>
-                <div class="d-none d-md-block text-end"><div class="fw-semibold"><?= e($user['name']) ?></div><div class="text-secondary small">Administrator</div></div>
-                <form action="<?= e(url('/logout')) ?>" method="POST">
-                    <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
-                    <button class="btn btn-outline-secondary btn-sm" type="submit">Sign out</button>
-                </form>
+                <?php $profileUser = $user; $profileShowStore = true; require base_path('views/partials/profile-menu.php'); ?>
             </nav>
         </div>
     </header>

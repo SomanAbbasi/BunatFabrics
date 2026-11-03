@@ -59,4 +59,60 @@
             event.preventDefault();
         }
     });
+
+    /* Profile menu -------------------------------------------------------- */
+
+    function closeProfileMenus(except) {
+        document.querySelectorAll('[data-profile-toggle]').forEach(function (toggle) {
+            if (toggle === except) {
+                return;
+            }
+
+            var menu = document.getElementById(toggle.getAttribute('aria-controls'));
+
+            if (menu) {
+                menu.setAttribute('hidden', '');
+            }
+
+            toggle.setAttribute('aria-expanded', 'false');
+        });
+    }
+
+    document.addEventListener('click', function (event) {
+        var toggle = event.target.closest('[data-profile-toggle]');
+
+        if (toggle) {
+            event.preventDefault();
+
+            var menu = document.getElementById(toggle.getAttribute('aria-controls'));
+
+            if (!menu) {
+                return;
+            }
+
+            var open = menu.hasAttribute('hidden');
+
+            closeProfileMenus(open ? toggle : null);
+
+            if (open) {
+                menu.removeAttribute('hidden');
+                toggle.setAttribute('aria-expanded', 'true');
+            } else {
+                menu.setAttribute('hidden', '');
+                toggle.setAttribute('aria-expanded', 'false');
+            }
+
+            return;
+        }
+
+        if (!event.target.closest('.profile')) {
+            closeProfileMenus(null);
+        }
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            closeProfileMenus(null);
+        }
+    });
 })();
