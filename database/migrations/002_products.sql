@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS products (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    category_id INT UNSIGNED NOT NULL,
+    product_code VARCHAR(50) NOT NULL,
+    title VARCHAR(150) NOT NULL,
+    description TEXT NOT NULL,
+    composition VARCHAR(100) DEFAULT NULL,
+    width_inch DECIMAL(5,1) DEFAULT NULL,
+    weight_gsm SMALLINT UNSIGNED DEFAULT NULL,
+    unit ENUM('meter', 'yard') NOT NULL DEFAULT 'meter',
+    status ENUM('draft', 'published', 'archived') NOT NULL DEFAULT 'draft',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY products_code_unique (product_code),
+    KEY products_category_status (category_id, status),
+    KEY products_status_id (status, id),
+    CONSTRAINT products_category_fk FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT products_width_check CHECK (width_inch IS NULL OR width_inch > 0),
+    CONSTRAINT products_weight_check CHECK (weight_gsm IS NULL OR weight_gsm > 0)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

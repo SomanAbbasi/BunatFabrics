@@ -19,13 +19,13 @@ declare(strict_types=1);
         <h2 class="h3 mb-3">Your workspace</h2>
         <div class="row row-deck g-3">
             <?php foreach ([
-                'categories' => ['Categories', 'Organize your fabric collections.', 'Category management is not available yet. Your collections will appear here once this feature is added.'],
-                'products' => ['Products', 'Keep your fabric catalog in one place.', 'Product management is not available yet. Your catalog will appear here once this feature is added.'],
+                'categories' => ['Categories', 'Organize your fabric collections.', 'Create, edit, and control the visibility of your fabric categories.'],
+                'products' => ['Products', 'Keep your fabric catalog in one place.', 'Create fabrics and manage their publication status in the catalog.'],
                 'orders' => ['Orders', 'Follow your wholesale orders.', 'Order management is not available yet. Orders will appear here once this feature is added.'],
                 'settings' => ['Settings', 'Manage your administrator account.', 'Account settings are not available yet. Password changes will be added in a later milestone.'],
             ] as $id => [$heading, $summary, $message]): ?>
                 <div class="col-md-6"><section class="card w-100 admin-feature" id="<?= e($id) ?>" aria-labelledby="<?= e($id) ?>-title" tabindex="-1">
-                    <div class="card-header"><h3 class="card-title" id="<?= e($id) ?>-title"><?= e($heading) ?></h3><span class="badge bg-secondary-lt ms-auto">Coming soon</span></div>
+                    <div class="card-header"><h3 class="card-title" id="<?= e($id) ?>-title"><?= e($heading) ?></h3><?php if (in_array($id, ['categories', 'products'], true)): ?><a class="btn btn-sm btn-outline-primary ms-auto" href="<?= e(url('/admin/' . $id)) ?>">Manage</a><?php else: ?><span class="badge bg-secondary-lt ms-auto">Coming soon</span><?php endif; ?></div>
                     <div class="card-body"><p class="fw-medium"><?= e($summary) ?></p><p class="text-secondary mb-0"><?= e($message) ?></p></div>
                 </section></div>
             <?php endforeach; ?>

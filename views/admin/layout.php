@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Core\Session;
 
 /** @var array<string, mixed> $user */
+$activeNav = $activeNav ?? 'dashboard';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -31,8 +32,10 @@ use App\Core\Session;
             <div class="collapse navbar-collapse" id="admin-menu">
                 <nav aria-label="Admin navigation" class="w-100">
                     <ul class="navbar-nav pt-lg-3">
-                        <li class="nav-item active"><a class="nav-link" href="<?= e(url('/admin')) ?>" aria-current="page"><span class="nav-link-title">Dashboard</span></a></li>
-                        <?php foreach (['categories' => 'Categories', 'products' => 'Products', 'orders' => 'Orders', 'settings' => 'Settings'] as $section => $label): ?>
+                        <?php foreach (['dashboard' => 'Dashboard', 'categories' => 'Categories', 'products' => 'Products'] as $section => $label): ?>
+                            <li class="nav-item <?= $activeNav === $section ? 'active' : '' ?>"><a class="nav-link" href="<?= e(url($section === 'dashboard' ? '/admin' : '/admin/' . $section)) ?>" <?= $activeNav === $section ? 'aria-current="page"' : '' ?>><span class="nav-link-title"><?= e($label) ?></span></a></li>
+                        <?php endforeach; ?>
+                        <?php foreach (['orders' => 'Orders', 'settings' => 'Settings'] as $section => $label): ?>
                             <li class="nav-item"><a class="nav-link" href="<?= e(url('/admin') . '#' . $section) ?>"><span class="nav-link-title"><?= e($label) ?></span><span class="badge bg-secondary-lt ms-auto">Soon</span></a></li>
                         <?php endforeach; ?>
                     </ul>
@@ -43,7 +46,7 @@ use App\Core\Session;
     </aside>
     <header class="navbar navbar-expand-md d-print-none">
         <div class="container-xl gap-3">
-            <span class="text-secondary">Administration / <span class="text-body">Dashboard</span></span>
+            <span class="text-secondary">Administration / <span class="text-body"><?= e($title) ?></span></span>
             <nav class="ms-auto d-flex align-items-center gap-3" aria-label="Account navigation">
                 <a class="text-secondary" href="<?= e(url('/')) ?>">View site</a>
                 <div class="d-none d-md-block text-end"><div class="fw-semibold"><?= e($user['name']) ?></div><div class="text-secondary small">Administrator</div></div>
@@ -56,7 +59,7 @@ use App\Core\Session;
     </header>
     <div class="page-wrapper">
         <main id="main-content" tabindex="-1">
-            <div class="page-header"><div class="container-xl"><div class="page-pretitle">Bunat Fabrics</div><h1 class="page-title">Dashboard</h1><p class="text-secondary mt-2">Welcome back, <?= e($user['name']) ?>. Here is your account overview.</p></div></div>
+            <div class="page-header"><div class="container-xl"><div class="page-pretitle">Bunat Fabrics</div><h1 class="page-title"><?= e($title) ?></h1><?php if ($activeNav === 'dashboard'): ?><p class="text-secondary mt-2">Welcome back, <?= e($user['name']) ?>. Here is your account overview.</p><?php endif; ?></div></div>
             <div class="page-body"><div class="container-xl">
                 <?php if ($status = Session::pullFlash('status')): ?><div class="alert alert-success" role="status"><?= e($status) ?></div><?php endif; ?>
                 <?php if ($error = Session::pullFlash('error')): ?><div class="alert alert-danger" role="alert"><?= e($error) ?></div><?php endif; ?>

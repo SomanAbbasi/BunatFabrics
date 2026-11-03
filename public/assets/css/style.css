@@ -602,3 +602,13 @@ svg {
         border-radius: var(--radius);
     }
 }
+
+/* Public catalog; reuse the existing warm palette and card styles. */
+.catalog-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.catalog-product { min-width: 0; overflow-wrap: anywhere; }
+.catalog-product h2 { margin-top: 18px; }
+.catalog-description { white-space: pre-line; }
+.catalog-product .detail-list > div { flex-wrap: wrap; }
+.catalog-product .detail-list dd { max-width: 100%; }
+.catalog-pages { display: flex; gap: 20px; justify-content: center; }
+@media (max-width: 680px) { .catalog-grid { grid-template-columns: 1fr; } }

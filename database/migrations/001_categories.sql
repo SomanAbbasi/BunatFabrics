@@ -1,0 +1,12 @@
+CREATE TABLE IF NOT EXISTS categories (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    slug VARCHAR(120) NOT NULL,
+    description TEXT NOT NULL,
+    is_active TINYINT UNSIGNED NOT NULL DEFAULT 1,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY categories_name_unique (name),
+    UNIQUE KEY categories_slug_unique (slug),
+    CONSTRAINT categories_active_check CHECK (is_active IN (0, 1))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

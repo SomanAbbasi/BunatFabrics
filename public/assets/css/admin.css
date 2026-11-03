@@ -24,3 +24,6 @@
     header.navbar > .container-xl { flex-wrap: wrap; padding-top: .5rem; padding-bottom: .5rem; }
     .page-title { font-size: 1.5rem; }
 }
+
+/* Long catalog values wrap while tables remain horizontally scrollable. */
+.catalog-title { min-width: 10rem; max-width: 22rem; white-space: normal; overflow-wrap: anywhere; }
