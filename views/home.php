@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 use App\Admin\Products\ProductImageService;
 
+/** @var list<array{id: int, name: string, slug: string, products: list<array<string, mixed>>}> $allGroups */
 /** @var list<array{id: int, name: string, slug: string, products: list<array<string, mixed>>}> $groups */
+/** @var int|null $activeCategory */
+$totalProducts = array_sum(array_map(static fn (array $group): int => count($group['products']), $allGroups));
 ?>
 <section class="storefront">
     <header class="store-hero">
@@ -14,24 +17,35 @@ use App\Admin\Products\ProductImageService;
     </header>
 
     <?php if ($unavailable): ?>
-        <div class="panel" role="status">
-            <h2>Catalog temporarily unavailable</h2>
+        <div class="empty-note" role="status">
+            <p class="empty-note-title">Catalog temporarily unavailable</p>
             <p class="muted">Please try again in a moment.</p>
         </div>
-    <?php elseif ($groups === []): ?>
-        <div class="panel">
-            <h2>No fabrics published yet</h2>
-            <p class="muted">Published fabric collections will appear here.</p>
+    <?php elseif ($allGroups === []): ?>
+        <div class="empty-note">
+            <p class="empty-note-title">No fabrics available yet</p>
+            <p class="muted">Our collections are being prepared. Please check back soon.</p>
         </div>
     <?php else: ?>
-        <nav class="category-nav" aria-label="Fabric categories">
-            <?php foreach ($groups as $group): ?>
-                <a href="#category-<?= e((string) $group['id']) ?>">
+        <nav class="category-nav" aria-label="Filter fabrics by category">
+            <a class="<?= $activeCategory === null ? 'is-active' : '' ?>" href="<?= e(url('/')) ?>" <?= $activeCategory === null ? 'aria-current="page"' : '' ?>>
+                All
+                <span><?= e((string) $totalProducts) ?></span>
+            </a>
+            <?php foreach ($allGroups as $group): ?>
+                <a class="<?= $activeCategory === $group['id'] ? 'is-active' : '' ?>" href="<?= e(url('/?category=' . $group['id'])) ?>" <?= $activeCategory === $group['id'] ? 'aria-current="page"' : '' ?>>
                     <?= e($group['name']) ?>
                     <span><?= e((string) count($group['products'])) ?></span>
                 </a>
             <?php endforeach; ?>
         </nav>
+
+        <?php if ($groups === []): ?>
+            <div class="empty-note">
+                <p class="empty-note-title">No fabrics in this category yet</p>
+                <p class="muted">Try another category or <a href="<?= e(url('/')) ?>">view all fabrics</a>.</p>
+            </div>
+        <?php endif; ?>
 
         <?php foreach ($groups as $group): ?>
             <section class="category-section" id="category-<?= e((string) $group['id']) ?>" aria-labelledby="category-<?= e((string) $group['id']) ?>-title">
