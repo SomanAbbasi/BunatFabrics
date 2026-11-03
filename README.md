@@ -26,6 +26,22 @@ signup / login and an admin dashboard.
 3. Configure your web server so the document root is the `public/` folder,
    then open the site in a browser.
 
+### Local development without Apache
+
+The built-in PHP server works on Chrome/any browser at `http://localhost:8080`:
+
+```bash
+php -S localhost:8080 -t public server.php
+```
+
+`server.php` serves files from `public/` and sends clean URLs to the front
+controller. Set `APP_URL=http://localhost:8080` in `.env` so redirects use the
+same address. Apply catalog tables with:
+
+```bash
+php database/catalog-migrate.php
+```
+
 ## Login
 
 The administrator account is defined in `.env` (`ADMIN_EMAIL` / `ADMIN_PASSWORD`).
