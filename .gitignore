@@ -7,3 +7,7 @@
 *.log
 storage/cache/*
 AGENTS.md
+
+# Uploaded product images are runtime data
+public/uploads/*
+!public/uploads/.gitkeep
