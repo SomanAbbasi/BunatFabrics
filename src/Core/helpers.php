@@ -70,6 +70,16 @@ if (! function_exists('old')) {
     }
 }
 
+if (! function_exists('pkr')) {
+    /**
+     * Format a amount using the wholesale catalog currency.
+     */
+    function pkr(mixed $amount): string
+    {
+        return 'PKR ' . number_format((float) $amount, 2);
+    }
+}
+
 if (! function_exists('url')) {
     /**
      * Build an absolute URL from an application path.
