@@ -60,6 +60,7 @@ final class Validator
         match ($name) {
             'required'  => $this->require($field, $label, $value),
             'email'     => $this->email($field, $label, $value),
+            'phone'     => $this->phone($field, $label, $value),
             'min'       => $this->length($field, $label, $value, (int) $parameter, 'min'),
             'max'       => $this->length($field, $label, $value, (int) $parameter, 'max'),
             'password'  => $this->password($field, $label, $value),
@@ -79,6 +80,19 @@ final class Validator
     {
         if ($value !== null && $value !== '' && ! filter_var($value, FILTER_VALIDATE_EMAIL)) {
             $this->errors[$field] = "{$label} must be a valid email address.";
+        }
+    }
+
+    private function phone(string $field, string $label, mixed $value): void
+    {
+        if (! is_string($value) || trim($value) === '') {
+            return;
+        }
+
+        $digits = preg_replace('/\D+/', '', $value) ?? '';
+
+        if (! preg_match('/^\+?[0-9][0-9\s().-]{6,19}$/', trim($value)) || strlen($digits) < 7 || strlen($digits) > 15) {
+            $this->errors[$field] = "{$label} must be a valid phone number.";
         }
     }
 

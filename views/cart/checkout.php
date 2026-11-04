@@ -10,18 +10,39 @@ use App\Core\Session;
 /** @var float $subtotal */
 /** @var array<string, int> $unitTotals */
 /** @var int $itemCount */
+/** @var array<string, string> $errors */
 ?>
 <section class="cart-page">
     <header class="page-heading">
         <span class="eyebrow">Checkout</span>
         <h1>Review your order</h1>
-        <p>Confirm the fabrics and quantities below, then place your wholesale order.</p>
+        <p>Confirm the fabrics and add your delivery contact before placing the order.</p>
     </header>
 
-    <div class="checkout-layout">
+    <form action="<?= e(url('/checkout')) ?>" method="POST" class="checkout-layout">
+        <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
+
         <div class="checkout-main">
             <article class="panel">
-                <h2>Account</h2>
+                <h2><?= icon('phone') ?> Contact details</h2>
+
+                <div class="field">
+                    <label for="phone">Phone number</label>
+                    <input type="tel" id="phone" name="phone" value="<?= e(old('phone')) ?>" placeholder="+92 300 1234567" autocomplete="tel" inputmode="tel" pattern="\+?[0-9][0-9\s().-]{6,19}" required>
+                    <span class="field-hint">We will use this number to confirm your order.</span>
+                    <?php if (isset($errors['phone'])): ?><span class="field-error"><?= e($errors['phone']) ?></span><?php endif; ?>
+                </div>
+
+                <div class="field">
+                    <label for="address">Delivery address</label>
+                    <textarea id="address" name="address" rows="4" placeholder="Street, area, city, postal code" autocomplete="street-address" required><?= e(old('address')) ?></textarea>
+                    <span class="field-hint">Include the full address where the fabrics should be delivered.</span>
+                    <?php if (isset($errors['address'])): ?><span class="field-error"><?= e($errors['address']) ?></span><?php endif; ?>
+                </div>
+            </article>
+
+            <article class="panel">
+                <h2><?= icon('user') ?> Account</h2>
                 <dl class="detail-list">
                     <div><dt>Name</dt><dd><?= e($user['name']) ?></dd></div>
                     <div><dt>Email</dt><dd><?= e($user['email']) ?></dd></div>
@@ -29,7 +50,7 @@ use App\Core\Session;
             </article>
 
             <article class="panel">
-                <h2>Order items</h2>
+                <h2><?= icon('package') ?> Order items</h2>
                 <div class="checkout-lines">
                     <?php foreach ($items as $item): ?>
                         <div class="checkout-line">
@@ -71,12 +92,9 @@ use App\Core\Session;
                 </div>
             </dl>
 
-            <form action="<?= e(url('/checkout')) ?>" method="POST">
-                <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
-                <button type="submit" class="button">Place order</button>
-            </form>
+            <button type="submit" class="button"><?= icon('lock') ?><span>Place order</span></button>
 
-            <a class="back-link" href="<?= e(url('/cart')) ?>">Back to cart</a>
+            <a class="back-link" href="<?= e(url('/cart')) ?>"><?= icon('cart') ?><span>Back to cart</span></a>
         </aside>
-    </div>
+    </form>
 </section>

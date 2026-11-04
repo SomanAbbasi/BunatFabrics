@@ -6,6 +6,7 @@ namespace App\Cart;
 
 use App\Auth\Guard;
 use App\Core\Session;
+use App\Core\Validator;
 use App\Core\View;
 use App\Orders\OrderService;
 use Throwable;
@@ -102,6 +103,7 @@ final class CartController
             'subtotal'   => $this->cart->subtotal(),
             'unitTotals' => $this->cart->unitTotals(),
             'itemCount'  => $this->cart->count(),
+            'errors'     => (array) Session::pullFlash('errors', []),
         ]);
     }
 
@@ -119,8 +121,31 @@ final class CartController
             redirect('/cart');
         }
 
+        $contact = [
+            'phone'   => trim((string) ($_POST['phone'] ?? '')),
+            'address' => trim((string) ($_POST['address'] ?? '')),
+        ];
+
+        $errors = (new Validator($contact))->validate(
+            [
+                'phone'   => 'required|phone',
+                'address' => 'required|min:10|max:500',
+            ],
+            [
+                'phone'   => 'Phone number',
+                'address' => 'Delivery address',
+            ],
+        );
+
+        if ($errors !== []) {
+            Session::flash('errors', $errors);
+            Session::flashInput($contact);
+
+            redirect('/checkout');
+        }
+
         try {
-            $orderId = (new OrderService())->place((int) $user['id'], $items, $this->cart->subtotal());
+            $orderId = (new OrderService())->place((int) $user['id'], $items, $this->cart->subtotal(), $contact);
         } catch (Throwable $exception) {
             error_log('Order placement failed: ' . $exception->getMessage());
             Session::flash('error', 'We could not place your order. Please try again.');

@@ -26,8 +26,9 @@ final class OrderService
 
     /**
      * @param list<array<string, mixed>> $items cart lines with product details
+     * @param array{phone: string, address: string} $contact
      */
-    public function place(int $userId, array $items, float $subtotal): int
+    public function place(int $userId, array $items, float $subtotal, array $contact): int
     {
         if ($items === []) {
             throw new RuntimeException('Cannot place an empty order.');
@@ -37,12 +38,14 @@ final class OrderService
 
         try {
             $order = $this->pdo->prepare(
-                "INSERT INTO orders (user_id, status, subtotal_pkr)
-                 VALUES (:user_id, 'pending', :subtotal)"
+                "INSERT INTO orders (user_id, status, subtotal_pkr, contact_phone, shipping_address)
+                 VALUES (:user_id, 'pending', :subtotal, :phone, :address)"
             );
             $order->execute([
                 'user_id'  => $userId,
                 'subtotal' => $subtotal,
+                'phone'    => $contact['phone'],
+                'address'  => $contact['address'],
             ]);
 
             $orderId = (int) $this->pdo->lastInsertId();
