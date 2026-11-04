@@ -48,6 +48,22 @@ The administrator account is defined in `.env` (`ADMIN_EMAIL` / `ADMIN_PASSWORD`
 `database/migrate.php` syncs it into the database, storing the password as a
 bcrypt hash. New customers can register from the signup page.
 
+## Shopping cart and checkout
+
+Customers can add a fabric and quantity to a cart, update quantities, remove
+lines, and see line totals plus the order subtotal. The cart is stored in the PHP
+session, so guests can build a cart before signing in: the cart survives the
+login and signup redirects and is not lost when the session id is regenerated.
+
+Checkout requires an account. A guest who opens `/checkout` is sent to the login
+page with the cart intact and then returned to checkout after signing in. Placing
+the order writes `orders` and `order_items` rows and clears the cart. Existing
+installations must apply the orders migration once:
+
+```bash
+php database/catalog-migrate.php
+```
+
 ## Project structure
 
 ```
@@ -58,7 +74,9 @@ routes/        route definitions
 src/Core/      framework pieces (Env, Database, Session, Router, ...)
 src/Admin/     admin dashboard, category and product management
 src/Auth/      authentication service, guard and controllers
+src/Cart/      session cart service and cart/checkout controllers
 src/Home/      public catalog controllers and queries
+src/Orders/    order persistence for placed carts
 views/         page templates and layout
 ```
 
