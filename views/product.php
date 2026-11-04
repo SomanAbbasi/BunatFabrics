@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Admin\Products\ProductImageService;
+use App\Core\Session;
 
 /** @var array<string, mixed> $product */
 /** @var list<array<string, mixed>> $images */
@@ -40,7 +41,19 @@ use App\Admin\Products\ProductImageService;
                 <div><dt>Category</dt><dd><?= e($product['category_name']) ?></dd></div>
             </dl>
 
-            <a class="button button-compact" href="<?= e(url('/')) ?>">Continue browsing</a>
+            <form action="<?= e(url('/cart/add')) ?>" method="POST" class="add-to-cart">
+                <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
+                <input type="hidden" name="product_id" value="<?= e((string) $product['id']) ?>">
+
+                <div class="field">
+                    <label for="quantity">Quantity (<?= e($product['unit']) ?>s)</label>
+                    <input type="number" id="quantity" name="quantity" value="1" min="1" max="999" inputmode="numeric" required>
+                </div>
+
+                <button type="submit" class="button">Add to cart</button>
+            </form>
+
+            <a class="button button-compact button-ghost" href="<?= e(url('/')) ?>">Continue browsing</a>
         </div>
     </div>
 </section>

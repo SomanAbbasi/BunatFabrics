@@ -3,9 +3,11 @@
 declare(strict_types=1);
 
 use App\Auth\Guard;
+use App\Cart\CartService;
 use App\Core\Session;
 
 $currentUser = Guard::user();
+$cartCount = (new CartService())->count();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -25,6 +27,10 @@ $currentUser = Guard::user();
 
         <nav class="site-nav" aria-label="Site navigation">
             <a class="nav-link" href="<?= e(url('/')) ?>">Fabrics</a>
+            <a class="nav-link nav-cart" href="<?= e(url('/cart')) ?>">
+                Cart
+                <?php if ($cartCount > 0): ?><span class="cart-count"><?= e((string) $cartCount) ?></span><?php endif; ?>
+            </a>
             <?php if ($currentUser !== null): ?>
                 <?php $profileUser = $currentUser; require base_path('views/partials/profile-menu.php'); ?>
             <?php else: ?>

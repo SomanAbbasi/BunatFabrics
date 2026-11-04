@@ -14,11 +14,17 @@ declare(strict_types=1);
 use App\Auth\AuthController;
 use App\Admin\Dashboard\DashboardController as AdminDashboardController;
 use App\Auth\DashboardController;
+use App\Cart\CartController;
 use App\Home\HomeController;
 use App\Home\ProductController as HomeProductController;
 
 $router->get('/', [HomeController::class, 'index']);
 $router->get('/product', [HomeProductController::class, 'show']);
+
+$router->get('/cart', [CartController::class, 'index']);
+$router->post('/cart/add', [CartController::class, 'add']);
+$router->post('/cart/update', [CartController::class, 'update']);
+$router->post('/cart/remove', [CartController::class, 'remove']);
 
 $router->get('/signup', [AuthController::class, 'showSignup']);
 $router->post('/signup', [AuthController::class, 'signup']);
