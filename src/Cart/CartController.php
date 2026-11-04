@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Cart;
 
+use App\Auth\Guard;
 use App\Core\Session;
 use App\Core\View;
+use App\Orders\OrderService;
+use Throwable;
 
 /**
  * Shopping cart screens and actions.
@@ -78,6 +81,99 @@ final class CartController
         Session::flash('status', 'Item removed from your cart.');
 
         redirect('/cart');
+    }
+
+    public function checkout(): void
+    {
+        $user = $this->requireCustomer();
+
+        $items = $this->cart->items();
+
+        if ($items === []) {
+            Session::flash('error', 'Your cart is empty. Add a fabric before checking out.');
+
+            redirect('/cart');
+        }
+
+        View::render('cart/checkout', [
+            'title'      => 'Checkout',
+            'user'       => $user,
+            'items'      => $items,
+            'subtotal'   => $this->cart->subtotal(),
+            'unitTotals' => $this->cart->unitTotals(),
+            'itemCount'  => $this->cart->count(),
+        ]);
+    }
+
+    public function placeOrder(): void
+    {
+        $user = $this->requireCustomer();
+
+        $this->requireCsrf('/checkout');
+
+        $items = $this->cart->items();
+
+        if ($items === []) {
+            Session::flash('error', 'Your cart is empty. Add a fabric before checking out.');
+
+            redirect('/cart');
+        }
+
+        try {
+            $orderId = (new OrderService())->place((int) $user['id'], $items, $this->cart->subtotal());
+        } catch (Throwable $exception) {
+            error_log('Order placement failed: ' . $exception->getMessage());
+            Session::flash('error', 'We could not place your order. Please try again.');
+
+            redirect('/checkout');
+        }
+
+        $this->cart->clear();
+        Session::flash('status', 'Your order has been placed.');
+
+        redirect('/checkout/success?order=' . $orderId);
+    }
+
+    public function success(): void
+    {
+        $user = $this->requireCustomer();
+
+        $orderId = filter_var($_GET['order'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+        $result  = $orderId === false ? null : (new OrderService())->findForUser((int) $orderId, (int) $user['id']);
+
+        if ($result === null) {
+            http_response_code(404);
+            View::render('errors/404', ['title' => 'Order not found']);
+
+            return;
+        }
+
+        View::render('cart/success', [
+            'title' => 'Order confirmed',
+            'user'  => $user,
+            'order' => $result['order'],
+            'items' => $result['items'],
+        ]);
+    }
+
+    /**
+     * Checkout is only available to signed in customers.
+     *
+     * The current path is remembered so the shopper returns here after login
+     * or signup; the session cart is kept intact by the auth flow.
+     */
+    private function requireCustomer(): array
+    {
+        $user = Guard::user();
+
+        if ($user === null) {
+            Session::setIntendedUrl('/checkout');
+            Session::flash('error', 'Please sign in or create an account to continue to checkout.');
+
+            redirect('/login');
+        }
+
+        return $user;
     }
 
     private function requireCsrf(string $fallback): void

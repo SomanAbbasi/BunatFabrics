@@ -26,6 +26,10 @@ $router->post('/cart/add', [CartController::class, 'add']);
 $router->post('/cart/update', [CartController::class, 'update']);
 $router->post('/cart/remove', [CartController::class, 'remove']);
 
+$router->get('/checkout', [CartController::class, 'checkout']);
+$router->post('/checkout', [CartController::class, 'placeOrder']);
+$router->get('/checkout/success', [CartController::class, 'success']);
+
 $router->get('/signup', [AuthController::class, 'showSignup']);
 $router->post('/signup', [AuthController::class, 'signup']);
 
