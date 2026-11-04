@@ -42,3 +42,9 @@ $router->get('/admin/products/edit', [\App\Admin\Products\ProductController::cla
 $router->post('/admin/products/store', [\App\Admin\Products\ProductController::class, 'store']);
 $router->post('/admin/products/update', [\App\Admin\Products\ProductController::class, 'update']);
 $router->post('/admin/products/state', [\App\Admin\Products\ProductController::class, 'state']);
+
+$router->get('/admin/orders', [\App\Admin\Orders\OrderController::class, 'index']);
+$router->post('/admin/orders/status', [\App\Admin\Orders\OrderController::class, 'update']);
+$router->get('/admin/settings', [\App\Admin\Settings\SettingsController::class, 'index']);
+$router->post('/admin/settings/profile', [\App\Admin\Settings\SettingsController::class, 'profile']);
+$router->post('/admin/settings/password', [\App\Admin\Settings\SettingsController::class, 'password']);

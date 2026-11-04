@@ -27,3 +27,4 @@
 
 /* Long catalog values wrap while tables remain horizontally scrollable. */
 .catalog-title { min-width: 10rem; max-width: 22rem; white-space: normal; overflow-wrap: anywhere; }
+.order-details { min-width: 18rem; max-width: 30rem; white-space: normal; overflow-wrap: anywhere; }

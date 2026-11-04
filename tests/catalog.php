@@ -44,7 +44,7 @@ $statement = $pdo->prepare('INSERT INTO users (name, email, password, role) VALU
 $statement->execute(['Test Administrator', 'admin@example.test', $hash, 'admin']);
 $statement->execute(['Test Customer', 'customer@example.test', password_hash('TestCustomer123', PASSWORD_BCRYPT), 'user']);
 $before = $pdo->query('SELECT * FROM users ORDER BY id')->fetchAll();
-check(count(Migrator::run($pdo, base_path('database/migrations'))) === 2, 'both catalog migrations applied');
+check(count(Migrator::run($pdo, base_path('database/migrations'))) === count(glob(base_path('database/migrations/*.sql'))), 'all migrations applied');
 check(Migrator::run($pdo, base_path('database/migrations')) === [], 'second migration run is a no-op');
 check($pdo->query('SELECT * FROM users ORDER BY id')->fetchAll() === $before, 'migration preserves all account fields and password hashes');
 $pdo->beginTransaction();

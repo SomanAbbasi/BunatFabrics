@@ -17,7 +17,7 @@ signup / login and an admin dashboard.
    cp .env.example .env
    ```
 
-2. Create the database table and seed the predefined data:
+2. Create the database table and initialize an administrator if none exists:
 
    ```bash
    php database/migrate.php
@@ -29,7 +29,7 @@ signup / login and an admin dashboard.
 ## Login
 
 The administrator account is defined in `.env` (`ADMIN_EMAIL` / `ADMIN_PASSWORD`).
-`database/migrate.php` syncs it into the database, storing the password as a
+`database/migrate.php` creates it if absent, storing the password as a
 bcrypt hash. New customers can register from the signup page.
 
 ## Project structure
@@ -55,7 +55,7 @@ views/         page templates and layout
 ## Catalog migrations (existing installations)
 
 Use the additive catalog runner, **not** the legacy `database/migrate.php`, which
-re-seeds accounts and synchronizes administrator passwords:
+initializes accounts (existing accounts are preserved):
 
 ```bash
 php database/catalog-migrate.php
@@ -84,3 +84,7 @@ categories appear publicly. Lists use 20 admin rows or 12 public cards per page.
 PHP needs `pdo_mysql` and `mbstring`. See [tests/README.md](tests/README.md) for
 isolated MySQL, HTTP regression, and manual browser checks. No test command seeds
 or resets the configured application's users.
+
+## Orders and settings
+
+Run `php database/catalog-migrate.php` to apply pending orders migrations. The same incremental runner never seeds accounts. The legacy setup script now preserves existing accounts; administrator credentials are changed through Settings. Order confirmation does not deduct stock; checkout and inventory are not implemented.

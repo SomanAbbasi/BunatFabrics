@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS orders (
+ id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ order_no VARCHAR(20) NOT NULL,
+ user_id INT UNSIGNED NOT NULL,
+ status ENUM('pending','confirmed','processing','dispatched','delivered','rejected','cancelled') NOT NULL DEFAULT 'pending',
+ subtotal DECIMAL(12,2) NOT NULL,
+ delivery_name VARCHAR(100) NOT NULL,
+ delivery_phone VARCHAR(25) NOT NULL,
+ delivery_address TEXT NOT NULL,
+ city VARCHAR(80) NOT NULL,
+ payment_method ENUM('bank','cod') NOT NULL,
+ notes TEXT,
+ created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+ UNIQUE KEY orders_number_unique (order_no),
+ KEY orders_status_date (status, created_at),
+ KEY orders_date (created_at),
+ KEY orders_user (user_id),
+ CONSTRAINT orders_user_fk FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE RESTRICT,
+ CONSTRAINT orders_subtotal_check CHECK (subtotal >= 0)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
