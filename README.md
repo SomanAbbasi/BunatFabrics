@@ -48,6 +48,48 @@ The administrator account is defined in `.env` (`ADMIN_EMAIL` / `ADMIN_PASSWORD`
 `database/migrate.php` creates it if absent, storing the password as a
 bcrypt hash. New customers can register from the signup page.
 
+## Shopping cart and checkout
+
+Customers can add a fabric and quantity to a cart, update quantities, remove
+lines, and see line totals plus the order subtotal. The cart is stored in the PHP
+session, so guests can build a cart before signing in: the cart survives the
+login and signup redirects and is not lost when the session id is regenerated.
+
+Checkout requires an account. A guest who opens `/checkout` is sent to the login
+page with the cart intact and then returned to checkout after signing in. Before
+placing the order the customer must enter a validated phone number and delivery
+address. Placing the order writes `orders` and `order_items` rows (including the
+contact details) and clears the cart. Existing installations must apply the
+orders migrations once:
+
+```bash
+php database/catalog-migrate.php
+```
+
+## Admin orders API
+
+The admin dashboard can read placed orders from these JSON endpoints. They use
+the normal administrator session, so `fetch()` calls work after signing in as an
+admin. Unauthenticated requests receive `401`; non-admin users receive `403`.
+The controller lives in `src/Admin/Orders/OrderApiController.php` and the routes
+are registered in `routes/web.php`.
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `GET` | `/api/admin/orders` | Paginated order list, newest first |
+| `GET` | `/api/admin/orders/show?id=1` | One order with its line items |
+
+`/api/admin/orders` accepts `status` (`pending`, `confirmed`, `cancelled`),
+`page` (default `1`) and `per_page` (default `20`, maximum `100`). The response
+includes `data` and `meta` (`page`, `per_page`, `total`, `total_pages`, `status`).
+Each order exposes `id`, `user_id`, `status`, `subtotal_pkr`, `contact_phone`,
+`shipping_address`, `created_at`, `updated_at`, `customer_name`,
+`customer_email`, `item_lines` and `total_quantity`.
+
+The detail response adds an `items` array with `product_id`, `product_code`,
+`title`, `unit`, `unit_price_pkr`, `quantity` and `line_total_pkr` for each line.
+Amounts are strings (as returned by MySQL `DECIMAL`); cast them in JavaScript.
+
 ## Project structure
 
 ```
@@ -58,7 +100,9 @@ routes/        route definitions
 src/Core/      framework pieces (Env, Database, Session, Router, ...)
 src/Admin/     admin dashboard, category and product management
 src/Auth/      authentication service, guard and controllers
+src/Cart/      session cart service and cart/checkout controllers
 src/Home/      public catalog controllers and queries
+src/Orders/    order persistence for placed carts
 views/         page templates and layout
 ```
 

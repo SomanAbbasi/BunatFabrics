@@ -60,6 +60,15 @@ leaves catalog fixtures only in that disposable database. Test users are
 - Confirm signup/login/logout and customer dashboard remain functional; customers
   must get 403 on all admin routes, including POST submissions.
 - Refresh after saving to confirm redirects avoid duplicate submissions.
+- As a guest, add two fabrics from the catalog cards, change quantities and
+  remove a line; confirm each card shows its in-cart count, and the header count,
+  line totals and subtotal update.
+- Open checkout while signed out, sign in, and confirm the same cart is still
+  present. Submit blank and malformed phone/address values, then place the order
+  with valid details; verify the cart clears and only the short confirmation is
+  shown (no order item list).
+- As an admin, call `/api/admin/orders` and `/api/admin/orders/show?id=…` and
+  confirm the JSON order data and line items; confirm guests receive `401`.
 
 The PHP test server exercises application routes and sessions, not Apache rewrite
 configuration. Check `public/.htaccess` through Apache before deployment.

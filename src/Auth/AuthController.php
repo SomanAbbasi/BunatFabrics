@@ -100,7 +100,7 @@ final class AuthController
 
         Guard::login($user);
 
-        redirect('/dashboard');
+        redirect(Session::pullIntendedUrl('/dashboard'));
     }
 
     public function logout(): void

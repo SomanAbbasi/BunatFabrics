@@ -13,12 +13,23 @@ declare(strict_types=1);
 
 use App\Auth\AuthController;
 use App\Admin\Dashboard\DashboardController as AdminDashboardController;
+use App\Admin\Orders\OrderApiController;
 use App\Auth\DashboardController;
+use App\Cart\CartController;
 use App\Home\HomeController;
 use App\Home\ProductController as HomeProductController;
 
 $router->get('/', [HomeController::class, 'index']);
 $router->get('/product', [HomeProductController::class, 'show']);
+
+$router->get('/cart', [CartController::class, 'index']);
+$router->post('/cart/add', [CartController::class, 'add']);
+$router->post('/cart/update', [CartController::class, 'update']);
+$router->post('/cart/remove', [CartController::class, 'remove']);
+
+$router->get('/checkout', [CartController::class, 'checkout']);
+$router->post('/checkout', [CartController::class, 'placeOrder']);
+$router->get('/checkout/success', [CartController::class, 'success']);
 
 $router->get('/signup', [AuthController::class, 'showSignup']);
 $router->post('/signup', [AuthController::class, 'signup']);
@@ -30,6 +41,9 @@ $router->post('/logout', [AuthController::class, 'logout']);
 
 $router->get('/dashboard', [DashboardController::class, 'index']);
 $router->get('/admin', [AdminDashboardController::class, 'index']);
+
+$router->get('/api/admin/orders', [OrderApiController::class, 'index']);
+$router->get('/api/admin/orders/show', [OrderApiController::class, 'show']);
 
 // Catalog routes use literal paths; edit IDs are validated query/form values.
 $router->get('/admin/categories', [\App\Admin\Categories\CategoryController::class, 'index']);

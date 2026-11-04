@@ -3,9 +3,11 @@
 declare(strict_types=1);
 
 use App\Admin\Products\ProductImageService;
+use App\Core\Session;
 
 /** @var array<string, mixed> $product */
 /** @var list<array<string, mixed>> $images */
+/** @var int $cartQuantity */
 ?>
 <section class="product-detail">
     <a class="back-link" href="<?= e(url('/')) ?>">&larr; Back to catalog</a>
@@ -40,7 +42,26 @@ use App\Admin\Products\ProductImageService;
                 <div><dt>Category</dt><dd><?= e($product['category_name']) ?></dd></div>
             </dl>
 
-            <a class="button button-compact" href="<?= e(url('/')) ?>">Continue browsing</a>
+            <form action="<?= e(url('/cart/add')) ?>" method="POST" class="add-to-cart">
+                <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
+                <input type="hidden" name="product_id" value="<?= e((string) $product['id']) ?>">
+
+                <div class="field">
+                    <label for="quantity">Quantity (<?= e($product['unit']) ?>s)</label>
+                    <input type="number" id="quantity" name="quantity" value="1" min="1" max="999" inputmode="numeric" required>
+                </div>
+
+                <button type="submit" class="button<?= $cartQuantity > 0 ? ' is-added' : '' ?>">
+                    <?= icon($cartQuantity > 0 ? 'cart' : 'plus') ?>
+                    <span><?= $cartQuantity > 0 ? 'Add another (' . e((string) $cartQuantity) . ' in cart)' : 'Add to cart' ?></span>
+                </button>
+            </form>
+
+            <?php if ($cartQuantity > 0): ?>
+                <p class="cart-inline-note"><?= icon('check-circle') ?> This fabric is already in your <a href="<?= e(url('/cart')) ?>">cart</a>.</p>
+            <?php endif; ?>
+
+            <a class="button button-compact button-ghost" href="<?= e(url('/')) ?>"><?= icon('grid') ?><span>Continue browsing</span></a>
         </div>
     </div>
 </section>

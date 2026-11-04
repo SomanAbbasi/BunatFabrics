@@ -65,6 +65,37 @@ final class CatalogService
         return $statement->fetch() ?: null;
     }
 
+    /**
+     * Fetch several published products keyed by their id.
+     *
+     * @param list<int> $ids
+     * @return array<int, array<string, mixed>>
+     */
+    public function findPublishedMany(array $ids): array
+    {
+        $ids = array_values(array_unique(array_filter(
+            array_map('intval', $ids),
+            static fn (int $id): bool => $id > 0
+        )));
+
+        if ($ids === []) {
+            return [];
+        }
+
+        $placeholders = implode(', ', array_fill(0, count($ids), '?'));
+        $statement    = $this->pdo->prepare(
+            $this->selectPublished() . " AND p.id IN ({$placeholders})"
+        );
+        $statement->execute($ids);
+
+        $products = [];
+        foreach ($statement->fetchAll() as $row) {
+            $products[(int) $row['id']] = $row;
+        }
+
+        return $products;
+    }
+
     private function selectPublished(): string
     {
         return "SELECT p.id, p.product_code, p.title, p.description, p.composition,
