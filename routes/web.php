@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 use App\Auth\AuthController;
 use App\Admin\Dashboard\DashboardController as AdminDashboardController;
+use App\Admin\Orders\OrderApiController;
 use App\Auth\DashboardController;
 use App\Cart\CartController;
 use App\Home\HomeController;
@@ -40,6 +41,9 @@ $router->post('/logout', [AuthController::class, 'logout']);
 
 $router->get('/dashboard', [DashboardController::class, 'index']);
 $router->get('/admin', [AdminDashboardController::class, 'index']);
+
+$router->get('/api/admin/orders', [OrderApiController::class, 'index']);
+$router->get('/api/admin/orders/show', [OrderApiController::class, 'show']);
 
 // Catalog routes use literal paths; edit IDs are validated query/form values.
 $router->get('/admin/categories', [\App\Admin\Categories\CategoryController::class, 'index']);
