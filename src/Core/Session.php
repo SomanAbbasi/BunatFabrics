@@ -81,6 +81,30 @@ final class Session
         self::forget('_old_input');
     }
 
+    /**
+     * Remember where to send the visitor after a successful sign in.
+     */
+    public static function setIntendedUrl(string $path): void
+    {
+        self::put('intended_url', $path);
+    }
+
+    /**
+     * Read and clear the intended path, rejecting anything off-site.
+     */
+    public static function pullIntendedUrl(string $default = '/dashboard'): string
+    {
+        $path = self::get('intended_url');
+
+        self::forget('intended_url');
+
+        if (! is_string($path) || $path === '' || $path[0] !== '/' || str_starts_with($path, '//')) {
+            return $default;
+        }
+
+        return $path;
+    }
+
     public static function csrfToken(): string
     {
         if (! self::has('_csrf_token')) {
