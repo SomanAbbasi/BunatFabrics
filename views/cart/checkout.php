@@ -39,6 +39,20 @@ use App\Core\Session;
                     <span class="field-hint">Include the full address where the fabrics should be delivered.</span>
                     <?php if (isset($errors['address'])): ?><span class="field-error"><?= e($errors['address']) ?></span><?php endif; ?>
                 </div>
+                <div class="field">
+                    <label for="city">City</label>
+                    <input id="city" name="city" maxlength="80" autocomplete="address-level2" required value="<?= e(old('city')) ?>">
+                    <?php if (isset($errors['city'])): ?><span class="field-error"><?= e($errors['city']) ?></span><?php endif; ?>
+                </div>
+                <div class="field">
+                    <label for="payment_method">Payment method</label>
+                    <select id="payment_method" name="payment_method" required>
+                        <option value="">Choose a payment method</option>
+                        <option value="bank" <?= old('payment_method') === 'bank' ? 'selected' : '' ?>>Bank transfer</option>
+                        <option value="cod" <?= old('payment_method') === 'cod' ? 'selected' : '' ?>>Cash on delivery</option>
+                    </select>
+                    <?php if (isset($errors['payment_method'])): ?><span class="field-error"><?= e($errors['payment_method']) ?></span><?php endif; ?>
+                </div>
             </article>
 
             <article class="panel">

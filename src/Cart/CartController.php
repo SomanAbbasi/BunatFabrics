@@ -122,20 +122,27 @@ final class CartController
         }
 
         $contact = [
-            'phone'   => trim((string) ($_POST['phone'] ?? '')),
-            'address' => trim((string) ($_POST['address'] ?? '')),
+            'phone' => is_string($_POST['phone'] ?? null) ? trim($_POST['phone']) : '',
+            'address' => is_string($_POST['address'] ?? null) ? trim($_POST['address']) : '',
+            'city' => is_string($_POST['city'] ?? null) ? trim($_POST['city']) : '',
+            'payment_method' => is_string($_POST['payment_method'] ?? null) ? $_POST['payment_method'] : '',
         ];
 
         $errors = (new Validator($contact))->validate(
             [
                 'phone'   => 'required|phone',
                 'address' => 'required|min:10|max:500',
+                'city' => 'required|max:80',
             ],
             [
                 'phone'   => 'Phone number',
                 'address' => 'Delivery address',
             ],
         );
+
+        if (! in_array($contact['payment_method'], ['bank', 'cod'], true)) {
+            $errors['payment_method'] = 'Choose a payment method.';
+        }
 
         if ($errors !== []) {
             Session::flash('errors', $errors);
@@ -145,7 +152,7 @@ final class CartController
         }
 
         try {
-            $orderId = (new OrderService())->place((int) $user['id'], $items, $this->cart->subtotal(), $contact);
+            $orderId = (new OrderService())->place((int) $user['id'], $items, $contact);
         } catch (Throwable $exception) {
             error_log('Order placement failed: ' . $exception->getMessage());
             Session::flash('error', 'We could not place your order. Please try again.');
@@ -198,12 +205,18 @@ final class CartController
             redirect('/login');
         }
 
+        if (($user['role'] ?? null) !== 'user') {
+            http_response_code(403);
+            View::render('errors/403', ['title' => 'Customer access required', 'message' => 'Please sign in with a customer account to place an order.']);
+            exit;
+        }
+
         return $user;
     }
 
     private function requireCsrf(string $fallback): void
     {
-        if (! Session::verifyCsrf($_POST['_token'] ?? null)) {
+        if (! is_string($_POST['_token'] ?? null) || ! Session::verifyCsrf($_POST['_token'])) {
             Session::flash('error', 'Your session expired. Please try again.');
 
             redirect($fallback);

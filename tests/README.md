@@ -72,3 +72,15 @@ leaves catalog fixtures only in that disposable database. Test users are
 
 The PHP test server exercises application routes and sessions, not Apache rewrite
 configuration. Check `public/.htaccess` through Apache before deployment.
+
+## Orders integration
+
+After running `tests/catalog.php` and starting `tests/catalog-router.php` against
+its generated disposable database, run `python3 tests/orders_http.py`. Set
+`CATALOG_TEST_URL` when the server uses a non-default port. The test creates
+products and an order only on that isolated server and checks checkout, admin
+status/history, API responses, CSRF, authorization and order ownership.
+
+Run `CATALOG_TEST_DSN='mysql:unix_socket=/tmp/bunat-catalog-mysql.sock;charset=utf8mb4' php -d session.save_path=/tmp tests/orders_legacy.php`
+to create a separate disposable legacy-schema database, exercise the bridge and
+confirm old orders and new snapshots remain available. The database is retained.

@@ -41,8 +41,54 @@ final class OrderService
             $row['next'] = self::TRANSITIONS[$row['status']] ?? [];
         }
         unset($row);
-        $counts = $this->pdo->query("SELECT COUNT(*) AS total, SUM(status='pending') AS pending, SUM(status IN ('confirmed','processing','dispatched')) AS active FROM orders")->fetch();
+        $statement = $this->pdo->prepare("SELECT COUNT(*) AS total, SUM(status='pending') AS pending, SUM(status IN ('confirmed','processing','dispatched')) AS active FROM orders");
+        $statement->execute();
+        $counts = $statement->fetch();
         return ['orders'=>$rows, 'hasNext'=>$next, 'counts'=>$counts];
+    }
+
+    /** Return the existing JSON API shape from the same order records. */
+    public function apiListing(?string $status, int $page, int $perPage): array
+    {
+        $where = $status === null ? '' : 'WHERE o.status = :status';
+        $count = $this->pdo->prepare("SELECT COUNT(*) FROM orders o {$where}");
+        if ($status !== null) $count->bindValue(':status', $status);
+        $count->execute();
+        $total = (int) $count->fetchColumn();
+        $statement = $this->pdo->prepare("SELECT o.id, o.order_no, o.user_id, o.status,
+            o.subtotal AS subtotal_pkr, o.delivery_phone AS contact_phone,
+            o.delivery_address AS shipping_address, o.created_at, o.updated_at,
+            u.name AS customer_name, u.email AS customer_email,
+            COUNT(oi.id) AS item_lines, COALESCE(SUM(oi.quantity), 0) AS total_quantity
+            FROM orders o JOIN users u ON u.id = o.user_id
+            LEFT JOIN order_items oi ON oi.order_id = o.id {$where}
+            GROUP BY o.id ORDER BY o.id DESC LIMIT :limit OFFSET :offset");
+        if ($status !== null) $statement->bindValue(':status', $status);
+        $statement->bindValue(':limit', $perPage, PDO::PARAM_INT);
+        $statement->bindValue(':offset', ($page - 1) * $perPage, PDO::PARAM_INT);
+        $statement->execute();
+        return ['data' => $statement->fetchAll(), 'meta' => [
+            'page' => $page, 'per_page' => $perPage, 'total' => $total,
+            'total_pages' => $total === 0 ? 0 : (int) ceil($total / $perPage), 'status' => $status,
+        ]];
+    }
+
+    public function apiFind(int $id): ?array
+    {
+        $statement = $this->pdo->prepare('SELECT o.*, u.name AS customer_name, u.email AS customer_email
+            FROM orders o JOIN users u ON u.id = o.user_id WHERE o.id = ? LIMIT 1');
+        $statement->execute([$id]);
+        $order = $statement->fetch();
+        if ($order === false) return null;
+        $items = $this->pdo->prepare('SELECT id, product_id, product_code, fabric_title AS title, unit,
+            unit_price AS unit_price_pkr, quantity, line_total AS line_total_pkr
+            FROM order_items WHERE order_id = ? ORDER BY id');
+        $items->execute([$id]);
+        $order['subtotal_pkr'] = $order['subtotal'];
+        $order['contact_phone'] = $order['delivery_phone'];
+        $order['shipping_address'] = $order['delivery_address'];
+        $order['items'] = $items->fetchAll();
+        return $order;
     }
 
     public function transition(int $id, string $expected, string $next, array $admin): string

@@ -14,9 +14,9 @@ declare(strict_types=1);
 
     <div class="panel order-confirmation">
         <span class="confirmation-icon"><?= icon('check-circle') ?></span>
-        <h2>Order #<?= e((string) $order['id']) ?> is pending confirmation</h2>
-        <p class="muted">Our team will contact you on <strong><?= e($order['contact_phone']) ?></strong> to confirm stock and delivery.</p>
-        <p class="muted">Total: <strong><?= e(pkr($order['subtotal_pkr'])) ?></strong></p>
+        <h2>Order #<?= e((string) $order['order_no']) ?> is pending confirmation</h2>
+        <p class="muted">Our team will contact you on <strong><?= e($order['delivery_phone']) ?></strong> to confirm stock and delivery.</p>
+        <p class="muted">Total: <strong><?= e(pkr($order['subtotal'])) ?></strong></p>
         <a class="button button-compact" href="<?= e(url('/')) ?>"><?= icon('grid') ?><span>Browse more fabrics</span></a>
     </div>
 </section>

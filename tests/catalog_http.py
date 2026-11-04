@@ -82,7 +82,9 @@ product['title'] += ' edited'
 check(admin.request('/admin/products/update', product)[0] == 302, 'HTTP edit product')
 check(admin.request('/admin/products/state', {'_token':token, 'id':product_id, 'status':'published'})[0] == 302, 'HTTP publish')
 body = guest.request('/')[1]
-check(product['title'] in body and '&lt;script&gt;' in body and '<script>alert(1)</script>' not in body, 'public product visible and HTML escaped')
+check(product['title'] in body, 'published product appears on homepage')
+detail = guest.request('/product?id=' + product_id)[1]
+check('&lt;script&gt;' in detail and '<script>alert(1)</script>' not in detail, 'product description is HTML escaped')
 check(admin.request('/admin/categories/state', {'_token':token,'id':category_id,'is_active':'0'})[0] == 302, 'HTTP hide category')
 check(product['title'] not in guest.request('/')[1], 'hidden category excluded publicly')
 check(admin.request('/admin/categories/state', {'_token':token,'id':category_id,'is_active':'1'})[0] == 302, 'HTTP enable category')

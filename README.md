@@ -57,8 +57,8 @@ login and signup redirects and is not lost when the session id is regenerated.
 
 Checkout requires an account. A guest who opens `/checkout` is sent to the login
 page with the cart intact and then returned to checkout after signing in. Before
-placing the order the customer must enter a validated phone number and delivery
-address. Placing the order writes `orders` and `order_items` rows (including the
+placing the order the customer must enter a validated phone number, delivery
+address, city, and payment method. Placing the order writes `orders` and `order_items` rows (including the
 contact details) and clears the cart. Existing installations must apply the
 orders migrations once:
 
@@ -79,7 +79,8 @@ are registered in `routes/web.php`.
 | `GET` | `/api/admin/orders` | Paginated order list, newest first |
 | `GET` | `/api/admin/orders/show?id=1` | One order with its line items |
 
-`/api/admin/orders` accepts `status` (`pending`, `confirmed`, `cancelled`),
+`/api/admin/orders` accepts `status` (`pending`, `confirmed`, `processing`,
+`dispatched`, `delivered`, `rejected`, `cancelled`),
 `page` (default `1`) and `per_page` (default `20`, maximum `100`). The response
 includes `data` and `meta` (`page`, `per_page`, `total`, `total_pages`, `status`).
 Each order exposes `id`, `user_id`, `status`, `subtotal_pkr`, `contact_phone`,
@@ -153,4 +154,18 @@ or resets the configured application's users.
 
 ## Orders and settings
 
-Run `php database/catalog-migrate.php` to apply pending orders migrations. The same incremental runner never seeds accounts. The legacy setup script now preserves existing accounts; administrator credentials are changed through Settings. Order confirmation does not deduct stock; checkout and inventory are not implemented.
+Run `php database/catalog-migrate.php` to apply pending orders migrations. The same incremental runner never seeds accounts. The legacy setup script now preserves existing accounts; administrator credentials are changed through Settings. Order confirmation does not deduct stock; inventory is not implemented.
+
+## Customer and admin order integration
+
+Checkout writes the admin `orders` and `order_items` records in one transaction.
+Product prices and availability are rechecked while the records are locked; amounts
+are calculated in integer cents and saved as decimal snapshots. Customers can view
+only their own confirmation. The admin page and existing read-only API use the
+same records and status flow. No colour is selected until variants are implemented.
+
+Apply pending migrations with `php database/catalog-migrate.php`. The order bridge
+migrations preserve older checkout-shaped records and the existing migration
+history; the `subtotal_pkr` compatibility alias allows the earlier contact
+migration to run against the admin schema. Legacy orders without a city or payment
+method show those values as unrecorded. Back up the database before deployment.
