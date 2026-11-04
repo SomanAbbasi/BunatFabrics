@@ -47,7 +47,7 @@ for section in ['categories', 'products']:
         check(customer.request('/admin/' + section + path)[0] == 403, 'customer GET denied: ' + section + path)
     for path in ['/store', '/update', '/state']:
         check(customer.request('/admin/' + section + path, {})[0] == 403, 'customer POST denied: ' + section + path)
-check('Hello World' in customer.request('/dashboard')[1], 'customer dashboard unchanged')
+check('Customer account' in customer.request('/dashboard')[1], 'customer dashboard renders account details')
 check(admin.login('admin@example.test', 'TestAdmin123')[0] == 302, 'admin login')
 check(admin.request('/dashboard')[2]['Location'].endswith('/admin'), 'admin dashboard redirect')
 check(admin.request('/admin')[0] == 200, 'admin dashboard render')
@@ -98,6 +98,6 @@ newuser = Client()
 newtoken = newuser.token('/signup')
 signup = {'_token':newtoken,'name':'HTTP New User','email':'new-' + suffix + '@example.test','password':'NewCustomer123','password_confirmation':'NewCustomer123'}
 check(newuser.request('/signup', signup)[0] == 302, 'signup submission')
-check(newuser.login(signup['email'], signup['password'])[0] == 302 and 'Hello World' in newuser.request('/dashboard')[1], 'new signup can log in')
+check(newuser.login(signup['email'], signup['password'])[0] == 302 and signup['name'] in newuser.request('/dashboard')[1], 'new signup can log in')
 check(newuser.request('/admin/products')[0] == 403, 'signup cannot create administrator')
 print('HTTP suite complete; test data exists only in the disposable database.')

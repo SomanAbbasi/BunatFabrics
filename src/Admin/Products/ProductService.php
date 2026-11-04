@@ -21,7 +21,7 @@ final class ProductService
 
     public function listing(int $page): array
     {
-        $statement = $this->pdo->prepare('SELECT p.*, c.name AS category_name, c.is_active AS category_active FROM products p JOIN categories c ON c.id = p.category_id ORDER BY p.id DESC LIMIT 21 OFFSET ?');
+        $statement = $this->pdo->prepare('SELECT p.*, c.name AS category_name, c.is_active AS category_active, (SELECT pi.file_path FROM product_images pi WHERE pi.product_id = p.id ORDER BY pi.sort_order, pi.id LIMIT 1) AS image_path FROM products p JOIN categories c ON c.id = p.category_id ORDER BY p.id DESC LIMIT 21 OFFSET ?');
         $statement->bindValue(1, ($page - 1) * 20, PDO::PARAM_INT);
         $statement->execute();
         $rows = $statement->fetchAll();
@@ -38,10 +38,11 @@ final class ProductService
     public function save(array $input, ?int $id = null): array
     {
         $data = [];
-        foreach (['product_code', 'title', 'description', 'category_id', 'composition', 'width_inch', 'weight_gsm', 'unit', 'status'] as $key) {
-            $data[$key] = CatalogInput::text($input, $key);
+        foreach (['product_code', 'title', 'description', 'category_id', 'composition', 'width_inch', 'weight_gsm', 'unit', 'price_pkr', 'status'] as $key) {
+            $data[$key] = CatalogInput::text($input, $key, $key === 'price_pkr' ? '0' : '');
         }
         $data['product_code'] = strtoupper($data['product_code']);
+        $data['price_pkr'] = $data['price_pkr'] === '' ? '0' : $data['price_pkr'];
         $errors = [];
         if (! preg_match('/^[A-Z0-9][A-Z0-9_-]{0,49}$/D', $data['product_code'])) {
             $errors['product_code'] = 'Use 1–50 letters, numbers, hyphens, or underscores; start with a letter or number.';
@@ -60,6 +61,9 @@ final class ProductService
         }
         if ($data['weight_gsm'] !== '' && (! preg_match('/^[1-9][0-9]{0,4}$/D', $data['weight_gsm']) || (int) $data['weight_gsm'] > 65535)) {
             $errors['weight_gsm'] = 'Enter a whole GSM value from 1 to 65535.';
+        }
+        if (! preg_match('/^[0-9]{1,10}(?:\.[0-9]{1,2})?$/D', $data['price_pkr']) || (float) $data['price_pkr'] > 9999999999.99) {
+            $errors['price_pkr'] = 'Enter a price in PKR using up to 10 digits and 2 decimal places.';
         }
         if (! in_array($data['unit'], ['meter', 'yard'], true)) {
             $errors['unit'] = 'Choose meter or yard.';
@@ -85,11 +89,11 @@ final class ProductService
             }
             try {
                 if ($id === null) {
-                    $statement = $this->pdo->prepare('INSERT INTO products (product_code, title, description, category_id, composition, width_inch, weight_gsm, unit, status) VALUES (:product_code, :title, :description, :category_id, :composition, :width_inch, :weight_gsm, :unit, :status)');
+                    $statement = $this->pdo->prepare('INSERT INTO products (product_code, title, description, category_id, composition, width_inch, weight_gsm, unit, price_pkr, status) VALUES (:product_code, :title, :description, :category_id, :composition, :width_inch, :weight_gsm, :unit, :price_pkr, :status)');
                     $statement->execute($values);
                     $id = (int) $this->pdo->lastInsertId();
                 } else {
-                    $statement = $this->pdo->prepare('UPDATE products SET product_code = :product_code, title = :title, description = :description, category_id = :category_id, composition = :composition, width_inch = :width_inch, weight_gsm = :weight_gsm, unit = :unit, status = :status WHERE id = :id');
+                    $statement = $this->pdo->prepare('UPDATE products SET product_code = :product_code, title = :title, description = :description, category_id = :category_id, composition = :composition, width_inch = :width_inch, weight_gsm = :weight_gsm, unit = :unit, price_pkr = :price_pkr, status = :status WHERE id = :id');
                     $statement->execute($values + ['id' => $id]);
                 }
             } catch (PDOException $exception) {
