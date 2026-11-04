@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Home;
 
 use App\Admin\Products\ProductImageService;
+use App\Cart\CartService;
 use App\Core\View;
 
 final class ProductController
@@ -25,6 +26,7 @@ final class ProductController
             'title' => (string) $product['title'],
             'product' => $product,
             'images' => (new ProductImageService())->forProduct((int) $product['id']),
+            'cartQuantity' => (new CartService())->raw()[(int) $product['id']] ?? 0,
         ]);
     }
 }

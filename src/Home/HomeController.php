@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Home;
 
+use App\Cart\CartService;
 use App\Core\View;
 use Throwable;
 
@@ -39,6 +40,7 @@ final class HomeController
             'groups' => $groups,
             'activeCategory' => $activeCategory,
             'unavailable' => $unavailable,
+            'cartQuantities' => (new CartService())->raw(),
         ]);
     }
 }

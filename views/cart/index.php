@@ -19,9 +19,10 @@ use App\Core\Session;
 
     <?php if ($items === []): ?>
         <div class="panel empty-cart">
+            <?= icon('cart', 'icon empty-cart-icon') ?>
             <p class="empty-note-title">Your cart is empty</p>
             <p class="muted">Add fabrics from the catalog to start a wholesale order.</p>
-            <a class="button button-compact" href="<?= e(url('/')) ?>">Browse fabrics</a>
+            <a class="button button-compact" href="<?= e(url('/')) ?>"><?= icon('grid') ?><span>Browse fabrics</span></a>
         </div>
     <?php else: ?>
         <div class="cart-layout">
@@ -48,13 +49,13 @@ use App\Core\Session;
                                 <input type="hidden" name="product_id" value="<?= e((string) $item['id']) ?>">
                                 <label for="quantity-<?= e((string) $item['id']) ?>">Qty</label>
                                 <input type="number" id="quantity-<?= e((string) $item['id']) ?>" name="quantity" value="<?= e((string) $item['quantity']) ?>" min="1" max="999" inputmode="numeric">
-                                <button type="submit" class="button button-compact button-ghost">Update</button>
+                                <button type="submit" class="button button-compact button-ghost"><?= icon('check-circle') ?><span>Update</span></button>
                             </form>
 
                             <form action="<?= e(url('/cart/remove')) ?>" method="POST" class="cart-remove-form">
                                 <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
                                 <input type="hidden" name="product_id" value="<?= e((string) $item['id']) ?>">
-                                <button type="submit" class="link-button danger-link">Remove</button>
+                                <button type="submit" class="link-button danger-link"><?= icon('trash') ?><span>Remove</span></button>
                             </form>
                         </div>
 
@@ -86,8 +87,8 @@ use App\Core\Session;
                     </div>
                 </dl>
 
-                <a class="button" href="<?= e(url('/checkout')) ?>">Proceed to checkout</a>
-                <a class="back-link" href="<?= e(url('/')) ?>">Continue browsing</a>
+                <a class="button" href="<?= e(url('/checkout')) ?>"><?= icon('lock') ?><span>Proceed to checkout</span></a>
+                <a class="back-link" href="<?= e(url('/')) ?>"><?= icon('grid') ?><span>Continue browsing</span></a>
             </aside>
         </div>
     <?php endif; ?>
