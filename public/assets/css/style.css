@@ -1018,7 +1018,8 @@ img {
 
 /* Buttons --------------------------------------------------------------- */
 
-.button {
+.button,
+.button-primary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1028,23 +1029,25 @@ img {
     border: 1px solid var(--ink);
     border-radius: var(--radius-sm);
     background: var(--ink);
-    color: #fff;
+    color: #fff !important;
     font: inherit;
     font-size: 0.96rem;
     font-weight: 600;
     text-align: center;
     cursor: pointer;
-    transition: background 0.15s ease, border-color 0.15s ease;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
-.button:hover {
+.button:hover,
+.button-primary:hover {
     background: #1f2937;
     border-color: #1f2937;
     text-decoration: none;
-    color: #fff;
+    color: #fff !important;
 }
 
-.button:active {
+.button:active,
+.button-primary:active {
     transform: translateY(1px);
 }
 
@@ -1055,6 +1058,7 @@ img {
 }
 
 .button .icon,
+.button-primary .icon,
 .link-button .icon,
 .nav-cta .icon {
     width: 17px;
@@ -1064,15 +1068,48 @@ img {
 .button.is-added {
     border-color: var(--success);
     background: var(--success);
+    color: #fff !important;
+}
+
+/* Ghost Buttons — Always ensure text and icon stay dark on light background */
+.button.button-ghost,
+.button-ghost {
+    background: var(--surface) !important;
+    border: 1px solid var(--line-strong) !important;
+    color: var(--ink) !important;
+    box-shadow: none;
+}
+
+.button.button-ghost:hover,
+.button-ghost:hover {
+    background: var(--surface-soft) !important;
+    border-color: var(--ink) !important;
+    color: var(--ink) !important;
+    text-decoration: none;
+}
+
+.button.button-ghost:hover .icon,
+.button-ghost:hover .icon {
+    color: var(--ink) !important;
+}
+
+.button.button-ghost:active,
+.button-ghost:active {
+    background: var(--accent-soft) !important;
+    border-color: var(--ink) !important;
+    color: var(--ink) !important;
+}
+
+.danger-link {
+    color: var(--danger);
+}
+
+.danger-link:hover {
+    color: var(--danger);
+    text-decoration: underline;
 }
 
 /* Alerts ---------------------------------------------------------------- */
-
-.icon {
-    width: 18px;
-    height: 18px;
-    flex: 0 0 auto;
-}
 
 .alert {
     display: flex;
@@ -1101,24 +1138,6 @@ img {
     background: var(--danger-soft);
     border-color: rgba(180, 35, 24, 0.16);
     color: var(--danger);
-}
-
-.button-ghost {
-    background: var(--surface);
-    color: var(--ink);
-}
-
-.button-ghost:hover {
-    background: var(--accent-soft);
-}
-
-.danger-link {
-    color: var(--danger);
-}
-
-.danger-link:hover {
-    color: var(--danger);
-    text-decoration: underline;
 }
 
 /* Cart ------------------------------------------------------------------ */
@@ -1434,35 +1453,121 @@ img {
     white-space: nowrap;
 }
 
-.order-confirmation {
+/* Order Success Page ---------------------------------------------------- */
+
+.success-page {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-    max-width: 640px;
+    justify-content: center;
+    align-items: center;
+    padding: 24px 16px 48px;
+    width: 100%;
 }
 
-.order-confirmation h2 {
-    margin: 4px 0 0;
-}
-
-.order-confirmation .button {
-    margin-top: 10px;
+.success-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: clamp(24px, 5vw, 40px) clamp(20px, 4vw, 36px);
+    max-width: 580px;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+    box-shadow: 0 4px 20px -8px rgba(16, 24, 40, 0.06);
 }
 
 .confirmation-icon {
     display: grid;
     place-items: center;
-    width: 52px;
-    height: 52px;
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 16px;
     border-radius: 50%;
     background: var(--success-soft);
     color: var(--success);
 }
 
 .confirmation-icon .icon {
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
+}
+
+.success-title {
+    font-size: clamp(1.45rem, 3.5vw, 1.95rem);
+    margin: 0 0 8px;
+    letter-spacing: -0.02em;
+}
+
+.success-subtitle {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin: 0 auto 24px;
+    max-width: 440px;
+    line-height: 1.5;
+}
+
+.success-summary-box {
+    background: var(--surface-soft);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 20px;
+    margin-bottom: 24px;
+    text-align: left;
+}
+
+.success-summary-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.success-order-num {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+}
+
+.success-contact-text {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin: 0 0 16px;
+    line-height: 1.5;
+}
+
+.success-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+}
+
+.success-total-val {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--ink);
+}
+
+.success-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+@media (min-width: 480px) {
+    .success-actions {
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .success-actions .button {
+        flex: 1;
+        width: auto;
+    }
 }
 
 /* Error pages ----------------------------------------------------------- */
@@ -1546,6 +1651,49 @@ img {
 
     .add-to-cart {
         flex-wrap: wrap;
+    }
+
+    .container {
+        padding: 16px 14px;
+    }
+
+    .site-header {
+        padding: 10px 14px;
+        gap: 10px;
+    }
+
+    .brand-name {
+        font-size: 0.96rem;
+    }
+
+    .site-nav {
+        gap: 8px;
+    }
+
+    .nav-link,
+    .nav-cta {
+        font-size: 0.84rem;
+        padding: 6px 10px;
+    }
+
+    .card-order-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .card-qty-group {
+        flex: 1 1 auto;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .product-card-cart .card-cart-button {
+        width: 100%;
+    }
+
+    .account-grid {
+        grid-template-columns: 1fr;
     }
 }
 
