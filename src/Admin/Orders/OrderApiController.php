@@ -202,14 +202,8 @@ final class OrderApiController
 
     private function authorize(): bool
     {
-        if (! Guard::check()) {
-            $this->json(['error' => 'Authentication required.'], 401);
-
-            return false;
-        }
-
-        if (! Guard::isAdmin()) {
-            $this->json(['error' => 'Administrator access required.'], 403);
+        if (! Guard::check() || ! Guard::isAdmin()) {
+            $this->json(['error' => 'Resource not found.'], 404);
 
             return false;
         }

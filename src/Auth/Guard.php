@@ -62,8 +62,8 @@ final class Guard
         }
 
         if (! self::isAdmin()) {
-            http_response_code(403);
-            View::render('errors/403', ['title' => 'Access denied']);
+            http_response_code(404);
+            View::render('errors/404', ['title' => 'Page not found']);
             exit;
         }
 

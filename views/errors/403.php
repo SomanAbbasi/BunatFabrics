@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 ?>
 <section class="card message-card">
-    <h1>403 &mdash; Access denied</h1>
-    <p class="muted"><?= e($message ?? 'This area is available to administrators only.') ?></p>
-    <a class="button" href="<?= e(url('/dashboard')) ?>">Back to your dashboard</a>
+    <h1>Access Restricted</h1>
+    <p class="muted">You do not have permission to view the requested page.</p>
+    <a class="button" href="<?= e(url('/')) ?>">Return to home page</a>
 </section>

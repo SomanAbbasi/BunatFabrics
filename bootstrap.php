@@ -38,12 +38,10 @@ App\Core\Env::load(BASE_PATH . '/.env');
 App\Core\Session::start();
 
 /*
- * Report every error while debugging, never leak them in production.
+ * Report every error to server logs; never leak technical details in responses.
  */
-$debug = (bool) config('app.debug');
-
 error_reporting(E_ALL);
-ini_set('display_errors', $debug ? '1' : '0');
+ini_set('display_errors', '0');
 ini_set('log_errors', '1');
 
 date_default_timezone_set('UTC');

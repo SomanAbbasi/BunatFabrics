@@ -74,6 +74,13 @@ final class Router
     {
         http_response_code($status);
 
+        $uri = $_SERVER['REQUEST_URI'] ?? '';
+        if (str_starts_with($uri, '/api/')) {
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['error' => 'Resource not found.'], JSON_UNESCAPED_SLASHES);
+            exit;
+        }
+
         View::render('errors/404', [
             'title' => 'Page not found',
         ]);
@@ -81,12 +88,14 @@ final class Router
 
     private function handleException(Throwable $exception): void
     {
+        error_log('[Application Error] ' . $exception->getMessage() . ' in ' . $exception->getFile() . ':' . $exception->getLine());
         http_response_code(500);
 
-        if ((bool) config('app.debug')) {
-            echo '<pre>' . htmlspecialchars((string) $exception, ENT_QUOTES) . '</pre>';
-
-            return;
+        $uri = $_SERVER['REQUEST_URI'] ?? '';
+        if (str_starts_with($uri, '/api/')) {
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['error' => 'An unexpected server error occurred.'], JSON_UNESCAPED_SLASHES);
+            exit;
         }
 
         View::render('errors/500', [

@@ -20,7 +20,6 @@ $orders = $orders ?? [];
                 <div><dt>Name</dt><dd><?= e($user['name']) ?></dd></div>
                 <div><dt>Email</dt><dd><?= e($user['email']) ?></dd></div>
                 <div><dt>Member since</dt><dd><?= e(date('M d, Y', strtotime((string) $user['created_at']))) ?></dd></div>
-                <div><dt>Account type</dt><dd><?= e(ucfirst((string) $user['role'])) ?></dd></div>
             </dl>
         </article>
 
