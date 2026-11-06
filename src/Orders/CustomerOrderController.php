@@ -27,12 +27,16 @@ final class CustomerOrderController
             redirect('/login');
         }
 
-        $orders = $this->orders->listForUser((int) $user['id']);
+        $page = max(1, (int) ($_GET['page'] ?? 1));
+        $pagination = $this->orders->paginateForUser((int) $user['id'], $page, 10);
 
         View::render('orders/index', [
-            'title'  => 'My Orders',
-            'user'   => $user,
-            'orders' => $orders,
+            'title'      => 'My Orders',
+            'user'       => $user,
+            'orders'     => $pagination['data'],
+            'page'       => $pagination['page'],
+            'totalPages' => $pagination['totalPages'],
+            'total'      => $pagination['total'],
         ]);
     }
 

@@ -46,7 +46,8 @@ $totalMeters = array_sum(array_column($items, 'quantity'));
                 <table class="table table-vcenter card-table">
                     <thead>
                         <tr>
-                            <th>Fabric Description</th>
+                            <th style="width: 64px;">Fabric</th>
+                            <th>Description</th>
                             <th>Code</th>
                             <th class="text-end">Wholesale Rate</th>
                             <th class="text-center">Quantity</th>
@@ -56,6 +57,15 @@ $totalMeters = array_sum(array_column($items, 'quantity'));
                     <tbody>
                         <?php foreach ($items as $item): ?>
                             <tr>
+                                <td>
+                                    <?php if (! empty($item['image_path'])): ?>
+                                        <img src="<?= e(ProductImageService::url((string) $item['image_path'])) ?>" alt="<?= e($item['title']) ?>" class="rounded" style="width: 52px; height: 52px; object-fit: cover; border: 1px solid var(--tblr-border-color, #e6e8ec);">
+                                    <?php else: ?>
+                                        <div class="rounded bg-light text-secondary d-flex align-items-center justify-content-center fw-bold" style="width: 52px; height: 52px; border: 1px solid var(--tblr-border-color, #e6e8ec);">
+                                            B
+                                        </div>
+                                    <?php endif; ?>
+                                </td>
                                 <td>
                                     <div class="fw-bold"><?= e($item['title']) ?></div>
                                     <div class="text-secondary small">Unit: <?= e(ucfirst($item['unit'])) ?></div>
@@ -77,12 +87,12 @@ $totalMeters = array_sum(array_column($items, 'quantity'));
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="3" class="text-end fw-bold text-secondary">Total Wholesale Volume:</td>
+                            <td colspan="4" class="text-end fw-bold text-secondary">Total Wholesale Volume:</td>
                             <td class="text-center fw-bold"><?= e(number_format($totalMeters)) ?> units</td>
                             <td></td>
                         </tr>
                         <tr class="table-light">
-                            <td colspan="4" class="text-end h4 mb-0 fw-bold">Grand Subtotal:</td>
+                            <td colspan="5" class="text-end h4 mb-0 fw-bold">Grand Subtotal:</td>
                             <td class="text-end h3 mb-0 fw-bold text-primary"><?= e(pkr((float) $order['subtotal_pkr'])) ?></td>
                         </tr>
                     </tfoot>

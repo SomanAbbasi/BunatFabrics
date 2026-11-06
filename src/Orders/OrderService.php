@@ -126,7 +126,11 @@ final class OrderService
         }
 
         $items = $this->pdo->prepare(
-            'SELECT * FROM order_items WHERE order_id = :order_id ORDER BY id'
+            'SELECT oi.*,
+                    (SELECT file_path FROM product_images WHERE product_id = oi.product_id ORDER BY sort_order ASC, id ASC LIMIT 1) AS image_path
+             FROM order_items oi
+             WHERE oi.order_id = :order_id
+             ORDER BY oi.id'
         );
         $items->execute(['order_id' => $orderId]);
 
@@ -156,6 +160,47 @@ final class OrderService
     }
 
     /**
+     * List paginated orders placed by a specific customer (10 per page).
+     *
+     * @return array{data: list<array<string, mixed>>, total: int, page: int, perPage: int, totalPages: int}
+     */
+    public function paginateForUser(int $userId, int $page = 1, int $perPage = 10): array
+    {
+        $page = max(1, $page);
+        $perPage = max(1, min(50, $perPage));
+
+        $countStmt = $this->pdo->prepare('SELECT COUNT(*) FROM orders WHERE user_id = :user_id');
+        $countStmt->execute(['user_id' => $userId]);
+        $total = (int) $countStmt->fetchColumn();
+        $totalPages = $total > 0 ? (int) ceil($total / $perPage) : 1;
+
+        $offset = ($page - 1) * $perPage;
+        $statement = $this->pdo->prepare(
+            "SELECT o.*,
+                    COUNT(oi.id) AS item_lines,
+                    COALESCE(SUM(oi.quantity), 0) AS total_quantity
+             FROM orders o
+             LEFT JOIN order_items oi ON oi.order_id = o.id
+             WHERE o.user_id = :user_id
+             GROUP BY o.id
+             ORDER BY o.id DESC
+             LIMIT :limit OFFSET :offset"
+        );
+        $statement->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $statement->bindValue(':limit', $perPage, PDO::PARAM_INT);
+        $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $statement->execute();
+
+        return [
+            'data'       => $statement->fetchAll(),
+            'total'      => $total,
+            'page'       => $page,
+            'perPage'    => $perPage,
+            'totalPages' => $totalPages,
+        ];
+    }
+
+    /**
      * Find single order by ID for admin (including customer info and items).
      *
      * @return array{order: array<string, mixed>, items: list<array<string, mixed>>}|null
@@ -177,7 +222,11 @@ final class OrderService
         }
 
         $items = $this->pdo->prepare(
-            'SELECT * FROM order_items WHERE order_id = :order_id ORDER BY id'
+            'SELECT oi.*,
+                    (SELECT file_path FROM product_images WHERE product_id = oi.product_id ORDER BY sort_order ASC, id ASC LIMIT 1) AS image_path
+             FROM order_items oi
+             WHERE oi.order_id = :order_id
+             ORDER BY oi.id'
         );
         $items->execute(['order_id' => $orderId]);
 

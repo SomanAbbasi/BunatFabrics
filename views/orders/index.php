@@ -75,6 +75,27 @@ declare(strict_types=1);
                     </tbody>
                 </table>
             </div>
+
+            <?php if (($totalPages ?? 1) > 1): ?>
+                <div style="padding: 12px 16px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; background: var(--surface-soft); flex-wrap: wrap; gap: 10px;">
+                    <span class="text-secondary small" style="color: var(--muted); font-size: 0.85rem;">
+                        Page <?= e((string) $page) ?> of <?= e((string) $totalPages) ?> (<?= e((string) $total) ?> total orders)
+                    </span>
+                    <div style="display: flex; gap: 6px;">
+                        <?php if ($page > 1): ?>
+                            <a class="button button-compact button-ghost" href="<?= e(url('/orders?page=' . ($page - 1))) ?>" style="padding: 4px 10px; font-size: 0.82rem;">&larr; Previous</a>
+                        <?php endif; ?>
+                        <?php for ($p = 1; $p <= $totalPages; $p++): ?>
+                            <a class="button button-compact <?= $p === $page ? '' : 'button-ghost' ?>" href="<?= e(url('/orders?page=' . $p)) ?>" style="padding: 4px 10px; font-size: 0.82rem; min-width: 32px; text-align: center;">
+                                <?= e((string) $p) ?>
+                            </a>
+                        <?php endfor; ?>
+                        <?php if ($page < $totalPages): ?>
+                            <a class="button button-compact button-ghost" href="<?= e(url('/orders?page=' . ($page + 1))) ?>" style="padding: 4px 10px; font-size: 0.82rem;">Next &rarr;</a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
     <?php endif; ?>
 </section>

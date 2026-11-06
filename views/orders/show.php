@@ -72,6 +72,7 @@ $formattedDate = date('F j, Y, g:i A', strtotime((string) $order['created_at']))
                 <table style="width: 100%; border-collapse: collapse; font-size: 0.92rem;">
                     <thead>
                         <tr style="background: var(--surface-soft); border-bottom: 1px solid var(--line); text-align: left;">
+                            <th style="padding: 12px 16px; width: 60px;"></th>
                             <th style="padding: 12px 16px; font-size: 0.78rem; text-transform: uppercase; color: var(--muted);">Fabric</th>
                             <th style="padding: 12px 16px; font-size: 0.78rem; text-transform: uppercase; color: var(--muted);">Code</th>
                             <th style="padding: 12px 16px; font-size: 0.78rem; text-transform: uppercase; color: var(--muted); text-align: right;">Rate</th>
@@ -82,6 +83,13 @@ $formattedDate = date('F j, Y, g:i A', strtotime((string) $order['created_at']))
                     <tbody>
                         <?php foreach ($items as $item): ?>
                             <tr style="border-bottom: 1px solid var(--line);">
+                                <td style="padding: 10px 16px;">
+                                    <?php if (! empty($item['image_path'])): ?>
+                                        <img src="<?= e(\App\Admin\Products\ProductImageService::url((string) $item['image_path'])) ?>" alt="<?= e($item['title']) ?>" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid var(--line);">
+                                    <?php else: ?>
+                                        <div style="width: 48px; height: 48px; border-radius: 6px; background: var(--surface-soft); display: grid; place-items: center; font-weight: 700; color: var(--muted); border: 1px solid var(--line);">B</div>
+                                    <?php endif; ?>
+                                </td>
                                 <td style="padding: 12px 16px; font-weight: 600;">
                                     <a href="<?= e(url('/product?id=' . $item['product_id'])) ?>">
                                         <?= e($item['title']) ?>
@@ -104,7 +112,7 @@ $formattedDate = date('F j, Y, g:i A', strtotime((string) $order['created_at']))
                     </tbody>
                     <tfoot>
                         <tr style="background: var(--surface-soft); font-weight: 800; font-size: 1rem;">
-                            <td colspan="4" style="padding: 14px 16px; text-align: right;">Subtotal:</td>
+                            <td colspan="5" style="padding: 14px 16px; text-align: right;">Subtotal:</td>
                             <td style="padding: 14px 16px; text-align: right; color: var(--ink);">
                                 <?= e(pkr((float) $order['subtotal_pkr'])) ?>
                             </td>
