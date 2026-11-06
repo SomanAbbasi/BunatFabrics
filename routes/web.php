@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 use App\Auth\AuthController;
 use App\Admin\Dashboard\DashboardController as AdminDashboardController;
+use App\Admin\Orders\AdminOrderController;
 use App\Admin\Orders\OrderApiController;
 use App\Auth\DashboardController;
 use App\Cart\CartController;
@@ -44,6 +45,9 @@ $router->get('/dashboard', [DashboardController::class, 'index']);
 $router->get('/orders', [\App\Orders\CustomerOrderController::class, 'index']);
 $router->get('/orders/show', [\App\Orders\CustomerOrderController::class, 'show']);
 $router->get('/admin', [AdminDashboardController::class, 'index']);
+$router->get('/admin/orders', [AdminOrderController::class, 'index']);
+$router->get('/admin/orders/show', [AdminOrderController::class, 'show']);
+$router->post('/admin/orders/status', [AdminOrderController::class, 'updateStatus']);
 
 $router->get('/api/admin/orders', [OrderApiController::class, 'index']);
 $router->get('/api/admin/orders/show', [OrderApiController::class, 'show']);

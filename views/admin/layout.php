@@ -33,7 +33,7 @@ $activeNav = $activeNav ?? 'dashboard';
             <div class="collapse navbar-collapse" id="admin-menu">
                 <nav aria-label="Admin navigation" class="w-100">
                     <ul class="navbar-nav pt-lg-3">
-                        <?php foreach (['dashboard' => 'Dashboard', 'categories' => 'Categories', 'products' => 'Products'] as $section => $label): ?>
+                        <?php foreach (['dashboard' => 'Dashboard', 'orders' => 'Orders', 'categories' => 'Categories', 'products' => 'Products'] as $section => $label): ?>
                             <li class="nav-item <?= $activeNav === $section ? 'active' : '' ?>"><a class="nav-link" href="<?= e(url($section === 'dashboard' ? '/admin' : '/admin/' . $section)) ?>" <?= $activeNav === $section ? 'aria-current="page"' : '' ?>><span class="nav-link-title"><?= e($label) ?></span></a></li>
                         <?php endforeach; ?>
                     </ul>
