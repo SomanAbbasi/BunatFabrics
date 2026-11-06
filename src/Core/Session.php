@@ -92,7 +92,7 @@ final class Session
     /**
      * Read and clear the intended path, rejecting anything off-site.
      */
-    public static function pullIntendedUrl(string $default = '/dashboard'): string
+    public static function pullIntendedUrl(string $default = '/'): string
     {
         $path = self::get('intended_url');
 

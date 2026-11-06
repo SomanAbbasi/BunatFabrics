@@ -1,17 +1,230 @@
 <?php
 
 declare(strict_types=1);
+
 use App\Core\Session;
+use App\Orders\OrderService;
+
+/** @var array<string, mixed> $user */
+/** @var list<array<string, mixed>> $orders */
+/** @var array<string, mixed> $summary */
+/** @var string $currentStatus */
+/** @var string $searchQuery */
+/** @var int $page */
+/** @var int $totalPages */
+/** @var int $totalOrders */
 ?>
-<?php if ($errors === []): ?><div class="row row-deck g-3 mb-4"><?php foreach (['total'=>'All orders','pending'=>'Pending','active'=>'In progress'] as $key=>$label): ?><div class="col-sm-4"><div class="card"><div class="card-body"><h2 class="subheader"><?= e($label) ?></h2><div class="h1 mb-0"><?= e((string)($counts[$key] ?? 0)) ?></div></div></div></div><?php endforeach; ?></div><?php endif; ?>
-<div class="card mb-3"><div class="card-body"><form method="get" action="<?= e(url('/admin/orders')) ?>" class="row g-3 align-items-end">
-<div class="col-md-4"><label for="q" class="form-label">Order number or customer</label><input id="q" name="q" class="form-control" maxlength="100" value="<?= e($filters['q']) ?>"></div>
-<div class="col-md-3"><label for="date" class="form-label">Order date</label><input type="date" id="date" name="date" class="form-control" value="<?= e($filters['date']) ?>"></div>
-<div class="col-md-3"><label for="status" class="form-label">Status</label><select id="status" name="status" class="form-select"><option value="">All statuses</option><?php foreach ($statuses as $status): ?><option value="<?= e($status) ?>" <?= $filters['status'] === $status ? 'selected' : '' ?>><?= e(ucfirst($status)) ?></option><?php endforeach; ?></select></div>
-<div class="col-md-2"><button class="btn btn-primary">Filter</button> <a href="<?= e(url('/admin/orders')) ?>">Clear</a></div></form></div></div>
-<?php if ($errors !== []): ?><div class="alert alert-danger" role="alert"><?= e(implode(' ', $errors)) ?></div><?php endif; ?>
-<div class="card"><?php if ($orders === []): ?><div class="empty"><h2 class="empty-title">No orders found</h2><p class="empty-subtitle text-secondary">Orders will appear here when customers can place them. Adjust filters to broaden your search.</p></div><?php else: ?>
-<div class="table-responsive"><table class="table table-vcenter card-table"><caption class="visually-hidden">Orders</caption><thead><tr><th>Order</th><th>Customer</th><th>Date</th><th>Total</th><th>Payment</th><th>Status</th><th>Actions</th></tr></thead><tbody>
-<?php foreach ($orders as $order): ?><tr><td><?= e($order['order_no']) ?></td><td><?= e($order['customer']) ?><small class="d-block text-secondary"><?= e($order['email']) ?></small></td><td><?= e($order['created_at']) ?></td><td><?= e($order['subtotal']) ?></td><td><?= e(match ($order['payment_method']) { 'cod' => 'Cash on delivery', 'bank' => 'Bank transfer', default => 'Not recorded' }) ?></td><td><span class="badge bg-secondary-lt"><?= e(ucfirst($order['status'])) ?></span></td><td><details><summary class="btn btn-sm">Details and actions</summary><div class="p-3 order-details"><h3 class="h4">Delivery</h3><p><?= e($order['delivery_name']) ?><br><?= e($order['delivery_phone']) ?><br><?= nl2br(e($order['delivery_address'])) ?><br><?= e($order['city'] ?: 'City not recorded') ?></p><?php if ($order['notes']): ?><p>Notes: <?= nl2br(e($order['notes'])) ?></p><?php endif; ?><h3 class="h4">Items</h3><?php if ($order['items'] === []): ?><p>No items recorded.</p><?php else: ?><ul><?php foreach ($order['items'] as $item): ?><li><?= e($item['fabric_title']) ?> (<?= e($item['product_code']) ?>), <?= e(! empty($item['color_name']) ? $item['color_name'] : 'Colour not selected') ?><?= ! empty($item['unit']) ? ' / ' . e($item['unit']) : '' ?> — <?= e($item['quantity']) ?> × <?= e($item['unit_price']) ?> = <?= e($item['line_total']) ?></li><?php endforeach; ?></ul><?php endif; ?><h3 class="h4">Status history</h3><?php if ($order['history'] === []): ?><p>No status changes recorded.</p><?php else: ?><ul><?php foreach ($order['history'] as $entry): ?><li><?= e($entry['changed_at']) ?>: <?= e($entry['old_status']) ?> → <?= e($entry['new_status']) ?> by <?= e($entry['admin_name']) ?></li><?php endforeach; ?></ul><?php endif; ?>
-<?php if ($order['next'] !== []): ?><form method="post" action="<?= e(url('/admin/orders/status')) ?>" onsubmit="return confirm('Confirm this order status change?')"><input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>"><input type="hidden" name="id" value="<?= e($order['id']) ?>"><input type="hidden" name="expected" value="<?= e($order['status']) ?>"><label class="form-label" for="status-<?= e($order['id']) ?>">Change status</label><select class="form-select mb-2" id="status-<?= e($order['id']) ?>" name="status"><?php foreach ($order['next'] as $next): ?><option value="<?= e($next) ?>"><?= e(ucfirst($next)) ?></option><?php endforeach; ?></select><button class="btn btn-primary btn-sm">Update status</button></form><?php endif; ?></div></details></td></tr><?php endforeach; ?></tbody></table></div><?php endif; ?></div>
-<?php $query = $filters; ?><nav class="d-flex gap-3 mt-3" aria-label="Order pages"><?php if ($page > 1): $query['page']=$page-1; ?><a class="btn" href="<?= e(url('/admin/orders') . '?' . http_build_query($query)) ?>">Previous</a><?php endif; ?><span>Page <?= e($page) ?></span><?php if ($hasNext): $query['page']=$page+1; ?><a class="btn" href="<?= e(url('/admin/orders') . '?' . http_build_query($query)) ?>">Next</a><?php endif; ?></nav>
+<!-- KPI / Summary Cards -->
+<div class="row row-deck g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="subheader">Total Orders</div>
+                </div>
+                <div class="h1 mb-1"><?= e(number_format((int) ($summary['total_count'] ?? 0))) ?></div>
+                <div class="text-secondary small">Wholesale mill requests</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="subheader text-warning">Pending Review</div>
+                </div>
+                <div class="h1 mb-1 text-warning"><?= e(number_format((int) ($summary['pending_count'] ?? 0))) ?></div>
+                <div class="text-secondary small">Awaiting bolt confirmation</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="subheader text-purple">Dispatched</div>
+                </div>
+                <div class="h1 mb-1 text-purple"><?= e(number_format((int) ($summary['dispatched_count'] ?? 0))) ?></div>
+                <div class="text-secondary small">En route to apparel brands</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="subheader text-success">Total Revenue</div>
+                </div>
+                <div class="h1 mb-1 text-success"><?= e(pkr((float) ($summary['total_revenue'] ?? 0))) ?></div>
+                <div class="text-secondary small">Placed order subtotal</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Table Card -->
+<div class="card">
+    <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <h3 class="card-title mb-0">Wholesale Orders (<?= e((string) $totalOrders) ?>)</h3>
+
+        <!-- Search Form -->
+        <form action="<?= e(url('/admin/orders')) ?>" method="GET" class="d-flex align-items-center gap-2">
+            <?php if ($currentStatus !== ''): ?>
+                <input type="hidden" name="status" value="<?= e($currentStatus) ?>">
+            <?php endif; ?>
+            <div class="input-icon">
+                <input type="text" name="search" value="<?= e($searchQuery) ?>" class="form-control form-control-sm" placeholder="Search by ID, Name, Phone..." style="min-width: 240px;">
+            </div>
+            <button type="submit" class="btn btn-sm btn-primary">Search</button>
+            <?php if ($searchQuery !== '' || $currentStatus !== ''): ?>
+                <a href="<?= e(url('/admin/orders')) ?>" class="btn btn-sm btn-outline-secondary">Reset</a>
+            <?php endif; ?>
+        </form>
+    </div>
+
+    <!-- Status Filter Tabs -->
+    <div class="border-bottom px-3 pt-2 bg-light-subtle">
+        <ul class="nav nav-tabs border-0 gap-1">
+            <li class="nav-item">
+                <a class="nav-link py-2 <?= $currentStatus === '' ? 'active' : '' ?>" href="<?= e(url('/admin/orders' . ($searchQuery ? '?search=' . urlencode($searchQuery) : ''))) ?>">
+                    All Orders
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link py-2 <?= $currentStatus === 'pending' ? 'active' : '' ?>" href="<?= e(url('/admin/orders?status=pending' . ($searchQuery ? '&search=' . urlencode($searchQuery) : ''))) ?>">
+                    Pending <span class="badge bg-warning-lt ms-1"><?= (int) ($summary['pending_count'] ?? 0) ?></span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link py-2 <?= $currentStatus === 'confirmed' ? 'active' : '' ?>" href="<?= e(url('/admin/orders?status=confirmed' . ($searchQuery ? '&search=' . urlencode($searchQuery) : ''))) ?>">
+                    Confirmed
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link py-2 <?= $currentStatus === 'dispatched' ? 'active' : '' ?>" href="<?= e(url('/admin/orders?status=dispatched' . ($searchQuery ? '&search=' . urlencode($searchQuery) : ''))) ?>">
+                    Dispatched <span class="badge bg-purple-lt ms-1"><?= (int) ($summary['dispatched_count'] ?? 0) ?></span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link py-2 <?= $currentStatus === 'delivered' ? 'active' : '' ?>" href="<?= e(url('/admin/orders?status=delivered' . ($searchQuery ? '&search=' . urlencode($searchQuery) : ''))) ?>">
+                    Delivered <span class="badge bg-success-lt ms-1"><?= (int) ($summary['delivered_count'] ?? 0) ?></span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link py-2 <?= $currentStatus === 'rejected' ? 'active' : '' ?>" href="<?= e(url('/admin/orders?status=rejected' . ($searchQuery ? '&search=' . urlencode($searchQuery) : ''))) ?>">
+                    Rejected
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <?php if ($orders === []): ?>
+        <div class="card-body text-center py-5">
+            <p class="text-secondary mb-2">No wholesale orders found matching criteria.</p>
+            <a href="<?= e(url('/admin/orders')) ?>" class="btn btn-sm btn-outline-primary">Clear Filters</a>
+        </div>
+    <?php else: ?>
+        <div class="table-responsive">
+            <table class="table table-vcenter card-table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer / Brand</th>
+                        <th>Date & Time</th>
+                        <th>Wholesale Items</th>
+                        <th>Subtotal (PKR)</th>
+                        <th>Status</th>
+                        <th>Update Status</th>
+                        <th class="w-1 text-end">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($orders as $order): ?>
+                        <?php
+                        $orderNum = ! empty($order['order_number']) ? $order['order_number'] : sprintf('BNT-%05d', $order['id']);
+                        $status = (string) ($order['status'] ?? 'pending');
+                        $badgeClass = match ($status) {
+                            'pending'    => 'bg-warning-lt text-warning-emphasis',
+                            'confirmed', 'processing' => 'bg-azure-lt',
+                            'dispatched' => 'bg-purple-lt text-purple',
+                            'delivered'  => 'bg-success-lt text-success',
+                            'rejected', 'cancelled' => 'bg-danger-lt text-danger',
+                            default      => 'bg-secondary-lt',
+                        };
+                        ?>
+                        <tr>
+                            <td>
+                                <a href="<?= e(url('/admin/orders/show?id=' . $order['id'])) ?>" class="fw-bold text-reset font-monospace">
+                                    <?= e($orderNum) ?>
+                                </a>
+                                <?php if (! empty($order['tracking_number'])): ?>
+                                    <div class="small text-secondary font-monospace">
+                                        Track: <?= e($order['tracking_number']) ?>
+                                    </div>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <div class="fw-medium"><?= e($order['customer_name'] ?? 'Guest Customer') ?></div>
+                                <div class="small text-secondary"><?= e($order['customer_email'] ?? '') ?></div>
+                                <?php if (! empty($order['contact_phone'])): ?>
+                                    <div class="small text-secondary"><?= e($order['contact_phone']) ?></div>
+                                <?php endif; ?>
+                            </td>
+                            <td class="text-secondary small">
+                                <div><?= e(date('M d, Y', strtotime((string) $order['created_at']))) ?></div>
+                                <div><?= e(date('h:i A', strtotime((string) $order['created_at']))) ?></div>
+                            </td>
+                            <td>
+                                <div><strong><?= e((string) ($order['item_lines'] ?? 1)) ?></strong> line items</div>
+                                <div class="small text-secondary"><?= e(number_format((int) $order['total_quantity'])) ?> meters/yards</div>
+                            </td>
+                            <td class="fw-bold">
+                                <?= e(pkr((float) $order['subtotal_pkr'])) ?>
+                            </td>
+                            <td>
+                                <span class="badge <?= e($badgeClass) ?> text-uppercase">
+                                    <?= e(OrderService::ALL_STATUSES[$status] ?? ucfirst($status)) ?>
+                                </span>
+                            </td>
+                            <td>
+                                <form action="<?= e(url('/admin/orders/status')) ?>" method="POST" class="d-inline-flex align-items-center gap-1">
+                                    <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
+                                    <input type="hidden" name="id" value="<?= e((string) $order['id']) ?>">
+                                    <input type="hidden" name="return_to" value="<?= e($_SERVER['REQUEST_URI'] ?? '/admin/orders') ?>">
+                                    <select name="status" class="form-select form-select-sm py-1" style="font-size: 0.8rem; width: 125px;" onchange="this.form.submit()">
+                                        <?php foreach (['pending' => 'Pending', 'confirmed' => 'Confirmed', 'dispatched' => 'Dispatched', 'delivered' => 'Delivered', 'rejected' => 'Rejected'] as $val => $label): ?>
+                                            <option value="<?= e($val) ?>" <?= $status === $val ? 'selected' : '' ?>>
+                                                <?= e($label) ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <noscript><button type="submit" class="btn btn-sm btn-light">Save</button></noscript>
+                                </form>
+                            </td>
+                            <td class="text-end">
+                                <a href="<?= e(url('/admin/orders/show?id=' . $order['id'])) ?>" class="btn btn-sm btn-outline-primary">
+                                    View Slip
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+
+        <?php if ($totalPages > 1): ?>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <span class="text-secondary small">Showing page <?= e((string) $page) ?> of <?= e((string) $totalPages) ?></span>
+                <ul class="pagination m-0 ms-auto">
+                    <?php for ($p = 1; $p <= $totalPages; $p++): ?>
+                        <li class="page-item <?= $p === $page ? 'active' : '' ?>">
+                            <a class="page-link" href="<?= e(url('/admin/orders?page=' . $p . ($currentStatus ? '&status=' . urlencode($currentStatus) : '') . ($searchQuery ? '&search=' . urlencode($searchQuery) : ''))) ?>">
+                                <?= e((string) $p) ?>
+                            </a>
+                        </li>
+                    <?php endfor; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
+    <?php endif; ?>
+</div>

@@ -18,7 +18,7 @@ final class CartService
 {
     private const SESSION_KEY = 'cart';
 
-    public const MAX_QUANTITY = 999;
+    public const MAX_QUANTITY = 1000000;
 
     private CatalogService $catalog;
 
@@ -176,6 +176,34 @@ final class CartService
         }
 
         return $totals;
+    }
+
+    /**
+     * Summary payload for JSON cart responses and drawer rendering.
+     *
+     * @return array<string, mixed>
+     */
+    public function summary(): array
+    {
+        $items = $this->items();
+        $subtotal = $this->subtotal();
+
+        $enrichedItems = array_map(static function (array $item): array {
+            $imagePath = (string) ($item['image_path'] ?? '');
+            $item['image_url'] = $imagePath !== '' ? \App\Admin\Products\ProductImageService::url($imagePath) : null;
+            $item['price_formatted'] = pkr((float) $item['price_pkr']);
+            $item['line_total_formatted'] = pkr((float) $item['line_total']);
+            return $item;
+        }, $items);
+
+        return [
+            'items'              => $enrichedItems,
+            'count'              => $this->count(),
+            'subtotal'           => $subtotal,
+            'subtotal_formatted' => pkr($subtotal),
+            'unitTotals'         => $this->unitTotals(),
+            'isEmpty'            => empty($items),
+        ];
     }
 
     /**

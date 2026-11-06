@@ -14,6 +14,8 @@ $cartCount = (new CartService())->count();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<?= e(Session::csrfToken()) ?>">
+    <meta name="app-url" content="<?= e(url('/')) ?>">
     <title><?= e($title) ?> &middot; <?= e(config('app.name')) ?></title>
     <link rel="stylesheet" href="<?= e(url('/assets/css/style.css')) ?>">
     <script src="<?= e(url('/assets/js/app.js')) ?>" defer></script>
@@ -30,7 +32,7 @@ $cartCount = (new CartService())->count();
             <a class="nav-link nav-cart<?= $cartCount > 0 ? ' has-items' : '' ?>" href="<?= e(url('/cart')) ?>">
                 <?= icon('cart') ?>
                 <span>Cart</span>
-                <?php if ($cartCount > 0): ?><span class="cart-count"><?= e((string) $cartCount) ?></span><?php endif; ?>
+                <span class="cart-count" id="header-cart-count" <?= $cartCount > 0 ? '' : 'style="display:none"' ?>><?= e((string) $cartCount) ?></span>
             </a>
             <?php if ($currentUser !== null): ?>
                 <?php $profileUser = $currentUser; require base_path('views/partials/profile-menu.php'); ?>

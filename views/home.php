@@ -13,9 +13,9 @@ $totalProducts = array_sum(array_map(static fn (array $group): int => count($gro
 ?>
 <section class="storefront">
     <header class="store-hero">
-        <span class="eyebrow">Wholesale fabrics</span>
-        <h1>Fabric collections for your business</h1>
-        <p>Browse by category, compare specifications and PKR pricing, then open any fabric for the full details.</p>
+        <span class="eyebrow">Wholesale Fabric Sourcing</span>
+        <h1>Fabric Collections</h1>
+        <p>Browse collections, review specifications (width, weight, composition), and enter custom wholesale meterage.</p>
     </header>
 
     <?php if ($unavailable): ?>
@@ -31,7 +31,7 @@ $totalProducts = array_sum(array_map(static fn (array $group): int => count($gro
     <?php else: ?>
         <nav class="category-nav" aria-label="Filter fabrics by category">
             <a class="<?= $activeCategory === null ? 'is-active' : '' ?>" href="<?= e(url('/')) ?>" <?= $activeCategory === null ? 'aria-current="page"' : '' ?>>
-                All
+                All Fabrics
                 <span><?= e((string) $totalProducts) ?></span>
             </a>
             <?php foreach ($allGroups as $group): ?>
@@ -55,9 +55,13 @@ $totalProducts = array_sum(array_map(static fn (array $group): int => count($gro
                     <h2 id="category-<?= e((string) $group['id']) ?>-title"><?= e($group['name']) ?></h2>
                     <span><?= e((string) count($group['products'])) ?> <?= count($group['products']) === 1 ? 'fabric' : 'fabrics' ?></span>
                 </header>
+
                 <div class="product-grid">
                     <?php foreach ($group['products'] as $product): ?>
-                        <?php $inCart = (int) ($cartQuantities[(int) $product['id']] ?? 0); ?>
+                        <?php
+                        $inCart = (int) ($cartQuantities[(int) $product['id']] ?? 0);
+                        $unit = (string) ($product['unit'] ?? 'meter');
+                        ?>
                         <article class="product-card">
                             <a class="product-card-link" href="<?= e(url('/product?id=' . $product['id'])) ?>">
                                 <div class="product-media">
@@ -70,24 +74,43 @@ $totalProducts = array_sum(array_map(static fn (array $group): int => count($gro
                                 <div class="product-body">
                                     <span class="product-code"><?= e($product['product_code']) ?></span>
                                     <h3><?= e($product['title']) ?></h3>
-                                    <p class="product-price"><?= e(pkr($product['price_pkr'])) ?></p>
+                                    <p class="product-price">
+                                        <?= e(pkr($product['price_pkr'])) ?>
+                                        <span class="unit-suffix">/ <?= e($unit) ?></span>
+                                    </p>
+
                                     <dl class="product-meta">
-                                        <?php if ($product['composition'] !== null && $product['composition'] !== ''): ?><div><dt>Composition</dt><dd><?= e($product['composition']) ?></dd></div><?php endif; ?>
-                                        <?php if ($product['width_inch'] !== null): ?><div><dt>Width</dt><dd><?= e($product['width_inch']) ?> in</dd></div><?php endif; ?>
-                                        <?php if ($product['weight_gsm'] !== null): ?><div><dt>Weight</dt><dd><?= e($product['weight_gsm']) ?> GSM</dd></div><?php endif; ?>
+                                        <?php if ($product['width_inch'] !== null): ?>
+                                            <div><dt>Width</dt><dd><?= e((string) $product['width_inch']) ?> in</dd></div>
+                                        <?php endif; ?>
+                                        <?php if ($product['weight_gsm'] !== null): ?>
+                                            <div><dt>Weight</dt><dd><?= e((string) $product['weight_gsm']) ?> GSM</dd></div>
+                                        <?php endif; ?>
+                                        <?php if ($product['composition'] !== null && $product['composition'] !== ''): ?>
+                                            <div><dt>Fiber</dt><dd><?= e($product['composition']) ?></dd></div>
+                                        <?php endif; ?>
+                                        <div><dt>Unit</dt><dd><?= e(ucfirst($unit)) ?></dd></div>
                                     </dl>
                                 </div>
                             </a>
 
-                            <form action="<?= e(url('/cart/add')) ?>" method="POST" class="product-card-cart">
+                            <!-- Simple, clean wholesale quantity order form -->
+                            <form action="<?= e(url('/cart/add')) ?>" method="POST" class="product-card-cart" data-cart-form>
                                 <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
                                 <input type="hidden" name="product_id" value="<?= e((string) $product['id']) ?>">
-                                <input type="hidden" name="quantity" value="1">
-                                <button type="submit" class="card-cart-button<?= $inCart > 0 ? ' is-added' : '' ?>" title="<?= $inCart > 0 ? 'Add one more to your cart' : 'Add this fabric to your cart' ?>">
-                                    <?= icon($inCart > 0 ? 'cart' : 'plus') ?>
-                                    <span><?= $inCart > 0 ? 'In cart' : 'Add to cart' ?></span>
-                                    <?php if ($inCart > 0): ?><span class="card-cart-count"><?= e((string) $inCart) ?></span><?php endif; ?>
-                                </button>
+                                <input type="hidden" name="return_to" value="<?= e(url($_SERVER['REQUEST_URI'] ?? '/')) ?>">
+
+                                <div class="card-order-controls">
+                                    <div class="card-qty-group">
+                                        <label for="qty-<?= e((string) $product['id']) ?>" class="visually-hidden">Quantity</label>
+                                        <input type="number" id="qty-<?= e((string) $product['id']) ?>" name="quantity" value="1" min="1" max="1000000" class="card-qty-input" inputmode="numeric" title="Enter quantity in <?= e($unit) ?>s">
+                                        <span class="card-qty-unit"><?= e($unit) ?>s</span>
+                                    </div>
+                                    <button type="submit" class="card-cart-button<?= $inCart > 0 ? ' is-added' : '' ?>" title="<?= $inCart > 0 ? 'In cart (' . $inCart . ' ' . $unit . 's)' : 'Add to cart' ?>">
+                                        <?= icon($inCart > 0 ? 'check-circle' : 'plus') ?>
+                                        <span class="btn-text"><?= $inCart > 0 ? 'In cart (' . $inCart . ')' : 'Add to cart' ?></span>
+                                    </button>
+                                </div>
                             </form>
                         </article>
                     <?php endforeach; ?>

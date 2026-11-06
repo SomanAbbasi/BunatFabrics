@@ -1,7 +1,7 @@
 :root {
     --bg: #ffffff;
     --surface: #ffffff;
-    --surface-soft: #fafafa;
+    --surface-soft: #f8fafc;
     --ink: #111827;
     --muted: #6b7280;
     --line: #e5e7eb;
@@ -163,11 +163,13 @@ img {
     color: #fff;
     font-size: 0.88rem;
     font-weight: 600;
+    transition: background 0.15s ease;
 }
 
 .nav-cta:hover {
     background: #1f2937;
     text-decoration: none;
+    color: #fff;
 }
 
 .inline-form {
@@ -223,9 +225,10 @@ img {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: var(--ink);
-    color: #fff;
-    font-size: 0.8rem;
+    background: var(--surface-soft);
+    color: var(--ink);
+    border: 1px solid var(--line-strong);
+    font-size: 0.82rem;
     font-weight: 700;
 }
 
@@ -644,6 +647,7 @@ img {
     place-items: center;
     width: 100%;
     height: 100%;
+    background: var(--surface-soft);
     color: var(--line-strong);
     font-size: 2rem;
     font-weight: 800;
@@ -1032,11 +1036,14 @@ img {
     font-weight: 600;
     text-align: center;
     cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .button:hover {
     background: #1f2937;
+    border-color: #1f2937;
     text-decoration: none;
+    color: #fff;
 }
 
 .button:active {
@@ -1542,4 +1549,178 @@ img {
     .add-to-cart {
         flex-wrap: wrap;
     }
+}
+
+
+/* ==========================================================================
+   Clean Card Order Controls & Minimal Wholesale Sizing
+   ========================================================================== */
+
+.unit-suffix {
+    font-size: 0.82rem;
+    font-weight: 400;
+    color: var(--muted);
+}
+
+.card-order-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.card-qty-group {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-sm);
+    background: #fff;
+    overflow: hidden;
+    height: 38px;
+    flex: 0 0 110px;
+}
+
+.card-qty-input {
+    width: 60px;
+    height: 100%;
+    border: none;
+    text-align: center;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--ink);
+    padding: 0 4px;
+    outline: none;
+    -moz-appearance: textfield;
+}
+
+.card-qty-input::-webkit-outer-spin-button,
+.card-qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.card-qty-unit {
+    padding-right: 8px;
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+.product-card-cart .card-cart-button {
+    flex: 1;
+    height: 38px;
+}
+
+.quantity-input-group {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: #fff;
+    max-width: 200px;
+    height: 42px;
+}
+
+.quantity-input-group input.wholesale-qty-input {
+    flex: 1;
+    border: none;
+    padding: 8px 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--ink);
+    outline: none;
+    text-align: center;
+}
+
+.quantity-input-group .unit-tag {
+    padding: 0 12px;
+    background: var(--surface-soft);
+    color: var(--muted);
+    font-size: 0.84rem;
+    font-weight: 600;
+    border-left: 1px solid var(--line);
+    display: grid;
+    place-items: center;
+    height: 100%;
+}
+
+/* ==========================================================================
+   Order Status Badges
+   ========================================================================== */
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1;
+}
+
+.status-badge::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.status-badge-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+.status-badge-pending::before {
+    background: #d97706;
+}
+
+.status-badge-confirmed,
+.status-badge-processing {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+.status-badge-confirmed::before,
+.status-badge-processing::before {
+    background: #0284c7;
+}
+
+.status-badge-dispatched {
+    background: #ede9fe;
+    color: #5b21b6;
+}
+.status-badge-dispatched::before {
+    background: #7c3aed;
+}
+
+.status-badge-delivered {
+    background: var(--success-soft);
+    color: var(--success);
+}
+.status-badge-delivered::before {
+    background: #16a34a;
+}
+
+.status-badge-rejected,
+.status-badge-cancelled {
+    background: var(--danger-soft);
+    color: var(--danger);
+}
+.status-badge-rejected::before,
+.status-badge-cancelled::before {
+    background: #dc2626;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
