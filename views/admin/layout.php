@@ -18,7 +18,7 @@ $activeNav = $activeNav ?? 'dashboard';
     <script src="<?= e(url('/assets/vendor/tabler/tabler.min.js')) ?>" defer></script>
     <script src="<?= e(url('/assets/js/app.js')) ?>" defer></script>
 </head>
-<body>
+<body class="admin-shell<?= ! empty($dashboardPage) ? ' admin-business-page' : '' ?>">
 <a class="admin-skip" href="#main-content">Skip to content</a>
 <div class="page">
     <aside class="navbar navbar-vertical navbar-expand-lg" aria-label="Admin sidebar">
@@ -51,7 +51,9 @@ $activeNav = $activeNav ?? 'dashboard';
     </header>
     <div class="page-wrapper">
         <main id="main-content" tabindex="-1">
-            <div class="page-header"><div class="container-xl"><h1 class="page-title"><?= e($title) ?></h1></div></div>
+            <?php if (empty($dashboardPage)): ?>
+                <div class="page-header"><div class="container-xl"><h1 class="page-title"><?= e($title) ?></h1></div></div>
+            <?php endif; ?>
             <div class="page-body"><div class="container-xl">
                 <?php if ($status = Session::pullFlash('status')): ?><div class="alert alert-success" role="status"><?= e($status) ?></div><?php endif; ?>
                 <?php if ($error = Session::pullFlash('error')): ?><div class="alert alert-danger" role="alert"><?= e($error) ?></div><?php endif; ?>

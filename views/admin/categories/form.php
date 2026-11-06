@@ -21,6 +21,6 @@ use App\Core\Session;
             <div class="col-12"><label class="form-label" for="description">Description</label><textarea class="form-control <?= isset($errors['description']) ? 'is-invalid' : '' ?>" id="description" name="description" rows="4" maxlength="5000" aria-describedby="description-error"><?= e($formData['description'] ?? '') ?></textarea><div class="invalid-feedback" id="description-error"><?= e($errors['description'] ?? '') ?></div></div>
             <div class="col-md-6"><label class="form-label" for="is_active">Visibility</label><select class="form-select" id="is_active" name="is_active"><option value="1" <?= (string) ($formData['is_active'] ?? '') === '1' ? 'selected' : '' ?>>Visible</option><option value="0" <?= (string) ($formData['is_active'] ?? '') === '0' ? 'selected' : '' ?>>Hidden</option></select></div>
         </div>
-        <div class="d-flex gap-2 mt-4"><button class="btn btn-primary">Save Category</button><a class="btn" href="<?= e(url('/admin/categories')) ?>">Cancel</a></div>
+        <div class="admin-form-actions"><button class="btn btn-primary">Save Category</button><a class="btn" href="<?= e(url('/admin/categories')) ?>">Cancel</a></div>
     </form>
 </div></div>

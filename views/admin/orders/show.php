@@ -34,7 +34,7 @@ $totalMeters = array_sum(array_column($items, 'quantity'));
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <div>
-                    <h3 class="card-title mb-0">Wholesale Invoice Slip</h3>
+                    <h2 class="card-title mb-0">Wholesale Invoice Slip</h2>
                     <div class="text-secondary small">Unique ID: <strong class="font-monospace text-body"><?= e($orderNum) ?></strong></div>
                 </div>
                 <span class="badge <?= e($badgeClass) ?> text-uppercase py-2 px-3">
@@ -42,7 +42,7 @@ $totalMeters = array_sum(array_column($items, 'quantity'));
                 </span>
             </div>
 
-            <div class="table-responsive">
+            <div class="table-responsive" role="region" aria-label="Order items" tabindex="0">
                 <table class="table table-vcenter card-table">
                     <thead>
                         <tr>
@@ -103,7 +103,7 @@ $totalMeters = array_sum(array_column($items, 'quantity'));
         <!-- Customer & Delivery Card -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Customer &amp; Shipping Destination</h3>
+                <h2 class="card-title">Customer &amp; Shipping Destination</h2>
             </div>
             <div class="card-body">
                 <div class="row g-3">
@@ -127,9 +127,9 @@ $totalMeters = array_sum(array_column($items, 'quantity'));
 
     <!-- Right Column: Status & Fulfillment Action Card -->
     <div class="col-lg-4">
-        <div class="card mb-4 border-primary">
-            <div class="card-header bg-primary text-white">
-                <h3 class="card-title text-white">Order Status &amp; Fulfillment</h3>
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2 class="card-title">Order Status &amp; Fulfillment</h2>
             </div>
             <div class="card-body">
                 <form action="<?= e(url('/admin/orders/status')) ?>" method="POST">
@@ -138,8 +138,8 @@ $totalMeters = array_sum(array_column($items, 'quantity'));
                     <input type="hidden" name="return_to" value="<?= e(url('/admin/orders/show?id=' . $order['id'])) ?>">
 
                     <div class="mb-3">
-                        <label class="form-label required">Order Status</label>
-                        <select name="status" class="form-select" required>
+                        <label class="form-label required" for="order-status">Order Status</label>
+                        <select name="status" id="order-status" class="form-select" required>
                             <option value="pending" <?= $status === 'pending' ? 'selected' : '' ?>>Pending Review</option>
                             <option value="confirmed" <?= $status === 'confirmed' ? 'selected' : '' ?>>Confirmed / In Preparation</option>
                             <option value="processing" <?= $status === 'processing' ? 'selected' : '' ?>>Processing / Bolt Cutting</option>
@@ -152,14 +152,14 @@ $totalMeters = array_sum(array_column($items, 'quantity'));
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Dispatch / Tracking Number</label>
-                        <input type="text" name="tracking_number" class="form-control" value="<?= e((string) ($order['tracking_number'] ?? '')) ?>" placeholder="e.g. TCS #781923, Cargo Roll #55">
+                        <label class="form-label" for="order-tracking_number">Dispatch / Tracking Number</label>
+                        <input type="text" name="tracking_number" id="order-tracking_number" class="form-control" value="<?= e((string) ($order['tracking_number'] ?? '')) ?>" placeholder="e.g. TCS #781923, Cargo Roll #55">
                         <div class="form-text">Tracking details are displayed to the customer in their portal.</div>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Admin Notes / Dispatch Details</label>
-                        <textarea name="admin_notes" class="form-control" rows="3" placeholder="Notes on fabric roll packing, freight transporter, or fabric batches..."><?= e((string) ($order['admin_notes'] ?? '')) ?></textarea>
+                        <label class="form-label" for="order-admin_notes">Admin Notes / Dispatch Details</label>
+                        <textarea name="admin_notes" id="order-admin_notes" class="form-control" rows="3" placeholder="Notes on fabric roll packing, freight transporter, or fabric batches..."><?= e((string) ($order['admin_notes'] ?? '')) ?></textarea>
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100">
@@ -172,7 +172,7 @@ $totalMeters = array_sum(array_column($items, 'quantity'));
         <!-- Meta Details Card -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Audit Information</h3>
+                <h2 class="card-title">Audit Information</h2>
             </div>
             <div class="card-body">
                 <dl class="mb-0">

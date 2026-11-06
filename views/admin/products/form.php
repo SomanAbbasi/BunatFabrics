@@ -45,7 +45,7 @@ use App\Core\Session;
                 <small class="form-hint" id="images-help">JPG, PNG, or WebP. Up to 6 images, 2 MB each. Images are stored by category and product.</small>
             </div>
         </div>
-        <div class="d-flex gap-2 mt-4"><button class="btn btn-primary" <?= $categories === [] ? 'disabled' : '' ?>>Save Product</button><a class="btn" href="<?= e(url('/admin/products')) ?>">Cancel</a></div>
+        <div class="admin-form-actions"><button class="btn btn-primary" <?= $categories === [] ? 'disabled' : '' ?>>Save Product</button><a class="btn" href="<?= e(url('/admin/products')) ?>">Cancel</a></div>
     </form>
 
     <?php if ($images !== []): ?>
