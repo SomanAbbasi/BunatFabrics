@@ -917,6 +917,65 @@ img {
     text-align: right;
 }
 
+/* Customer dashboard: retain shared panels and button styles. */
+.customer-dashboard .panel {
+    min-width: 0;
+    box-shadow: none;
+}
+
+.customer-dashboard .page-heading h1,
+.customer-dashboard .detail-list dd {
+    overflow-wrap: anywhere;
+}
+
+.customer-dashboard .detail-list dd {
+    min-width: 0;
+}
+
+.customer-dashboard .detail-list dt {
+    flex-shrink: 0;
+}
+
+.customer-dashboard .account-actions,
+.customer-dashboard .account-orders-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+.customer-dashboard .account-actions {
+    margin-top: 16px;
+}
+
+.customer-dashboard .account-orders-heading {
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+
+.customer-dashboard .account-orders-heading h2 {
+    margin: 0 0 4px;
+}
+
+.customer-dashboard .account-orders-heading p {
+    margin: 0;
+    font-size: 0.88rem;
+}
+
+.customer-dashboard .account-orders-scroll {
+    overflow-x: auto;
+}
+
+.customer-dashboard .account-orders-scroll table {
+    min-width: 680px;
+}
+
+.customer-dashboard .button:focus-visible,
+.customer-dashboard .account-orders-scroll:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+}
+
 /* Auth ------------------------------------------------------------------ */
 
 .auth-single {

@@ -6,14 +6,14 @@ declare(strict_types=1);
 /** @var list<array<string, mixed>> $orders */
 $orders = $orders ?? [];
 ?>
-<section class="account-page">
+<section class="account-page customer-dashboard">
     <header class="page-heading">
         <span class="eyebrow">Customer Account</span>
         <h1>Welcome, <?= e($user['name']) ?></h1>
         <p>Review your account details and manage your wholesale fabric orders.</p>
     </header>
 
-    <div class="account-grid mb-4" style="margin-bottom: 28px;">
+    <div class="account-grid">
         <article class="panel">
             <h2>Account Details</h2>
             <dl class="detail-list">
@@ -26,21 +26,21 @@ $orders = $orders ?? [];
         <article class="panel">
             <h2>Start an Order</h2>
             <p class="muted">Browse available fabrics, check specifications, and order required quantities.</p>
-            <div style="display: flex; gap: 10px; margin-top: 16px;">
+            <div class="account-actions">
                 <a class="button button-compact" href="<?= e(url('/')) ?>"><?= icon('grid') ?><span>Browse Catalog</span></a>
                 <a class="button button-compact button-ghost" href="<?= e(url('/orders')) ?>"><span>All My Orders</span></a>
             </div>
         </article>
     </div>
 
-    <section class="panel" style="padding: 24px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+    <section class="panel" aria-labelledby="recent-orders-title">
+        <div class="account-orders-heading">
             <div>
-                <h2 style="font-size: 1.15rem; font-weight: 700; margin: 0 0 4px;">Recent Orders</h2>
-                <p class="muted" style="margin: 0; font-size: 0.88rem;">Track order status and view invoices.</p>
+                <h2 id="recent-orders-title">Recent Orders</h2>
+                <p class="muted">Track order status and view order details.</p>
             </div>
             <?php if ($orders !== []): ?>
-                <a class="button button-compact button-ghost" href="<?= e(url('/orders')) ?>">View All (<?= count($orders) ?>)</a>
+                <a class="button button-compact button-ghost" href="<?= e(url('/orders')) ?>">View all orders (<?= count($orders) ?>)</a>
             <?php endif; ?>
         </div>
 
@@ -51,16 +51,16 @@ $orders = $orders ?? [];
                 <a class="button button-compact" href="<?= e(url('/')) ?>"><?= icon('grid') ?><span>Browse Fabrics</span></a>
             </div>
         <?php else: ?>
-            <div style="overflow-x: auto;">
+            <div class="account-orders-scroll" role="region" aria-labelledby="recent-orders-title" tabindex="0">
                 <table style="width: 100%; border-collapse: collapse; font-size: 0.92rem;">
                     <thead>
                         <tr style="border-bottom: 2px solid var(--line); text-align: left;">
-                            <th style="padding: 10px 14px; font-size: 0.78rem; text-transform: uppercase; color: var(--muted);">Order ID</th>
-                            <th style="padding: 10px 14px; font-size: 0.78rem; text-transform: uppercase; color: var(--muted);">Date</th>
-                            <th style="padding: 10px 14px; font-size: 0.78rem; text-transform: uppercase; color: var(--muted);">Items / Quantity</th>
-                            <th style="padding: 10px 14px; font-size: 0.78rem; text-transform: uppercase; color: var(--muted);">Status</th>
-                            <th style="padding: 10px 14px; font-size: 0.78rem; text-transform: uppercase; color: var(--muted); text-align: right;">Total (PKR)</th>
-                            <th style="padding: 10px 14px; font-size: 0.78rem; text-transform: uppercase; color: var(--muted); text-align: center;">Action</th>
+                            <th scope="col" style="padding: 10px 14px; font-size: 0.78rem; text-transform: uppercase; color: var(--muted);">Order ID</th>
+                            <th scope="col" style="padding: 10px 14px; font-size: 0.78rem; text-transform: uppercase; color: var(--muted);">Date</th>
+                            <th scope="col" style="padding: 10px 14px; font-size: 0.78rem; text-transform: uppercase; color: var(--muted);">Items / Quantity</th>
+                            <th scope="col" style="padding: 10px 14px; font-size: 0.78rem; text-transform: uppercase; color: var(--muted);">Status</th>
+                            <th scope="col" style="padding: 10px 14px; font-size: 0.78rem; text-transform: uppercase; color: var(--muted); text-align: right;">Total (PKR)</th>
+                            <th scope="col" style="padding: 10px 14px; font-size: 0.78rem; text-transform: uppercase; color: var(--muted); text-align: center;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -92,8 +92,8 @@ $orders = $orders ?? [];
                                     <?= e(pkr((float) $order['subtotal_pkr'])) ?>
                                 </td>
                                 <td style="padding: 14px; text-align: center;">
-                                    <a class="button button-compact button-ghost" href="<?= e(url('/orders/show?id=' . $order['id'])) ?>" style="padding: 5px 10px; font-size: 0.82rem;">
-                                        View
+                                    <a class="button button-compact button-ghost" href="<?= e(url('/orders/show?id=' . $order['id'])) ?>" aria-label="<?= e('View order ' . $orderNum) ?>">
+                                        View order
                                     </a>
                                 </td>
                             </tr>
