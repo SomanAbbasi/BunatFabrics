@@ -22,7 +22,7 @@ final class AuthController
     public function showSignup(): void
     {
         if (Guard::check()) {
-            redirect('/dashboard');
+            redirect('/');
         }
 
         View::render('auth/signup', [
@@ -59,7 +59,7 @@ final class AuthController
     public function showLogin(): void
     {
         if (Guard::check()) {
-            redirect('/dashboard');
+            redirect('/');
         }
 
         View::render('auth/login', [
@@ -100,7 +100,7 @@ final class AuthController
 
         Guard::login($user);
 
-        redirect(Session::pullIntendedUrl('/dashboard'));
+        redirect(Session::pullIntendedUrl('/'));
     }
 
     public function logout(): void
