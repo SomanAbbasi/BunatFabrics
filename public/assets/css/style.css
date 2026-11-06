@@ -435,6 +435,37 @@ img {
     font-size: 1rem;
 }
 
+.catalog-search label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.catalog-search-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.catalog-search-controls input {
+    flex: 1 1 220px;
+    min-width: 0;
+    max-width: 420px;
+    padding: 10px 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+}
+
+.catalog-search-controls button {
+    padding: 10px 16px;
+    border: 1px solid var(--ink);
+    border-radius: var(--radius);
+    background: var(--ink);
+    color: #fff;
+    cursor: pointer;
+}
+
 .category-nav {
     display: flex;
     flex-wrap: wrap;

@@ -29,13 +29,26 @@ $totalProducts = array_sum(array_map(static fn (array $group): int => count($gro
             <p class="muted">Our collections are being prepared. Please check back soon.</p>
         </div>
     <?php else: ?>
+        <form class="catalog-search" action="<?= e(url('/')) ?>" method="get" role="search">
+            <label for="fabric-search">Search fabrics</label>
+            <div class="catalog-search-controls">
+                <input id="fabric-search" type="search" name="q" value="<?= e($search) ?>" maxlength="100" placeholder="Name, code or material">
+                <?php if ($activeCategory !== null): ?>
+                    <input type="hidden" name="category" value="<?= e((string) $activeCategory) ?>">
+                <?php endif; ?>
+                <button type="submit">Search</button>
+                <?php if ($search !== ''): ?>
+                    <a href="<?= e(url($activeCategory === null ? '/' : '/?category=' . $activeCategory)) ?>">Clear</a>
+                <?php endif; ?>
+            </div>
+        </form>
         <nav class="category-nav" aria-label="Filter fabrics by category">
-            <a class="<?= $activeCategory === null ? 'is-active' : '' ?>" href="<?= e(url('/')) ?>" <?= $activeCategory === null ? 'aria-current="page"' : '' ?>>
+            <a class="<?= $activeCategory === null ? 'is-active' : '' ?>" href="<?= e(url($search === '' ? '/' : '/?' . http_build_query(['q' => $search]))) ?>" <?= $activeCategory === null ? 'aria-current="page"' : '' ?>>
                 All Fabrics
                 <span><?= e((string) $totalProducts) ?></span>
             </a>
             <?php foreach ($allGroups as $group): ?>
-                <a class="<?= $activeCategory === $group['id'] ? 'is-active' : '' ?>" href="<?= e(url('/?category=' . $group['id'])) ?>" <?= $activeCategory === $group['id'] ? 'aria-current="page"' : '' ?>>
+                <a class="<?= $activeCategory === $group['id'] ? 'is-active' : '' ?>" href="<?= e(url('/?' . http_build_query(array_filter(['category' => $group['id'], 'q' => $search], static fn ($value): bool => $value !== '')))) ?>" <?= $activeCategory === $group['id'] ? 'aria-current="page"' : '' ?>>
                     <?= e($group['name']) ?>
                     <span><?= e((string) count($group['products'])) ?></span>
                 </a>
@@ -44,8 +57,8 @@ $totalProducts = array_sum(array_map(static fn (array $group): int => count($gro
 
         <?php if ($groups === []): ?>
             <div class="empty-note">
-                <p class="empty-note-title">No fabrics in this category yet</p>
-                <p class="muted">Try another category or <a href="<?= e(url('/')) ?>">view all fabrics</a>.</p>
+                <p class="empty-note-title"><?= $search !== '' ? 'No fabrics match your search' : 'No fabrics in this category yet' ?></p>
+                <p class="muted">Try another search or category, or <a href="<?= e(url('/')) ?>">view all fabrics</a>.</p>
             </div>
         <?php endif; ?>
 
