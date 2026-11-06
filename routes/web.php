@@ -48,6 +48,9 @@ $router->get('/admin', [AdminDashboardController::class, 'index']);
 $router->get('/admin/orders', [AdminOrderController::class, 'index']);
 $router->get('/admin/orders/show', [AdminOrderController::class, 'show']);
 $router->post('/admin/orders/status', [AdminOrderController::class, 'updateStatus']);
+$router->get('/admin/settings', [\App\Admin\Settings\SettingsController::class, 'index']);
+$router->post('/admin/settings/profile', [\App\Admin\Settings\SettingsController::class, 'updateProfile']);
+$router->post('/admin/settings/password', [\App\Admin\Settings\SettingsController::class, 'updatePassword']);
 
 $router->get('/api/admin/orders', [OrderApiController::class, 'index']);
 $router->get('/api/admin/orders/show', [OrderApiController::class, 'show']);

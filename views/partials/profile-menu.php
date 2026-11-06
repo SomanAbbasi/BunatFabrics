@@ -27,10 +27,15 @@ $profileInitial = mb_strtoupper(mb_substr($profileName, 0, 1));
             <?php if ($profileIsAdmin): ?><span class="profile-role">Administrator</span><?php endif; ?>
         </div>
         <div class="profile-menu-links">
-            <?php if (! empty($profileShowStore)): ?><a href="<?= e(url('/')) ?>">View store</a><?php endif; ?>
-            <a href="<?= e(url('/dashboard')) ?>">Dashboard</a>
-            <a href="<?= e(url('/orders')) ?>">My Orders</a>
-            <?php if ($profileIsAdmin): ?><a href="<?= e(url('/admin')) ?>">Admin dashboard</a><?php endif; ?>
+            <?php if ($profileIsAdmin): ?>
+                <?php if (! empty($profileShowStore)): ?><a href="<?= e(url('/')) ?>">View store</a><?php endif; ?>
+                <a href="<?= e(url('/admin')) ?>">Admin dashboard</a>
+                <a href="<?= e(url('/admin/orders')) ?>">Orders</a>
+                <a href="<?= e(url('/admin/settings')) ?>">Settings</a>
+            <?php else: ?>
+                <a href="<?= e(url('/orders')) ?>">My Orders</a>
+                <a href="<?= e(url('/dashboard')) ?>">Dashboard</a>
+            <?php endif; ?>
         </div>
         <form action="<?= e(url('/logout')) ?>" method="POST" class="profile-menu-form">
             <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">

@@ -24,7 +24,7 @@ $activeNav = $activeNav ?? 'dashboard';
     <aside class="navbar navbar-vertical navbar-expand-lg" aria-label="Admin sidebar">
         <div class="container-fluid">
             <a class="navbar-brand admin-brand" href="<?= e(url('/admin')) ?>">
-                <span class="admin-monogram" aria-hidden="true">B</span>
+                <span class="admin-monogram" aria-hidden="true"><?= icon('fabric') ?></span>
                 <span>Bunat Fabrics<small class="d-block text-secondary">Administration</small></span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#admin-menu" aria-controls="admin-menu" aria-expanded="false" aria-label="Toggle admin navigation">
@@ -33,7 +33,7 @@ $activeNav = $activeNav ?? 'dashboard';
             <div class="collapse navbar-collapse" id="admin-menu">
                 <nav aria-label="Admin navigation" class="w-100">
                     <ul class="navbar-nav pt-lg-3">
-                        <?php foreach (['dashboard' => 'Dashboard', 'orders' => 'Orders', 'categories' => 'Categories', 'products' => 'Products'] as $section => $label): ?>
+                        <?php foreach (['dashboard' => 'Dashboard', 'orders' => 'Orders', 'categories' => 'Categories', 'products' => 'Products', 'settings' => 'Settings'] as $section => $label): ?>
                             <li class="nav-item <?= $activeNav === $section ? 'active' : '' ?>"><a class="nav-link" href="<?= e(url($section === 'dashboard' ? '/admin' : '/admin/' . $section)) ?>" <?= $activeNav === $section ? 'aria-current="page"' : '' ?>><span class="nav-link-title"><?= e($label) ?></span></a></li>
                         <?php endforeach; ?>
                     </ul>

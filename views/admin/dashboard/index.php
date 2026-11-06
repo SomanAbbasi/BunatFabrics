@@ -29,8 +29,7 @@ $recentOrders = $recentOrders ?? [];
 </div>
 
 <div class="row g-4">
-    <!-- Left Column: Orders & Catalog -->
-    <div class="col-xl-8">
+    <div class="col-12">
         <!-- Recent Wholesale Orders Section -->
         <section class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
@@ -121,18 +120,5 @@ $recentOrders = $recentOrders ?? [];
             <a class="btn" href="<?= e(url('/admin/orders')) ?>">View all orders</a>
             <a class="btn" href="<?= e(url('/')) ?>">View storefront</a>
         </div>
-    </div>
-
-    <!-- Right Column: Account Card -->
-    <div class="col-xl-4">
-        <h2 class="h3 mb-3">Account</h2>
-        <section class="card mb-4"><div class="card-body">
-            <h3 class="h2 mb-1"><?= e($user['name']) ?></h3>
-            <span class="badge bg-green-lt mb-4">Administrator</span>
-            <dl class="mb-0 admin-details">
-                <dt class="text-secondary small">Email address</dt><dd class="mb-3"><?= e($user['email']) ?></dd>
-                <dt class="text-secondary small">Member since</dt><dd class="mb-0"><?= e($user['created_at']) ?></dd>
-            </dl>
-        </div></section>
     </div>
 </div>
