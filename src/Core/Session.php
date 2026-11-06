@@ -66,7 +66,7 @@ final class Session
      */
     public static function flashInput(array $input): void
     {
-        unset($input['password'], $input['password_confirmation']);
+        unset($input['password'], $input['password_confirmation'], $input['current_password'], $input['new_password'], $input['new_password_confirmation']);
 
         self::put('_old_input', $input);
     }

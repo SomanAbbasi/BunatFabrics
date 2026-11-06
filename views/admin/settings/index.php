@@ -6,8 +6,12 @@ use App\Core\Session;
 
 /** @var array<string, mixed> $user */
 /** @var array<string, string> $errors */
-$errors = $errors ?? [];
+$errors = $profileErrors ?? [];
+$profile = $profile ?? $user;
 ?>
+<?php if ($message = ($profileErrors['_form'] ?? $passwordErrors['_form'] ?? null)): ?>
+    <div class="alert alert-danger" role="alert"><?= e($message) ?></div>
+<?php endif; ?>
 <div class="row g-4">
     <!-- Profile Information Section -->
     <div class="col-lg-6">
@@ -21,7 +25,7 @@ $errors = $errors ?? [];
 
                     <div class="mb-3">
                         <label class="form-label required" for="settings-name">Administrator Name</label>
-                        <input type="text" name="name" id="settings-name" class="form-control <?= isset($errors['name']) ? 'is-invalid' : '' ?>" value="<?= e((string) $user['name']) ?>" required autocomplete="name">
+                        <input type="text" name="name" id="settings-name" class="form-control <?= isset($errors['name']) ? 'is-invalid' : '' ?>" value="<?= e((string) $profile['name']) ?>" required autocomplete="name">
                         <?php if (isset($errors['name'])): ?>
                             <div class="invalid-feedback"><?= e($errors['name']) ?></div>
                         <?php endif; ?>
@@ -29,7 +33,7 @@ $errors = $errors ?? [];
 
                     <div class="mb-3">
                         <label class="form-label required" for="settings-email">Email Address</label>
-                        <input type="email" name="email" id="settings-email" class="form-control <?= isset($errors['email']) ? 'is-invalid' : '' ?>" value="<?= e((string) $user['email']) ?>" required autocomplete="email">
+                        <input type="email" name="email" id="settings-email" class="form-control <?= isset($errors['email']) ? 'is-invalid' : '' ?>" value="<?= e((string) $profile['email']) ?>" required autocomplete="email">
                         <?php if (isset($errors['email'])): ?>
                             <div class="invalid-feedback"><?= e($errors['email']) ?></div>
                         <?php endif; ?>
@@ -49,6 +53,12 @@ $errors = $errors ?? [];
                         </div>
                     </div>
 
+                    <div class="mb-3">
+                        <label class="form-label required" for="profile-current-password">Current password</label>
+                        <input type="password" name="current_password" id="profile-current-password" class="form-control" required autocomplete="current-password">
+                        <div class="form-text">Confirm your password before changing your name or email.</div>
+                        <?php if (isset($profileErrors['current_password'])): ?><div class="text-danger"><?= e($profileErrors['current_password']) ?></div><?php endif; ?>
+                    </div>
                     <button type="submit" class="btn btn-primary">
                         Save Profile Changes
                     </button>
@@ -58,6 +68,7 @@ $errors = $errors ?? [];
     </div>
 
     <!-- Security & Password Reset Section -->
+    <?php $errors = $passwordErrors ?? []; ?>
     <div class="col-lg-6">
         <div class="card h-100">
             <div class="card-header">
@@ -81,7 +92,7 @@ $errors = $errors ?? [];
                         <?php if (isset($errors['new_password'])): ?>
                             <div class="invalid-feedback"><?= e($errors['new_password']) ?></div>
                         <?php endif; ?>
-                        <div class="form-text">Must be at least 8 characters long.</div>
+                        <div class="form-text">Use 8+ characters with an uppercase letter, a lowercase letter and a number (up to 72 bytes).</div>
                     </div>
 
                     <div class="mb-4">
