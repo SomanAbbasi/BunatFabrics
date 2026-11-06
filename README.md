@@ -80,3 +80,42 @@ Open your browser at `http://localhost:8080` to view the storefront.
 - Point your web server document root directly to the `public/` directory.
 - Enable URL rewriting (`mod_rewrite` for Apache or standard try_files for Nginx).
 - Ensure the `public/uploads/` directory is writable by the web server user.
+
+## Account Settings
+
+Administrators use `/admin/settings`; customers use `/settings` from their profile menu or dashboard. Profile changes require the current password. Password changes also require a matching confirmation and the existing signup policy (8+ characters with uppercase, lowercase, and a number). The same password is rejected, and the server enforces bcrypt's 72-byte limit.
+
+Both pages share `AccountSettingsController`, `AccountSettingsService`, and form partials. The controller takes the account ID from `Guard`, checks CSRF, and passes only explicit fields to the service. Successful updates refresh the signed-in account, regenerate the session ID, and renew the CSRF token. Passwords are never repopulated or flashed. Other sessions are not revoked; the application has no session registry or shared rate limiter.
+
+No schema change is required. The existing migration runner and initial administrator setup preserve existing accounts, including changed emails and password hashes.
+
+### Settings regression checks
+
+Use an **isolated, disposable MySQL server** and an account allowed to create databases. The fixture script creates a uniquely named `bunat_settings_test_*` database; it never uses the application's configured database. It leaves the fixture available for HTTP checks. Do not run these checks against production or edit `.env` for testing.
+
+```bash
+export SETTINGS_TEST_DSN='mysql:host=127.0.0.1;port=3307;charset=utf8mb4'
+export SETTINGS_TEST_USER='test_user'
+# Set SETTINGS_TEST_PASSWORD through your local environment if needed.
+php tests/account_settings.php
+```
+
+Copy the printed `TEST_DATABASE` name into the following command, then start the guarded test server:
+
+```bash
+export SETTINGS_TEST_DATABASE='bunat_settings_test_REPLACE_WITH_PRINTED_SUFFIX'
+php -S 127.0.0.1:8098 -t public tests/settings_router.php
+```
+
+In another terminal:
+
+```bash
+python3 tests/account_settings_http.py
+php tests/dashboard.php
+php tests/catalog_search.php
+git diff --check
+```
+
+The PHP checks cover validation, unique emails, password hashing/authentication, session renewal, registration, and repeatable migrations. HTTP checks cover both roles, ownership, CSRF, malformed input, escaped errors, password changes, login/logout, and existing pages. The HTTP runner refuses a server without the test marker. Stop the test server after testing; dispose of the isolated fixtures when finished.
+
+For browser verification, sign in to the test server with `new-admin@example.test` or `new-user@example.test`, password `Changed456`. Check both settings pages at 1440, 768, 390, and 320 pixels; keyboard focus; Show/Hide controls; field errors; and profile-menu links. These accounts exist only in the disposable fixtures.
