@@ -41,6 +41,8 @@ $router->post('/login', [AuthController::class, 'login']);
 $router->post('/logout', [AuthController::class, 'logout']);
 
 $router->get('/dashboard', [DashboardController::class, 'index']);
+$router->get('/orders', [\App\Orders\CustomerOrderController::class, 'index']);
+$router->get('/orders/show', [\App\Orders\CustomerOrderController::class, 'show']);
 $router->get('/admin', [AdminDashboardController::class, 'index']);
 
 $router->get('/api/admin/orders', [OrderApiController::class, 'index']);

@@ -29,6 +29,7 @@ $profileInitial = mb_strtoupper(mb_substr($profileName, 0, 1));
         <div class="profile-menu-links">
             <?php if (! empty($profileShowStore)): ?><a href="<?= e(url('/')) ?>">View store</a><?php endif; ?>
             <a href="<?= e(url('/dashboard')) ?>">Dashboard</a>
+            <a href="<?= e(url('/orders')) ?>">My Orders</a>
             <?php if ($profileIsAdmin): ?><a href="<?= e(url('/admin')) ?>">Admin dashboard</a><?php endif; ?>
         </div>
         <form action="<?= e(url('/logout')) ?>" method="POST" class="profile-menu-form">
