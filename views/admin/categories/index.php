@@ -5,7 +5,7 @@ declare(strict_types=1);
 use App\Core\Session;
 
 ?>
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+<div class="admin-toolbar">
     <p class="text-secondary mb-0">Hidden categories and their products are excluded from the public catalog. Hide categories instead of deleting them.</p>
     <a class="btn btn-primary" href="<?= e(url('/admin/categories/create')) ?>">Add Category</a>
 </div>
@@ -13,7 +13,7 @@ use App\Core\Session;
     <?php if ($items === []): ?>
         <div class="empty"><h2 class="empty-title">No categories to show</h2><p class="empty-subtitle text-secondary">Add your first category to organize your fabrics.</p></div>
     <?php else: ?>
-        <div class="table-responsive"><table class="table table-vcenter card-table">
+        <div class="table-responsive" role="region" aria-label="Categories" tabindex="0"><table class="table table-vcenter card-table">
             <caption class="visually-hidden">Fabric categories and visibility controls</caption>
             <thead><tr><th scope="col">Category</th><th scope="col">Slug</th><th scope="col">Products</th><th scope="col">Visibility</th><th scope="col">Actions</th></tr></thead>
             <tbody><?php foreach ($items as $category): ?><tr>

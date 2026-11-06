@@ -20,7 +20,7 @@ use App\Orders\OrderService;
         <div class="card">
             <div class="card-body">
                 <div class="d-flex align-items-center">
-                    <div class="subheader">Total Orders</div>
+                    <div class="admin-metric-label">Total Orders</div>
                 </div>
                 <div class="h1 mb-1"><?= e(number_format((int) ($summary['total_count'] ?? 0))) ?></div>
                 <div class="text-secondary small">Wholesale mill requests</div>
@@ -31,9 +31,9 @@ use App\Orders\OrderService;
         <div class="card">
             <div class="card-body">
                 <div class="d-flex align-items-center">
-                    <div class="subheader text-warning">Pending Review</div>
+                    <div class="admin-metric-label">Pending Review</div>
                 </div>
-                <div class="h1 mb-1 text-warning"><?= e(number_format((int) ($summary['pending_count'] ?? 0))) ?></div>
+                <div class="h1 mb-1"><?= e(number_format((int) ($summary['pending_count'] ?? 0))) ?></div>
                 <div class="text-secondary small">Awaiting bolt confirmation</div>
             </div>
         </div>
@@ -42,9 +42,9 @@ use App\Orders\OrderService;
         <div class="card">
             <div class="card-body">
                 <div class="d-flex align-items-center">
-                    <div class="subheader text-purple">Dispatched</div>
+                    <div class="admin-metric-label">Dispatched</div>
                 </div>
-                <div class="h1 mb-1 text-purple"><?= e(number_format((int) ($summary['dispatched_count'] ?? 0))) ?></div>
+                <div class="h1 mb-1"><?= e(number_format((int) ($summary['dispatched_count'] ?? 0))) ?></div>
                 <div class="text-secondary small">En route to apparel brands</div>
             </div>
         </div>
@@ -53,9 +53,9 @@ use App\Orders\OrderService;
         <div class="card">
             <div class="card-body">
                 <div class="d-flex align-items-center">
-                    <div class="subheader text-success">Total Revenue</div>
+                    <div class="admin-metric-label">Order value</div>
                 </div>
-                <div class="h1 mb-1 text-success"><?= e(pkr((float) ($summary['total_revenue'] ?? 0))) ?></div>
+                <div class="h1 mb-1"><?= e(pkr((float) ($summary['total_revenue'] ?? 0))) ?></div>
                 <div class="text-secondary small">Placed order subtotal</div>
             </div>
         </div>
@@ -65,15 +65,15 @@ use App\Orders\OrderService;
 <!-- Main Table Card -->
 <div class="card">
     <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-3">
-        <h3 class="card-title mb-0">Wholesale Orders (<?= e((string) $totalOrders) ?>)</h3>
+        <h2 class="card-title mb-0">Wholesale Orders (<?= e((string) $totalOrders) ?>)</h2>
 
         <!-- Search Form -->
-        <form action="<?= e(url('/admin/orders')) ?>" method="GET" class="d-flex align-items-center gap-2">
+        <form action="<?= e(url('/admin/orders')) ?>" method="GET" class="admin-search">
             <?php if ($currentStatus !== ''): ?>
                 <input type="hidden" name="status" value="<?= e($currentStatus) ?>">
             <?php endif; ?>
             <div class="input-icon">
-                <input type="text" name="search" value="<?= e($searchQuery) ?>" class="form-control form-control-sm" placeholder="Search by ID, Name, Phone..." style="min-width: 240px;">
+                <input type="text" name="search" value="<?= e($searchQuery) ?>" class="form-control form-control-sm" placeholder="Search by ID, Name, Phone..." aria-label="Search orders by ID, name or phone">
             </div>
             <button type="submit" class="btn btn-sm btn-primary">Search</button>
             <?php if ($searchQuery !== '' || $currentStatus !== ''): ?>
@@ -124,18 +124,18 @@ use App\Orders\OrderService;
             <a href="<?= e(url('/admin/orders')) ?>" class="btn btn-sm btn-outline-primary">Clear Filters</a>
         </div>
     <?php else: ?>
-        <div class="table-responsive">
+        <div class="table-responsive" role="region" aria-label="Wholesale orders" tabindex="0">
             <table class="table table-vcenter card-table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th>Order ID</th>
-                        <th>Customer / Brand</th>
-                        <th>Date & Time</th>
-                        <th>Wholesale Items</th>
-                        <th>Subtotal (PKR)</th>
-                        <th>Status</th>
-                        <th>Update Status</th>
-                        <th class="w-1 text-end">Action</th>
+                        <th scope="col">Order ID</th>
+                        <th scope="col">Customer / Brand</th>
+                        <th scope="col">Date & Time</th>
+                        <th scope="col">Wholesale Items</th>
+                        <th scope="col">Subtotal (PKR)</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Update Status</th>
+                        <th scope="col" class="w-1 text-end">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -191,7 +191,7 @@ use App\Orders\OrderService;
                                     <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
                                     <input type="hidden" name="id" value="<?= e((string) $order['id']) ?>">
                                     <input type="hidden" name="return_to" value="<?= e($_SERVER['REQUEST_URI'] ?? '/admin/orders') ?>">
-                                    <select name="status" class="form-select form-select-sm py-1" style="font-size: 0.8rem; width: 125px;" onchange="this.form.submit()">
+                                    <select name="status" aria-label="<?= e('Update status for order ' . $orderNum) ?>" class="form-select form-select-sm py-1" style="font-size: 0.8rem; width: 125px;" onchange="this.form.submit()">
                                         <?php foreach (['pending' => 'Pending', 'confirmed' => 'Confirmed', 'dispatched' => 'Dispatched', 'delivered' => 'Delivered', 'rejected' => 'Rejected'] as $val => $label): ?>
                                             <option value="<?= e($val) ?>" <?= $status === $val ? 'selected' : '' ?>>
                                                 <?= e($label) ?>

@@ -13,27 +13,27 @@ $errors = $errors ?? [];
     <div class="col-lg-6">
         <div class="card h-100">
             <div class="card-header">
-                <h3 class="card-title mb-0">Profile Information</h3>
+                <h2 class="card-title mb-0">Profile Information</h2>
             </div>
             <div class="card-body">
                 <form action="<?= e(url('/admin/settings/profile')) ?>" method="POST">
                     <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
 
                     <div class="mb-3">
-                        <label class="form-label required">Administrator Name</label>
-                        <input type="text" name="name" class="form-control <?= isset($errors['name']) ? 'is-invalid' : '' ?>" value="<?= e((string) $user['name']) ?>" required autocomplete="name">
+                        <label class="form-label required" for="settings-name">Administrator Name</label>
+                        <input type="text" name="name" id="settings-name" class="form-control <?= isset($errors['name']) ? 'is-invalid' : '' ?>" value="<?= e((string) $user['name']) ?>" required autocomplete="name">
                         <?php if (isset($errors['name'])): ?>
                             <div class="invalid-feedback"><?= e($errors['name']) ?></div>
                         <?php endif; ?>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label required">Email Address</label>
-                        <input type="email" name="email" class="form-control <?= isset($errors['email']) ? 'is-invalid' : '' ?>" value="<?= e((string) $user['email']) ?>" required autocomplete="email">
+                        <label class="form-label required" for="settings-email">Email Address</label>
+                        <input type="email" name="email" id="settings-email" class="form-control <?= isset($errors['email']) ? 'is-invalid' : '' ?>" value="<?= e((string) $user['email']) ?>" required autocomplete="email">
                         <?php if (isset($errors['email'])): ?>
                             <div class="invalid-feedback"><?= e($errors['email']) ?></div>
                         <?php endif; ?>
-                        <div class="form-text">Used for administrator sign-in and system notifications.</div>
+                        <div class="form-text">Used for administrator sign-in.</div>
                     </div>
 
                     <div class="mb-4 pt-2 border-top">
@@ -61,23 +61,23 @@ $errors = $errors ?? [];
     <div class="col-lg-6">
         <div class="card h-100">
             <div class="card-header">
-                <h3 class="card-title mb-0">Change Password</h3>
+                <h2 class="card-title mb-0">Change Password</h2>
             </div>
             <div class="card-body">
                 <form action="<?= e(url('/admin/settings/password')) ?>" method="POST">
                     <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
 
                     <div class="mb-3">
-                        <label class="form-label required">Current Password</label>
-                        <input type="password" name="current_password" class="form-control <?= isset($errors['current_password']) ? 'is-invalid' : '' ?>" required autocomplete="current-password">
+                        <label class="form-label required" for="settings-current_password">Current Password</label>
+                        <input type="password" name="current_password" id="settings-current_password" class="form-control <?= isset($errors['current_password']) ? 'is-invalid' : '' ?>" required autocomplete="current-password">
                         <?php if (isset($errors['current_password'])): ?>
                             <div class="invalid-feedback"><?= e($errors['current_password']) ?></div>
                         <?php endif; ?>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label required">New Password</label>
-                        <input type="password" name="new_password" class="form-control <?= isset($errors['new_password']) ? 'is-invalid' : '' ?>" required minlength="8" autocomplete="new-password">
+                        <label class="form-label required" for="settings-new_password">New Password</label>
+                        <input type="password" name="new_password" id="settings-new_password" class="form-control <?= isset($errors['new_password']) ? 'is-invalid' : '' ?>" required minlength="8" autocomplete="new-password">
                         <?php if (isset($errors['new_password'])): ?>
                             <div class="invalid-feedback"><?= e($errors['new_password']) ?></div>
                         <?php endif; ?>
@@ -85,8 +85,8 @@ $errors = $errors ?? [];
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label required">Confirm New Password</label>
-                        <input type="password" name="new_password_confirmation" class="form-control <?= isset($errors['new_password_confirmation']) ? 'is-invalid' : '' ?>" required minlength="8" autocomplete="new-password">
+                        <label class="form-label required" for="settings-new_password_confirmation">Confirm New Password</label>
+                        <input type="password" name="new_password_confirmation" id="settings-new_password_confirmation" class="form-control <?= isset($errors['new_password_confirmation']) ? 'is-invalid' : '' ?>" required minlength="8" autocomplete="new-password">
                         <?php if (isset($errors['new_password_confirmation'])): ?>
                             <div class="invalid-feedback"><?= e($errors['new_password_confirmation']) ?></div>
                         <?php endif; ?>
