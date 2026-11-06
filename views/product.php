@@ -22,7 +22,10 @@ use App\Core\Session;
                 <?php endforeach; ?>
             <?php else: ?>
                 <div class="gallery-image gallery-image-main">
-                    <span class="product-placeholder" aria-hidden="true">B</span>
+                    <div class="product-placeholder" aria-hidden="true">
+                        <?= icon('layers') ?>
+                        <span>Fabric swatch</span>
+                    </div>
                 </div>
             <?php endif; ?>
         </div>

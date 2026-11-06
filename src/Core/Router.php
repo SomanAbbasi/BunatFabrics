@@ -37,6 +37,9 @@ final class Router
     public function dispatch(string $method, string $uri): void
     {
         $method = strtoupper($method);
+        if ($method === 'HEAD') {
+            $method = 'GET';
+        }
         $uri    = $this->normalize($uri);
 
         $action = $this->routes[$method][$uri] ?? null;

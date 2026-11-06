@@ -1,152 +1,82 @@
-# BunatFabrics
+# Bunat Fabrics
 
-B2B fabric wholesale ordering website — a small PHP 8 MVC app with customer
-signup / login and an admin dashboard.
+Bunat Fabrics is a modern B2B wholesale fabric sourcing and ordering platform built for textile mills, fashion brands, and apparel manufacturers. It streamlines bulk fabric procurement with transparent wholesale PKR pricing, verified textile specifications, and direct mill-to-factory order management.
 
-## Requirements
+---
 
-- PHP 8.1+ with the `pdo_mysql` extension
-- MySQL 8
-- Apache with `mod_rewrite`, document root pointed at `public/`
+## Key Features
 
-## Setup
+- **Wholesale Fabric Catalog**: Browse fabrics with verified apparel specifications including fiber composition, width (inches), weight (GSM), and wholesale rates per meter or yard.
+- **Custom Production Meterage**: Apparel brands can order sample bolts (e.g. 50m) up to full production roll runs (10,000m+) directly with custom quantity inputs.
+- **Streamlined Wholesale Cart & Checkout**: Fast ordering workflow without forced redirects, allowing brands to add multiple fabric bundles, review subtotal breakdowns, and submit dispatch requests.
+- **Customer Order Tracking**: Real-time order history with fabric thumbnail previews, dispatch status, tracking notes, and full line-item summaries.
+- **Admin Control Center**:
+  - **Orders Management**: Process incoming wholesale orders, review buyer contacts and delivery destinations, inspect fabric item photos, and update order statuses (`Pending`, `Confirmed`, `Shipped`, `Delivered`, `Cancelled`).
+  - **Catalog Management**: Create and manage fabric categories, specifications, and upload high-resolution swatch photography.
+  - **Admin Settings**: Securely update administrator name, email address, and account password.
 
-1. Create your environment file and set the database credentials:
+---
 
-   ```bash
-   cp .env.example .env
-   ```
+## Quick Setup
 
-2. Create the database table and seed the predefined data:
+### 1. Requirements
 
-   ```bash
-   php database/migrate.php
-   ```
+- PHP 8.1 or newer with `pdo_mysql` and `mbstring` extensions
+- MySQL 8.0 or MariaDB 10.5+
 
-3. Configure your web server so the document root is the `public/` folder,
-   then open the site in a browser.
+### 2. Configuration
 
-### Local development without Apache
+Copy the example environment file and configure your database connection:
 
-The built-in PHP server works on Chrome/any browser at `http://localhost:8080`:
+```bash
+cp .env.example .env
+```
+
+Ensure your `.env` contains valid database credentials:
+
+```ini
+APP_ENV=development
+APP_DEBUG=true
+APP_URL=http://localhost:8080
+
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_NAME=bunat_fabrics
+DB_USER=root
+DB_PASSWORD=your_password
+```
+
+### 3. Database Migration
+
+Run the catalog migration runner to set up all tables and initial categories:
+
+```bash
+php database/catalog-migrate.php
+```
+
+### 4. Start the Application
+
+Launch the local PHP development server:
 
 ```bash
 php -S localhost:8080 -t public server.php
 ```
 
-`server.php` serves files from `public/` and sends clean URLs to the front
-controller. Set `APP_URL=http://localhost:8080` in `.env` so redirects use the
-same address. Apply catalog tables with:
+Open your browser at `http://localhost:8080` to view the storefront.
 
-```bash
-php database/catalog-migrate.php
-```
+---
 
-## Login
+## Default Accounts
 
-The administrator account is defined in `.env` (`ADMIN_EMAIL` / `ADMIN_PASSWORD`).
-`database/migrate.php` syncs it into the database, storing the password as a
-bcrypt hash. New customers can register from the signup page.
+- **Administrator Portal**: Accessible at `http://localhost:8080/admin`
+  - **Email**: `admin@gmail.com`
+  - **Password**: `Admin@123` *(or as set in `.env`)*
+- **Customer Portal**: Customers can register for wholesale sourcing via the **Create Account** button or log in at `http://localhost:8080/login`.
 
-## Shopping cart and checkout
+---
 
-Customers can add a fabric and quantity to a cart, update quantities, remove
-lines, and see line totals plus the order subtotal. The cart is stored in the PHP
-session, so guests can build a cart before signing in: the cart survives the
-login and signup redirects and is not lost when the session id is regenerated.
+## Production Deployment Notes
 
-Checkout requires an account. A guest who opens `/checkout` is sent to the login
-page with the cart intact and then returned to checkout after signing in. Before
-placing the order the customer must enter a validated phone number and delivery
-address. Placing the order writes `orders` and `order_items` rows (including the
-contact details) and clears the cart. Existing installations must apply the
-orders migrations once:
-
-```bash
-php database/catalog-migrate.php
-```
-
-## Admin orders API
-
-The admin dashboard can read placed orders from these JSON endpoints. They use
-the normal administrator session, so `fetch()` calls work after signing in as an
-admin. Unauthenticated requests receive `401`; non-admin users receive `403`.
-The controller lives in `src/Admin/Orders/OrderApiController.php` and the routes
-are registered in `routes/web.php`.
-
-| Method | Endpoint | Description |
-| --- | --- | --- |
-| `GET` | `/api/admin/orders` | Paginated order list, newest first |
-| `GET` | `/api/admin/orders/show?id=1` | One order with its line items |
-
-`/api/admin/orders` accepts `status` (`pending`, `confirmed`, `cancelled`),
-`page` (default `1`) and `per_page` (default `20`, maximum `100`). The response
-includes `data` and `meta` (`page`, `per_page`, `total`, `total_pages`, `status`).
-Each order exposes `id`, `user_id`, `status`, `subtotal_pkr`, `contact_phone`,
-`shipping_address`, `created_at`, `updated_at`, `customer_name`,
-`customer_email`, `item_lines` and `total_quantity`.
-
-The detail response adds an `items` array with `product_id`, `product_code`,
-`title`, `unit`, `unit_price_pkr`, `quantity` and `line_total_pkr` for each line.
-Amounts are strings (as returned by MySQL `DECIMAL`); cast them in JavaScript.
-
-## Project structure
-
-```
-config/        application and database configuration
-database/      schema.sql, seed.sql and the migrate.php runner
-public/        front controller, .htaccess, assets and uploaded images
-routes/        route definitions
-src/Core/      framework pieces (Env, Database, Session, Router, ...)
-src/Admin/     admin dashboard, category and product management
-src/Auth/      authentication service, guard and controllers
-src/Cart/      session cart service and cart/checkout controllers
-src/Home/      public catalog controllers and queries
-src/Orders/    order persistence for placed carts
-views/         page templates and layout
-```
-
-## Security notes
-
-- Passwords are stored as bcrypt hashes (`password_hash`).
-- All queries use prepared statements.
-- Forms are protected with CSRF tokens.
-- The real `.env` file is git-ignored and must never be committed.
-
-## Catalog migrations (existing installations)
-
-Use the additive catalog runner, **not** the legacy `database/migrate.php`, which
-re-seeds accounts and synchronizes administrator passwords:
-
-```bash
-php database/catalog-migrate.php
-```
-
-It targets `DB_NAME` from the existing configuration, requires `APP_ENV` to be
-`local`, `development`, or `testing`, and creates `categories`, `products`, and
-`schema_migrations`. It does not create/drop databases or alter users. A database
-lock prevents concurrent runners; version checksums detect edits to applied SQL.
-Run it again safely to apply only pending versions. Keep applied migration files
-unchanged and add a new numbered SQL file for later changes. MySQL DDL is not
-transactional: the initial CREATE TABLE migrations use `IF NOT EXISTS` so an
-interrupted run can resume. This is not a schema-drift repair tool; investigate
-unexpected pre-existing catalog tables before running it.
-
-The catalog stores composition, `width_inch` (DECIMAL(5,1)), GSM, meter/yard
-unit, and the wholesale `price_pkr` (DECIMAL(12,2)). Optional specifications may
-be left blank. Categories are hidden instead of deleted, and the foreign key
-restricts deletion of a category in use. Only published products in visible
-categories appear publicly.
-
-Product photos uploaded from the admin product form are stored under
-`public/uploads/catalog/{category_id}/product-{product_id}/`. The product id
-keeps the folder stable, and moving a product to another category moves its
-folder and rewrites the stored paths. JPG, PNG, and WebP files are accepted up
-to 2 MB each (six per product). Uploaded files are runtime data and are not
-committed to Git. Set the PHP upload limits to at least 2 MB before deployment.
-
-## Catalog verification
-
-PHP needs `pdo_mysql` and `mbstring`. See [tests/README.md](tests/README.md) for
-isolated MySQL, HTTP regression, and manual browser checks. No test command seeds
-or resets the configured application's users.
+- Point your web server document root directly to the `public/` directory.
+- Enable URL rewriting (`mod_rewrite` for Apache or standard try_files for Nginx).
+- Ensure the `public/uploads/` directory is writable by the web server user.

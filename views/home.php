@@ -13,9 +13,17 @@ $totalProducts = array_sum(array_map(static fn (array $group): int => count($gro
 ?>
 <section class="storefront">
     <header class="store-hero">
-        <span class="eyebrow">Wholesale Fabric Sourcing</span>
-        <h1>Fabric Collections</h1>
-        <p>Browse collections, review specifications (width, weight, composition), and enter custom wholesale meterage.</p>
+        <div class="store-hero-badge">
+            <?= icon('fabric') ?>
+            <span>Direct Mill Wholesale</span>
+        </div>
+        <h1>Apparel Fabric Collections</h1>
+        <p>Order premium fabrics for clothing production in custom rolls or bulk meterage with verified GSM, width, and fiber specs.</p>
+        <div class="store-hero-highlights">
+            <span><?= icon('check-circle') ?> Custom Wholesale Lengths</span>
+            <span><?= icon('check-circle') ?> Verified Specifications</span>
+            <span><?= icon('check-circle') ?> Fast Dispatch Nationwide</span>
+        </div>
     </header>
 
     <?php if ($unavailable): ?>
@@ -68,7 +76,10 @@ $totalProducts = array_sum(array_map(static fn (array $group): int => count($gro
                                     <?php if (! empty($product['image_path'])): ?>
                                         <img src="<?= e(ProductImageService::url((string) $product['image_path'])) ?>" alt="<?= e($product['title']) ?>" loading="lazy">
                                     <?php else: ?>
-                                        <span class="product-placeholder" aria-hidden="true">B</span>
+                                        <div class="product-placeholder" aria-hidden="true">
+                                            <?= icon('layers') ?>
+                                            <span>Fabric swatch</span>
+                                        </div>
                                     <?php endif; ?>
                                 </div>
                                 <div class="product-body">
