@@ -290,7 +290,7 @@
             return;
         }
 
-        // Wholesale bundle preset click
+        // Wholesale bundle preset click (product page)
         var presetBtn = event.target.closest('[data-set-qty]');
         if (presetBtn) {
             event.preventDefault();
@@ -303,6 +303,24 @@
                 }
                 form.querySelectorAll('[data-set-qty]').forEach(function (btn) {
                     btn.classList.toggle('is-active', btn === presetBtn);
+                });
+            }
+            return;
+        }
+
+        // Wholesale quick preset pill click (homepage card)
+        var cardPreset = event.target.closest('[data-set-card-qty]');
+        if (cardPreset) {
+            event.preventDefault();
+            var cardQty = parseInt(cardPreset.getAttribute('data-set-card-qty'), 10);
+            var cardForm = cardPreset.closest('form');
+            if (cardForm) {
+                var cardInput = cardForm.querySelector('input[name="quantity"]');
+                if (cardInput) {
+                    cardInput.value = cardQty;
+                }
+                cardForm.querySelectorAll('[data-set-card-qty]').forEach(function (pill) {
+                    pill.classList.toggle('is-active', pill === cardPreset);
                 });
             }
             return;
