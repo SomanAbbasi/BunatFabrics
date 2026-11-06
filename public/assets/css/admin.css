@@ -46,16 +46,11 @@ body {
     place-items: center;
     width: 36px;
     height: 36px;
-    border-radius: 9px;
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    border-radius: 8px;
+    background: #111827;
     color: #fff;
-    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.28);
-}
-
-.admin-monogram .icon,
-.avatar.admin-monogram .icon {
-    width: 20px;
-    height: 20px;
+    font-family: inherit;
+    font-weight: 800;
 }
 
 .admin-brand small {

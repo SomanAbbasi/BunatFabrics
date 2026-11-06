@@ -24,7 +24,7 @@ $activeNav = $activeNav ?? 'dashboard';
     <aside class="navbar navbar-vertical navbar-expand-lg" aria-label="Admin sidebar">
         <div class="container-fluid">
             <a class="navbar-brand admin-brand" href="<?= e(url('/admin')) ?>">
-                <span class="admin-monogram" aria-hidden="true"><?= icon('fabric') ?></span>
+                <span class="admin-monogram" aria-hidden="true">B</span>
                 <span>Bunat Fabrics<small class="d-block text-secondary">Administration</small></span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#admin-menu" aria-controls="admin-menu" aria-expanded="false" aria-label="Toggle admin navigation">

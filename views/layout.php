@@ -23,7 +23,7 @@ $cartCount = (new CartService())->count();
 <body>
     <header class="site-header">
         <a class="brand" href="<?= e(url('/')) ?>">
-            <span class="brand-mark" aria-hidden="true"><?= icon('fabric') ?></span>
+            <span class="brand-mark" aria-hidden="true">B</span>
             <span class="brand-name">Bunat <em>Fabrics</em></span>
         </a>
 
