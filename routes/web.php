@@ -44,6 +44,7 @@ $router->get('/admin', [AdminDashboardController::class, 'index']);
 
 $router->get('/api/admin/orders', [OrderApiController::class, 'index']);
 $router->get('/api/admin/orders/show', [OrderApiController::class, 'show']);
+$router->post('/api/admin/orders/status', [OrderApiController::class, 'updateStatus']);
 
 // Catalog routes use literal paths; edit IDs are validated query/form values.
 $router->get('/admin/categories', [\App\Admin\Categories\CategoryController::class, 'index']);
