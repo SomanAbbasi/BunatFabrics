@@ -25,8 +25,8 @@ $orders = $orders ?? [];
         </article>
 
         <article class="panel">
-            <h2>Order Fabrics</h2>
-            <p class="muted">Browse our collection of high-density wholesale cotton, lawn, linen, and blends.</p>
+            <h2>Start an Order</h2>
+            <p class="muted">Browse available fabrics, check specifications, and order required quantities.</p>
             <div style="display: flex; gap: 10px; margin-top: 16px;">
                 <a class="button button-compact" href="<?= e(url('/')) ?>"><?= icon('grid') ?><span>Browse Catalog</span></a>
                 <a class="button button-compact button-ghost" href="<?= e(url('/orders')) ?>"><span>All My Orders</span></a>
@@ -37,8 +37,8 @@ $orders = $orders ?? [];
     <section class="panel" style="padding: 24px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
             <div>
-                <h2 style="font-size: 1.25rem; font-weight: 700; margin: 0 0 4px;">Recent Wholesale Orders</h2>
-                <p class="muted" style="margin: 0; font-size: 0.88rem;">Track live status, meterage, and shipment details.</p>
+                <h2 style="font-size: 1.15rem; font-weight: 700; margin: 0 0 4px;">Recent Orders</h2>
+                <p class="muted" style="margin: 0; font-size: 0.88rem;">Track order status and view invoices.</p>
             </div>
             <?php if ($orders !== []): ?>
                 <a class="button button-compact button-ghost" href="<?= e(url('/orders')) ?>">View All (<?= count($orders) ?>)</a>

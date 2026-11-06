@@ -29,7 +29,7 @@ $cartCount = (new CartService())->count();
 
         <nav class="site-nav" aria-label="Site navigation">
             <a class="nav-link" href="<?= e(url('/')) ?>"><?= icon('grid') ?><span>Fabrics</span></a>
-            <a class="nav-link nav-cart<?= $cartCount > 0 ? ' has-items' : '' ?>" href="<?= e(url('/cart')) ?>" data-open-cart-drawer>
+            <a class="nav-link nav-cart<?= $cartCount > 0 ? ' has-items' : '' ?>" href="<?= e(url('/cart')) ?>">
                 <?= icon('cart') ?>
                 <span>Cart</span>
                 <span class="cart-count" id="header-cart-count" <?= $cartCount > 0 ? '' : 'style="display:none"' ?>><?= e((string) $cartCount) ?></span>
@@ -58,7 +58,5 @@ $cartCount = (new CartService())->count();
     <footer class="site-footer">
         &copy; <?= date('Y') ?> <?= e(config('app.name')) ?> &middot; Wholesale fabric ordering
     </footer>
-
-    <?php require base_path('views/partials/cart-drawer.php'); ?>
 </body>
 </html>

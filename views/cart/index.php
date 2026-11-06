@@ -48,7 +48,7 @@ use App\Core\Session;
                                 <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
                                 <input type="hidden" name="product_id" value="<?= e((string) $item['id']) ?>">
                                 <label for="quantity-<?= e((string) $item['id']) ?>">Qty</label>
-                                <input type="number" id="quantity-<?= e((string) $item['id']) ?>" name="quantity" value="<?= e((string) $item['quantity']) ?>" min="1" max="999" inputmode="numeric">
+                                <input type="number" id="quantity-<?= e((string) $item['id']) ?>" name="quantity" value="<?= e((string) $item['quantity']) ?>" min="1" max="1000000" inputmode="numeric">
                                 <button type="submit" class="button button-compact button-ghost"><?= icon('check-circle') ?><span>Update</span></button>
                             </form>
 

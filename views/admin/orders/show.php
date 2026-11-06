@@ -173,10 +173,10 @@ $totalMeters = array_sum(array_column($items, 'quantity'));
                     <dd>#<?= e((string) $order['id']) ?></dd>
 
                     <dt class="text-secondary small">Order Placed At</dt>
-                    <dd><?= e(date('F j, Y &middot; g:i:s A', strtotime((string) $order['created_at']))) ?></dd>
+                    <dd><?= e(date('F j, Y, g:i:s A', strtotime((string) $order['created_at']))) ?></dd>
 
                     <dt class="text-secondary small">Last Updated At</dt>
-                    <dd class="mb-0"><?= e(date('F j, Y &middot; g:i:s A', strtotime((string) $order['updated_at']))) ?></dd>
+                    <dd class="mb-0"><?= e(date('F j, Y, g:i:s A', strtotime((string) $order['updated_at']))) ?></dd>
                 </dl>
             </div>
         </div>

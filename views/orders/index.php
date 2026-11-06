@@ -8,67 +8,73 @@ declare(strict_types=1);
 <section class="account-page">
     <header class="page-heading">
         <span class="eyebrow">Customer Account</span>
-        <h1>My Wholesale Orders</h1>
-        <p>Track your fabric orders, review quantities, check dispatch status, and view invoices.</p>
+        <h1>My Orders</h1>
+        <p>Review past fabric orders, tracking status, and invoice slips.</p>
     </header>
 
     <?php if ($orders === []): ?>
-        <div class="panel empty-orders text-center" style="padding: 48px 24px; text-align: center;">
-            <div style="width: 56px; height: 56px; margin: 0 auto 16px; border-radius: 50%; background: var(--surface-soft); display: grid; place-items: center; color: var(--muted);">
-                <?= icon('cart', 'icon') ?>
-            </div>
-            <h2>No orders placed yet</h2>
-            <p class="muted" style="margin-bottom: 24px;">You haven't placed any wholesale orders with Bunat Fabrics yet.</p>
-            <a class="button button-compact" href="<?= e(url('/')) ?>"><?= icon('grid') ?><span>Browse Fabric Collections</span></a>
+        <div class="panel text-center" style="padding: 48px 24px; text-align: center;">
+            <p class="muted" style="margin-bottom: 20px;">You haven't placed any wholesale fabric orders yet.</p>
+            <a class="button button-compact" href="<?= e(url('/')) ?>"><?= icon('grid') ?><span>Browse Fabrics</span></a>
         </div>
     <?php else: ?>
-        <div class="orders-list" style="display: flex; flex-direction: column; gap: 16px;">
-            <?php foreach ($orders as $order): ?>
-                <?php
-                $orderNum = ! empty($order['order_number']) ? $order['order_number'] : sprintf('BNT-%05d', $order['id']);
-                $status = (string) ($order['status'] ?? 'pending');
-                $statusClass = 'status-badge-' . $status;
-                ?>
-                <article class="panel order-card" style="padding: 20px 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) auto; gap: 20px; align-items: center;">
-                    <div>
-                        <span class="text-secondary small d-block" style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted);">Order ID</span>
-                        <strong style="font-size: 1.15rem; font-weight: 800;"><?= e($orderNum) ?></strong>
-                        <div style="font-size: 0.84rem; color: var(--muted); margin-top: 4px;">
-                            Placed on <?= e(date('M d, Y &middot; h:i A', strtotime((string) $order['created_at']))) ?>
-                        </div>
-                    </div>
-
-                    <div>
-                        <span class="text-secondary small d-block" style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted);">Wholesale Quantity</span>
-                        <div style="font-size: 0.96rem; font-weight: 600; color: var(--ink);">
-                            <?= e((string) ($order['item_lines'] ?? 1)) ?> <?= ($order['item_lines'] ?? 1) === 1 ? 'item' : 'items' ?>
-                            <?php if (! empty($order['total_quantity'])): ?>
-                                &middot; <?= e(number_format((int) $order['total_quantity'])) ?> meters/yards
-                            <?php endif; ?>
-                        </div>
-                        <div style="font-size: 0.84rem; color: var(--muted); margin-top: 4px;">
-                            Ship to: <?= e(mb_strimwidth((string) $order['shipping_address'], 0, 32, '...')) ?>
-                        </div>
-                    </div>
-
-                    <div>
-                        <span class="text-secondary small d-block" style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted);">Status & Total</span>
-                        <div style="margin-bottom: 6px;">
-                            <span class="status-badge <?= e($statusClass) ?>">
-                                <?= e(ucfirst($status)) ?>
-                            </span>
-                        </div>
-                        <strong style="font-size: 1.15rem; font-weight: 800; color: var(--ink);"><?= e(pkr((float) $order['subtotal_pkr'])) ?></strong>
-                    </div>
-
-                    <div style="justify-self: end;">
-                        <a class="button button-compact" href="<?= e(url('/orders/show?id=' . $order['id'])) ?>">
-                            <span>View Details</span>
-                            <span aria-hidden="true">&rarr;</span>
-                        </a>
-                    </div>
-                </article>
-            <?php endforeach; ?>
+        <div class="panel" style="padding: 0; overflow: hidden;">
+            <div style="overflow-x: auto;">
+                <table class="orders-table" style="width: 100%; border-collapse: collapse; font-size: 0.92rem;">
+                    <thead>
+                        <tr style="background: var(--surface-soft); border-bottom: 2px solid var(--line); text-align: left;">
+                            <th style="padding: 12px 16px; font-size: 0.78rem; text-transform: uppercase; color: var(--muted); font-weight: 700;">Order ID</th>
+                            <th style="padding: 12px 16px; font-size: 0.78rem; text-transform: uppercase; color: var(--muted); font-weight: 700;">Date</th>
+                            <th style="padding: 12px 16px; font-size: 0.78rem; text-transform: uppercase; color: var(--muted); font-weight: 700;">Volume</th>
+                            <th style="padding: 12px 16px; font-size: 0.78rem; text-transform: uppercase; color: var(--muted); font-weight: 700;">Shipping To</th>
+                            <th style="padding: 12px 16px; font-size: 0.78rem; text-transform: uppercase; color: var(--muted); font-weight: 700;">Status</th>
+                            <th style="padding: 12px 16px; font-size: 0.78rem; text-transform: uppercase; color: var(--muted); font-weight: 700; text-align: right;">Total (PKR)</th>
+                            <th style="padding: 12px 16px; font-size: 0.78rem; text-transform: uppercase; color: var(--muted); font-weight: 700; text-align: center;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($orders as $order): ?>
+                            <?php
+                            $orderNum = ! empty($order['order_number']) ? $order['order_number'] : sprintf('BNT-%05d', $order['id']);
+                            $status = (string) ($order['status'] ?? 'pending');
+                            $statusClass = 'status-badge-' . $status;
+                            $orderDate = date('M d, Y, h:i A', strtotime((string) $order['created_at']));
+                            $shippingShort = ! empty($order['shipping_address']) ? mb_strimwidth((string) $order['shipping_address'], 0, 32, '...') : '—';
+                            ?>
+                            <tr style="border-bottom: 1px solid var(--line);">
+                                <td style="padding: 12px 16px; font-weight: 700; font-family: monospace;">
+                                    <a href="<?= e(url('/orders/show?id=' . $order['id'])) ?>"><?= e($orderNum) ?></a>
+                                </td>
+                                <td style="padding: 12px 16px; color: var(--muted); white-space: nowrap;">
+                                    <?= e($orderDate) ?>
+                                </td>
+                                <td style="padding: 12px 16px;">
+                                    <strong><?= e((string) ($order['item_lines'] ?? 1)) ?></strong> <?= ($order['item_lines'] ?? 1) === 1 ? 'line' : 'lines' ?>
+                                    <?php if (! empty($order['total_quantity'])): ?>
+                                        <span class="text-secondary small" style="color: var(--muted);">(<?= e(number_format((int) $order['total_quantity'])) ?>m)</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td style="padding: 12px 16px; color: var(--muted);" title="<?= e((string) $order['shipping_address']) ?>">
+                                    <?= e($shippingShort) ?>
+                                </td>
+                                <td style="padding: 12px 16px; white-space: nowrap;">
+                                    <span class="status-badge <?= e($statusClass) ?>">
+                                        <?= e(ucfirst($status)) ?>
+                                    </span>
+                                </td>
+                                <td style="padding: 12px 16px; text-align: right; font-weight: 700; color: var(--ink); white-space: nowrap;">
+                                    <?= e(pkr((float) $order['subtotal_pkr'])) ?>
+                                </td>
+                                <td style="padding: 12px 16px; text-align: center; white-space: nowrap;">
+                                    <a class="button button-compact button-ghost" href="<?= e(url('/orders/show?id=' . $order['id'])) ?>" style="padding: 4px 10px; font-size: 0.82rem;">
+                                        View Details &rarr;
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     <?php endif; ?>
 </section>
