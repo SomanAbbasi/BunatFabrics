@@ -23,6 +23,7 @@ $router->get('/', [HomeController::class, 'index']);
 $router->get('/product', [HomeProductController::class, 'show']);
 
 $router->get('/cart', [CartController::class, 'index']);
+$router->get('/cart/data', [CartController::class, 'data']);
 $router->post('/cart/add', [CartController::class, 'add']);
 $router->post('/cart/update', [CartController::class, 'update']);
 $router->post('/cart/remove', [CartController::class, 'remove']);

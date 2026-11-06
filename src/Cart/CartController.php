@@ -34,6 +34,17 @@ final class CartController
         ]);
     }
 
+    /**
+     * JSON cart summary for client-side mini cart drawer.
+     */
+    public function data(): void
+    {
+        $this->jsonResponse([
+            'ok'   => true,
+            'cart' => $this->cart->summary(),
+        ]);
+    }
+
     public function add(): void
     {
         $this->requireCsrf('/cart');
@@ -42,15 +53,29 @@ final class CartController
         $quantity  = $this->postInt('quantity', 1);
 
         if ($productId === null || $productId < 1) {
+            if ($this->isJson()) {
+                $this->jsonResponse(['ok' => false, 'message' => 'Please choose a fabric to add to your cart.'], 422);
+            }
             Session::flash('error', 'Please choose a fabric to add to your cart.');
-            redirect('/');
+            redirect($this->safeReturnUrl($_POST['return_to'] ?? '/'));
         }
 
         $result = $this->cart->add($productId, $quantity ?? 1);
 
+        if ($this->isJson()) {
+            $this->jsonResponse([
+                'ok'      => $result['ok'],
+                'message' => $result['message'],
+                'cart'    => $this->cart->summary(),
+            ], $result['ok'] ? 200 : 422);
+        }
+
         Session::flash($result['ok'] ? 'status' : 'error', $result['message']);
 
-        redirect($result['ok'] ? '/cart' : '/');
+        // Instead of forcing the customer to the cart page, keep them on their current page
+        // so they can effortlessly continue browsing and add more fabrics.
+        $returnTo = $this->safeReturnUrl($_POST['return_to'] ?? $_SERVER['HTTP_REFERER'] ?? '/');
+        redirect($returnTo);
     }
 
     public function update(): void
@@ -64,9 +89,18 @@ final class CartController
             $this->cart->update($productId, $quantity);
         }
 
+        if ($this->isJson()) {
+            $this->jsonResponse([
+                'ok'      => true,
+                'message' => 'Your cart has been updated.',
+                'cart'    => $this->cart->summary(),
+            ]);
+        }
+
         Session::flash('status', 'Your cart has been updated.');
 
-        redirect('/cart');
+        $returnTo = $this->safeReturnUrl($_POST['return_to'] ?? '/cart');
+        redirect($returnTo);
     }
 
     public function remove(): void
@@ -79,9 +113,18 @@ final class CartController
             $this->cart->remove($productId);
         }
 
+        if ($this->isJson()) {
+            $this->jsonResponse([
+                'ok'      => true,
+                'message' => 'Item removed from your cart.',
+                'cart'    => $this->cart->summary(),
+            ]);
+        }
+
         Session::flash('status', 'Item removed from your cart.');
 
-        redirect('/cart');
+        $returnTo = $this->safeReturnUrl($_POST['return_to'] ?? '/cart');
+        redirect($returnTo);
     }
 
     public function checkout(): void
@@ -215,5 +258,44 @@ final class CartController
         $value = filter_var($_POST[$key] ?? null, FILTER_VALIDATE_INT);
 
         return $value === false ? $default : $value;
+    }
+
+    private function safeReturnUrl(?string $url): string
+    {
+        if ($url === null || trim($url) === '') {
+            return '/';
+        }
+
+        $url = trim($url);
+        $path = parse_url($url, PHP_URL_PATH) ?? '/';
+        $query = parse_url($url, PHP_URL_QUERY);
+
+        if (str_starts_with($url, 'http://') || str_starts_with($url, 'https://')) {
+            $host = parse_url($url, PHP_URL_HOST);
+            $appHost = parse_url((string) config('app.url'), PHP_URL_HOST) ?: 'localhost';
+            if ($host !== $appHost && $host !== 'localhost' && $host !== '127.0.0.1') {
+                return '/';
+            }
+        }
+
+        return $path . ($query ? '?' . $query : '');
+    }
+
+    private function isJson(): bool
+    {
+        $accept = $_SERVER['HTTP_ACCEPT'] ?? '';
+        $requestedWith = strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '');
+
+        return str_contains($accept, 'application/json') || $requestedWith === 'xmlhttprequest';
+    }
+
+    private function jsonResponse(array $payload, int $status = 200): void
+    {
+        http_response_code($status);
+        header('Content-Type: application/json; charset=utf-8');
+        header('Cache-Control: no-store');
+
+        echo json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        exit;
     }
 }

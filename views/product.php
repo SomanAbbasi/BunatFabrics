@@ -42,18 +42,33 @@ use App\Core\Session;
                 <div><dt>Category</dt><dd><?= e($product['category_name']) ?></dd></div>
             </dl>
 
-            <form action="<?= e(url('/cart/add')) ?>" method="POST" class="add-to-cart">
+            <form action="<?= e(url('/cart/add')) ?>" method="POST" class="add-to-cart" data-cart-form>
                 <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
                 <input type="hidden" name="product_id" value="<?= e((string) $product['id']) ?>">
+                <input type="hidden" name="return_to" value="<?= e(url($_SERVER['REQUEST_URI'] ?? '/')) ?>">
 
                 <div class="field">
-                    <label for="quantity">Quantity (<?= e($product['unit']) ?>s)</label>
-                    <input type="number" id="quantity" name="quantity" value="1" min="1" max="999" inputmode="numeric" required>
+                    <label for="quantity">Order Quantity (<?= e($product['unit']) ?>s)</label>
+                    <div class="quantity-input-group">
+                        <input type="number" id="quantity" name="quantity" value="50" min="1" max="1000000" inputmode="numeric" required class="wholesale-qty-input">
+                        <span class="unit-tag"><?= e($product['unit']) ?>s</span>
+                    </div>
                 </div>
 
-                <button type="submit" class="button<?= $cartQuantity > 0 ? ' is-added' : '' ?>">
+                <div class="wholesale-presets" aria-label="Wholesale bundle presets">
+                    <span class="presets-label">Wholesale Bundle Quick Select:</span>
+                    <div class="presets-buttons">
+                        <button type="button" class="preset-btn" data-set-qty="10">10 <?= e($product['unit']) ?>s (Sample)</button>
+                        <button type="button" class="preset-btn is-active" data-set-qty="50">50 <?= e($product['unit']) ?>s (1 Roll)</button>
+                        <button type="button" class="preset-btn" data-set-qty="100">100 <?= e($product['unit']) ?>s (2 Rolls)</button>
+                        <button type="button" class="preset-btn" data-set-qty="500">500 <?= e($product['unit']) ?>s (Bulk)</button>
+                        <button type="button" class="preset-btn" data-set-qty="1000">1,000 <?= e($product['unit']) ?>s (Container)</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="button button-lg<?= $cartQuantity > 0 ? ' is-added' : '' ?>">
                     <?= icon($cartQuantity > 0 ? 'cart' : 'plus') ?>
-                    <span><?= $cartQuantity > 0 ? 'Add another (' . e((string) $cartQuantity) . ' in cart)' : 'Add to cart' ?></span>
+                    <span><?= $cartQuantity > 0 ? 'Add more to cart (' . e((string) $cartQuantity) . ' in cart)' : 'Add fabric to cart' ?></span>
                 </button>
             </form>
 
