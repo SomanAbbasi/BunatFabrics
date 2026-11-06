@@ -10,6 +10,7 @@ use App\Core\Session;
 /** @var int|null $activeCategory */
 /** @var array<int, int> $cartQuantities */
 $totalProducts = array_sum(array_map(static fn (array $group): int => count($group['products']), $allGroups));
+$resultCount = array_sum(array_map(static fn (array $group): int => count($group['products']), $groups));
 ?>
 <section class="storefront">
     <header class="store-hero">
@@ -29,16 +30,16 @@ $totalProducts = array_sum(array_map(static fn (array $group): int => count($gro
             <p class="muted">Our collections are being prepared. Please check back soon.</p>
         </div>
     <?php else: ?>
-        <form class="catalog-search" action="<?= e(url('/')) ?>" method="get" role="search">
+        <form class="catalog-search" action="<?= e(url('/')) ?>" method="get" role="search" aria-label="Fabric catalog">
             <label for="fabric-search">Search fabrics</label>
             <div class="catalog-search-controls">
-                <input id="fabric-search" type="search" name="q" value="<?= e($search) ?>" maxlength="100" placeholder="Name, code or material">
+                <input id="fabric-search" type="search" name="q" value="<?= e($search) ?>" maxlength="100" placeholder="Try cotton or a product code">
                 <?php if ($activeCategory !== null): ?>
                     <input type="hidden" name="category" value="<?= e((string) $activeCategory) ?>">
                 <?php endif; ?>
                 <button type="submit">Search</button>
                 <?php if ($search !== ''): ?>
-                    <a href="<?= e(url($activeCategory === null ? '/' : '/?category=' . $activeCategory)) ?>">Clear</a>
+                    <a href="<?= e(url($activeCategory === null ? '/' : '/?category=' . $activeCategory)) ?>">Clear search</a>
                 <?php endif; ?>
             </div>
         </form>
@@ -55,10 +56,20 @@ $totalProducts = array_sum(array_map(static fn (array $group): int => count($gro
             <?php endforeach; ?>
         </nav>
 
+        <?php if ($search !== ''): ?>
+            <p class="catalog-search-summary" role="status">
+                <?= e((string) $resultCount) ?> <?= $resultCount === 1 ? 'fabric' : 'fabrics' ?> found for “<?= e($search) ?>”<?= $activeCategory !== null ? ' in this category' : '' ?>.
+                <span>Category counts show all available fabrics.</span>
+            </p>
+        <?php endif; ?>
+
         <?php if ($groups === []): ?>
             <div class="empty-note">
                 <p class="empty-note-title"><?= $search !== '' ? 'No fabrics match your search' : 'No fabrics in this category yet' ?></p>
-                <p class="muted">Try another search or category, or <a href="<?= e(url('/')) ?>">view all fabrics</a>.</p>
+                <p class="muted"><?= $search !== '' ? 'Check the spelling or try a different name, product code, material, or category.' : 'Try another category.' ?> <a href="<?= e(url('/')) ?>">View all fabrics</a>.</p>
+                <?php if ($search !== '' && $activeCategory !== null && $matchesAcrossCategories > 0): ?>
+                    <p><a href="<?= e(url('/?' . http_build_query(['q' => $search]))) ?>">Search all categories for “<?= e($search) ?>”</a></p>
+                <?php endif; ?>
             </div>
         <?php endif; ?>
 
