@@ -353,3 +353,52 @@ body {
 }
 
 .order-details { min-width: 18rem; max-width: 30rem; white-space: normal; overflow-wrap: anywhere; }
+
+/* Business dashboard */
+.business-dashboard { color: #17211f; }
+.dashboard-intro { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1.5rem; margin-bottom: 2rem; }
+.dashboard-intro h2 { margin: 0 0 .45rem; font-size: clamp(1.45rem, 2.4vw, 2rem); letter-spacing: -.035em; }
+.dashboard-intro p:not(.dashboard-kicker), .dashboard-section-heading p, .dashboard-card-header p:not(.dashboard-kicker) { margin: 0; color: #596865; }
+.dashboard-kicker { margin: 0 0 .5rem; color: #526962; font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.dashboard-period label { display: block; margin-bottom: .4rem; font-size: .8rem; font-weight: 600; }
+.dashboard-period-controls { display: flex; gap: .5rem; }
+.dashboard-period-controls select { min-width: 9rem; }
+.dashboard-section-heading { margin-bottom: 1rem; }
+.business-dashboard h2:not(.dashboard-intro h2) { margin: 0 0 .35rem; font-size: 1.05rem; font-weight: 700; }
+.dashboard-section-heading p, .dashboard-card-header p:not(.dashboard-kicker) { font-size: .85rem; }
+.dashboard-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+.dashboard-kpi { border-top: 3px solid #52796c; }
+.dashboard-kpi h3 { margin: 0; color: #596865; font-size: .8rem; font-weight: 600; }
+.dashboard-kpi .dashboard-kpi-value { margin: .75rem 0 .3rem; color: #17211f; font-size: clamp(1.35rem, 2vw, 1.8rem); font-weight: 700; letter-spacing: -.03em; overflow-wrap: anywhere; }
+.dashboard-kpi p:last-child, .dashboard-caption { color: #596865; font-size: .8rem; }
+.dashboard-kpi p:last-child { margin: 0; }
+.dashboard-caption { margin: .75rem 0 1.5rem; line-height: 1.5; }
+.dashboard-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(250px, 1fr); gap: 1rem; align-items: start; }
+.dashboard-main, .dashboard-side { min-width: 0; }
+.dashboard-card-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; padding: 1.25rem; border-bottom: 1px solid #e5e7eb; }
+.dashboard-card-header .btn { flex-shrink: 0; }
+.dashboard-empty { display: grid; gap: .35rem; padding: 2rem 1.25rem; color: #596865; font-size: .875rem; }
+.dashboard-empty strong { color: #17211f; }
+.dashboard-orders { min-width: 600px; }
+.dashboard-orders td { font-size: .85rem; }
+.dashboard-order-link { color: #245449; font-weight: 700; }
+.dashboard-status, .dashboard-neutral-badge { display: inline-block; padding: .3rem .55rem; border-radius: 999px; font-size: .72rem; font-weight: 700; white-space: nowrap; }
+.dashboard-status-pending { background: #fff1d3; color: #744b00; }
+.dashboard-status-active { background: #e5eff7; color: #235272; }
+.dashboard-status-delivered { background: #e2f2e9; color: #175b39; }
+.dashboard-status-muted, .dashboard-neutral-badge { background: #edf0ef; color: #44534f; }
+.dashboard-inventory p { margin: .85rem 0; color: #596865; line-height: 1.5; }
+.dashboard-stack { display: grid; gap: 1rem; }
+.dashboard-list { margin: 1rem 0; }
+.dashboard-list div { display: flex; justify-content: space-between; gap: 1rem; padding: .6rem 0; border-bottom: 1px solid #edf0ef; }
+.dashboard-list dt { font-weight: 400; color: #596865; }
+.dashboard-list dd { margin: 0; font-weight: 700; }
+.dashboard-links { display: flex; flex-wrap: wrap; gap: 1rem; }
+.dashboard-links a, .dashboard-inventory a { color: #245449; font-weight: 600; }
+.dashboard-bottom { display: grid; grid-template-columns: minmax(0, 2fr) minmax(250px, 1fr); gap: 1rem; margin-top: 1rem; }
+.dashboard-trend { margin-top: 1rem; }
+.dashboard-actions { display: grid; margin-top: .75rem; }
+.dashboard-actions a { display: flex; justify-content: space-between; padding: .7rem 0; border-bottom: 1px solid #edf0ef; color: #245449; font-weight: 600; }
+.business-dashboard a:focus-visible, .business-dashboard button:focus-visible, .business-dashboard select:focus-visible { outline: 3px solid #275b50; outline-offset: 3px; }
+@media (max-width: 991.98px) { .dashboard-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .dashboard-grid, .dashboard-bottom { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 480px) { .dashboard-kpis { grid-template-columns: minmax(0, 1fr); } .dashboard-period { width: 100%; } .dashboard-period-controls select { min-width: 0; } }
