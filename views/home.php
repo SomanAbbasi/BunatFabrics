@@ -87,7 +87,7 @@ $resultCount = array_sum(array_map(static fn (array $group): int => count($group
                         $unit = (string) ($product['unit'] ?? 'meter');
                         ?>
                         <article class="product-card">
-                            <a class="product-card-link" href="<?= e(url('/product?id=' . $product['id'])) ?>">
+                            <a class="product-card-link" href="<?= e(url('/product?' . http_build_query(array_filter(['id' => $product['id'], 'q' => $search, 'category' => $activeCategory], static fn ($value): bool => $value !== '' && $value !== null)))) ?>">
                                 <div class="product-media">
                                     <?php if (! empty($product['image_path'])): ?>
                                         <img src="<?= e(ProductImageService::url((string) $product['image_path'])) ?>" alt="<?= e($product['title']) ?>" loading="lazy">
