@@ -351,3 +351,5 @@ body {
     padding: 6px;
     border-top: 1px solid #e5e7eb;
 }
+
+.order-details { min-width: 18rem; max-width: 30rem; white-space: normal; overflow-wrap: anywhere; }

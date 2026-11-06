@@ -435,6 +435,54 @@ img {
     font-size: 1rem;
 }
 
+.catalog-search label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.catalog-search-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.catalog-search-controls input {
+    flex: 1 1 220px;
+    min-width: 0;
+    max-width: 420px;
+    padding: 10px 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+}
+
+.catalog-search-controls button {
+    padding: 10px 16px;
+    border: 1px solid var(--ink);
+    border-radius: var(--radius);
+    background: var(--ink);
+    color: #fff;
+    cursor: pointer;
+}
+
+.catalog-search-controls :focus-visible {
+    outline: 3px solid var(--ink);
+    outline-offset: 3px;
+}
+
+.catalog-search-summary {
+    margin: -16px 0 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.catalog-search-summary span {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.8rem;
+}
+
 .category-nav {
     display: flex;
     flex-wrap: wrap;
@@ -912,7 +960,8 @@ img {
     font-weight: 600;
 }
 
-.field input {
+.field input,
+.field select {
     width: 100%;
     padding: 11px 13px;
     border: 1px solid var(--line);
@@ -948,6 +997,7 @@ img {
 }
 
 .field input:focus,
+.field select:focus,
 .field textarea:focus {
     outline: none;
     border-color: var(--ink);

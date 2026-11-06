@@ -113,6 +113,14 @@ $recentOrders = $recentOrders ?? [];
                 <div class="card-header"><h3 class="card-title">Products</h3><a class="btn btn-sm btn-outline-primary ms-auto" href="<?= e(url('/admin/products')) ?>">Manage</a></div>
                 <div class="card-body"><p class="fw-medium">Add photos, prices, and specifications.</p><p class="text-secondary mb-0">Published fabrics in visible categories appear on the storefront.</p></div>
             </section></div>
+            <div class="col-md-6"><section class="card w-100">
+                <div class="card-header"><h3 class="card-title">Orders</h3><a class="btn btn-sm btn-outline-primary ms-auto" href="<?= e(url('/admin/orders')) ?>">Manage</a></div>
+                <div class="card-body"><p class="fw-medium">Follow your wholesale orders.</p><p class="text-secondary mb-0">Review orders and manage their progress.</p></div>
+            </section></div>
+            <div class="col-md-6"><section class="card w-100">
+                <div class="card-header"><h3 class="card-title">Settings</h3><a class="btn btn-sm btn-outline-primary ms-auto" href="<?= e(url('/admin/settings')) ?>">Manage</a></div>
+                <div class="card-body"><p class="fw-medium">Manage your administrator account.</p><p class="text-secondary mb-0">Update your administrator profile and password.</p></div>
+            </section></div>
         </div>
         <div class="d-flex flex-wrap gap-2 mt-3">
             <a class="btn btn-primary" href="<?= e(url('/admin/products/create')) ?>">Add product</a>

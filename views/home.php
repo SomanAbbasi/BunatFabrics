@@ -10,6 +10,7 @@ use App\Core\Session;
 /** @var int|null $activeCategory */
 /** @var array<int, int> $cartQuantities */
 $totalProducts = array_sum(array_map(static fn (array $group): int => count($group['products']), $allGroups));
+$resultCount = array_sum(array_map(static fn (array $group): int => count($group['products']), $groups));
 ?>
 <section class="storefront">
     <header class="store-hero">
@@ -29,23 +30,46 @@ $totalProducts = array_sum(array_map(static fn (array $group): int => count($gro
             <p class="muted">Our collections are being prepared. Please check back soon.</p>
         </div>
     <?php else: ?>
+        <form class="catalog-search" action="<?= e(url('/')) ?>" method="get" role="search" aria-label="Fabric catalog">
+            <label for="fabric-search">Search fabrics</label>
+            <div class="catalog-search-controls">
+                <input id="fabric-search" type="search" name="q" value="<?= e($search) ?>" maxlength="100" placeholder="Try cotton or a product code">
+                <?php if ($activeCategory !== null): ?>
+                    <input type="hidden" name="category" value="<?= e((string) $activeCategory) ?>">
+                <?php endif; ?>
+                <button type="submit">Search</button>
+                <?php if ($search !== ''): ?>
+                    <a href="<?= e(url($activeCategory === null ? '/' : '/?category=' . $activeCategory)) ?>">Clear search</a>
+                <?php endif; ?>
+            </div>
+        </form>
         <nav class="category-nav" aria-label="Filter fabrics by category">
-            <a class="<?= $activeCategory === null ? 'is-active' : '' ?>" href="<?= e(url('/')) ?>" <?= $activeCategory === null ? 'aria-current="page"' : '' ?>>
+            <a class="<?= $activeCategory === null ? 'is-active' : '' ?>" href="<?= e(url($search === '' ? '/' : '/?' . http_build_query(['q' => $search]))) ?>" <?= $activeCategory === null ? 'aria-current="page"' : '' ?>>
                 All Fabrics
                 <span><?= e((string) $totalProducts) ?></span>
             </a>
             <?php foreach ($allGroups as $group): ?>
-                <a class="<?= $activeCategory === $group['id'] ? 'is-active' : '' ?>" href="<?= e(url('/?category=' . $group['id'])) ?>" <?= $activeCategory === $group['id'] ? 'aria-current="page"' : '' ?>>
+                <a class="<?= $activeCategory === $group['id'] ? 'is-active' : '' ?>" href="<?= e(url('/?' . http_build_query(array_filter(['category' => $group['id'], 'q' => $search], static fn ($value): bool => $value !== '')))) ?>" <?= $activeCategory === $group['id'] ? 'aria-current="page"' : '' ?>>
                     <?= e($group['name']) ?>
                     <span><?= e((string) count($group['products'])) ?></span>
                 </a>
             <?php endforeach; ?>
         </nav>
 
+        <?php if ($search !== ''): ?>
+            <p class="catalog-search-summary" role="status">
+                <?= e((string) $resultCount) ?> <?= $resultCount === 1 ? 'fabric' : 'fabrics' ?> found for “<?= e($search) ?>”<?= $activeCategory !== null ? ' in this category' : '' ?>.
+                <span>Category counts show all available fabrics.</span>
+            </p>
+        <?php endif; ?>
+
         <?php if ($groups === []): ?>
             <div class="empty-note">
-                <p class="empty-note-title">No fabrics in this category yet</p>
-                <p class="muted">Try another category or <a href="<?= e(url('/')) ?>">view all fabrics</a>.</p>
+                <p class="empty-note-title"><?= $search !== '' ? 'No fabrics match your search' : 'No fabrics in this category yet' ?></p>
+                <p class="muted"><?= $search !== '' ? 'Check the spelling or try a different name, product code, material, or category.' : 'Try another category.' ?> <a href="<?= e(url('/')) ?>">View all fabrics</a>.</p>
+                <?php if ($search !== '' && $activeCategory !== null && $matchesAcrossCategories > 0): ?>
+                    <p><a href="<?= e(url('/?' . http_build_query(['q' => $search]))) ?>">Search all categories for “<?= e($search) ?>”</a></p>
+                <?php endif; ?>
             </div>
         <?php endif; ?>
 
@@ -63,7 +87,7 @@ $totalProducts = array_sum(array_map(static fn (array $group): int => count($gro
                         $unit = (string) ($product['unit'] ?? 'meter');
                         ?>
                         <article class="product-card">
-                            <a class="product-card-link" href="<?= e(url('/product?id=' . $product['id'])) ?>">
+                            <a class="product-card-link" href="<?= e(url('/product?' . http_build_query(array_filter(['id' => $product['id'], 'q' => $search, 'category' => $activeCategory], static fn ($value): bool => $value !== '' && $value !== null)))) ?>">
                                 <div class="product-media">
                                     <?php if (! empty($product['image_path'])): ?>
                                         <img src="<?= e(ProductImageService::url((string) $product['image_path'])) ?>" alt="<?= e($product['title']) ?>" loading="lazy">

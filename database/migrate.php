@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 /*
 |--------------------------------------------------------------------------
-| Database migration / seeding
+| Initial database setup
 |--------------------------------------------------------------------------
 | Usage:  php database/migrate.php
 |
 |  1. Boots the app so .env + config are available.
 |  2. Executes database/schema.sql (idempotent).
-|  3. Executes database/seed.sql with the predefined demo accounts.
-|  4. Re-syncs the admin account from ADMIN_EMAIL / ADMIN_PASSWORD in .env,
+|  3. Leaves all existing accounts unchanged.
+|  4. Creates the admin account if missing from ADMIN_EMAIL / ADMIN_PASSWORD in .env,
 |     storing the password as a bcrypt hash.
 */
 
@@ -26,7 +26,7 @@ echo str_repeat('-', 40) . "\n";
 $pdo = Database::connection();
 
 runSqlFile($pdo, __DIR__ . '/schema.sql', 'schema');
-runSqlFile($pdo, __DIR__ . '/seed.sql', 'seed');
+// Existing accounts are never seeded or overwritten by setup.
 
 syncAdmin($pdo);
 
@@ -49,8 +49,7 @@ function runSqlFile(PDO $pdo, string $path, string $label): void
 }
 
 /**
- * Keep the .env admin account authoritative: create or update it with a
- * freshly generated hash so the configured password always logs in.
+ * Create the configured administrator only if that email is not already in use.
  */
 function syncAdmin(PDO $pdo): void
 {
@@ -59,8 +58,13 @@ function syncAdmin(PDO $pdo): void
     $password = (string) Env::get('ADMIN_PASSWORD', '');
 
     if ($email === '' || $password === '') {
-        echo "  [--] ADMIN_EMAIL / ADMIN_PASSWORD not set, skipped admin sync\n";
+        echo "  [--] ADMIN_EMAIL / ADMIN_PASSWORD not set, skipped admin setup\n";
 
+        return;
+    }
+
+    if ((int) $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'admin'")->fetchColumn() > 0) {
+        echo "  [--] administrator already exists, skipped setup\n";
         return;
     }
 
@@ -69,10 +73,7 @@ function syncAdmin(PDO $pdo): void
     $statement = $pdo->prepare(
         'INSERT INTO users (name, email, password, role)
          VALUES (:name, :email, :password, :role)
-         ON DUPLICATE KEY UPDATE
-            name = VALUES(name),
-            password = VALUES(password),
-            role = VALUES(role)'
+         ON DUPLICATE KEY UPDATE id = id'
     );
 
     $statement->execute([
@@ -82,5 +83,5 @@ function syncAdmin(PDO $pdo): void
         'role'     => 'admin',
     ]);
 
-    echo "  [ok] admin synced from .env ({$email})\n";
+    echo "  [ok] admin setup checked from .env ({$email})\n";
 }

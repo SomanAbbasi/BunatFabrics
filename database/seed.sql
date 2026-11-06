@@ -5,9 +5,9 @@
 --   admin@gmail.com  ->  Admin@123
 --   demo@bunat.com   ->  Demo@123
 --
--- migrate.php also re-syncs the admin account from ADMIN_EMAIL/ADMIN_PASSWORD
--- in .env, so those values always stay the source of truth.
--- Safe to re-run: duplicates are updated in place.
+-- migrate.php can initialize an admin account from ADMIN_EMAIL/ADMIN_PASSWORD
+-- in .env only if the account does not exist.
+-- Safe to re-run: existing accounts are preserved.
 -- ---------------------------------------------------------------------------
 
 USE `bunat_fabrics`;
@@ -26,7 +26,4 @@ VALUES
         '$2y$10$saHrMRCTbNWsmnquL1yqLudlSoRlqSYk1ZIQ67UDV5MzDFkXtfN9a',
         'user'
     )
-ON DUPLICATE KEY UPDATE
-    `name`     = VALUES(`name`),
-    `password` = VALUES(`password`),
-    `role`     = VALUES(`role`);
+ON DUPLICATE KEY UPDATE `id` = `id`;

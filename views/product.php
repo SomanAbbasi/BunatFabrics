@@ -10,7 +10,7 @@ use App\Core\Session;
 /** @var int $cartQuantity */
 ?>
 <section class="product-detail">
-    <a class="back-link" href="<?= e(url('/')) ?>">&larr; Back to catalog</a>
+    <a class="back-link" href="<?= e(url($catalogPath)) ?>">&larr; Back to catalog</a>
 
     <div class="product-detail-grid">
         <div class="product-gallery">
@@ -68,7 +68,7 @@ use App\Core\Session;
                 <p class="cart-inline-note"><?= icon('check-circle') ?> This fabric is in your <a href="<?= e(url('/cart')) ?>">cart</a>. You can add more or proceed to checkout.</p>
             <?php endif; ?>
 
-            <a class="button button-compact button-ghost" href="<?= e(url('/')) ?>"><?= icon('grid') ?><span>Continue browsing</span></a>
+            <a class="button button-compact button-ghost" href="<?= e(url($catalogPath)) ?>"><?= icon('grid') ?><span>Continue browsing</span></a>
         </div>
     </div>
 </section>
