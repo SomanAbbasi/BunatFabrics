@@ -1,5 +1,19 @@
 # Catalog verification
 
+## Business dashboard
+
+Run `php tests/dashboard.php` for reporting-period boundaries, escaped output,
+and empty/error states. These checks do not connect to MySQL or exercise admin
+authentication. Verify the dashboard against a disposable database and test
+guest, customer, and admin access before deployment.
+
+Dashboard revenue and average order value use the order subtotal for orders
+currently marked delivered. The selected period is based on when the order was
+created, not on its delivery or payment date. Pending, active, rejected, and
+cancelled orders do not contribute. Order queue and catalog totals are all-time;
+customer additions and sales use the selected period. Zero-priced products are
+flagged for review, not assumed to be incorrectly priced. Stock is not tracked.
+
 Run PHP checks from the repository root:
 
 ```bash
