@@ -29,6 +29,7 @@ $orders = $orders ?? [];
             <div class="account-actions">
                 <a class="button button-compact" href="<?= e(url('/')) ?>"><?= icon('grid') ?><span>Browse Catalog</span></a>
                 <a class="button button-compact button-ghost" href="<?= e(url('/orders')) ?>"><span>All My Orders</span></a>
+                <a class="button button-compact button-ghost" href="<?= e(url('/settings')) ?>">Account settings</a>
             </div>
         </article>
     </div>

@@ -35,6 +35,7 @@ $profileInitial = mb_strtoupper(mb_substr($profileName, 0, 1));
             <?php else: ?>
                 <a href="<?= e(url('/orders')) ?>">My Orders</a>
                 <a href="<?= e(url('/dashboard')) ?>">Dashboard</a>
+                <a href="<?= e(url('/settings')) ?>">Account settings</a>
             <?php endif; ?>
         </div>
         <form action="<?= e(url('/logout')) ?>" method="POST" class="profile-menu-form">

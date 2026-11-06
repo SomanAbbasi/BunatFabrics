@@ -18,6 +18,7 @@ use App\Admin\Orders\OrderApiController;
 use App\Admin\Products\ProductController;
 use App\Admin\Settings\SettingsController;
 use App\Auth\AuthController;
+use App\Auth\AccountSettingsController;
 use App\Auth\DashboardController;
 use App\Cart\CartController;
 use App\Home\HomeController;
@@ -46,6 +47,9 @@ $router->post('/login', [AuthController::class, 'login']);
 $router->post('/logout', [AuthController::class, 'logout']);
 
 // Customer Portal
+$router->get('/settings', [AccountSettingsController::class, 'index']);
+$router->post('/settings/profile', [AccountSettingsController::class, 'updateProfile']);
+$router->post('/settings/password', [AccountSettingsController::class, 'updatePassword']);
 $router->get('/dashboard', [DashboardController::class, 'index']);
 $router->get('/orders', [CustomerOrderController::class, 'index']);
 $router->get('/orders/show', [CustomerOrderController::class, 'show']);

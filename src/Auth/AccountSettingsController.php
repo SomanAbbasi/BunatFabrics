@@ -90,8 +90,6 @@ class AccountSettingsController
             'settingsPath' => $this->path(), 'profile' => $profile + $safeUser,
             'profileErrors' => $section === 'profile' ? $errors : [],
             'passwordErrors' => $section === 'password' ? $errors : [],
-            // Kept for the existing admin template until the shared forms replace it.
-            'errors' => $errors,
         ], static::ADMIN ? 'admin/layout' : 'layout');
     }
 
