@@ -1,0 +1,57 @@
+/* Shared settings forms for the existing admin and customer layouts. */
+.account-settings {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    align-items: start;
+}
+.account-settings .settings-panel { min-width: 0; padding: 0; }
+.settings-panel-heading { padding: 22px; border-bottom: 1px solid #e5e7eb; }
+.settings-panel-heading h2 { margin: 0 0 8px; font-size: 18px; font-weight: 600; }
+.settings-panel-heading p { margin: 0; color: #6b7280; font-size: 13px; line-height: 1.5; }
+.settings-form { display: grid; gap: 18px; padding: 22px; }
+.settings-field { min-width: 0; }
+.settings-field label { display: block; margin-bottom: 7px; font-size: 13px; font-weight: 600; }
+.account-settings .form-control {
+    display: block;
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    background: #fff;
+    color: #111827;
+    font: inherit;
+    font-size: 15px;
+}
+.account-settings [aria-invalid="true"] { border-color: #b42318; }
+.settings-password { position: relative; }
+.account-settings .settings-password input { padding-right: 68px; }
+.settings-toggle {
+    position: absolute;
+    inset: 1px 1px 1px auto;
+    min-width: 60px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: 0 6px 6px 0;
+    background: #f8fafc;
+    color: #374151;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.settings-toggle:hover { background: #f3f4f6; }
+.settings-toggle .settings-hide, .settings-toggle.is-visible .settings-show { display: none; }
+.settings-toggle.is-visible .settings-hide { display: inline; }
+.settings-help, .settings-error { margin: 7px 0 0; font-size: 12px; line-height: 1.5; }
+.settings-help { color: #6b7280; }
+.settings-error { color: #b42318; }
+.settings-notice { padding: 12px; border: 1px solid #fecdca; border-radius: 7px; background: #fef3f2; color: #b42318; font-size: 13px; }
+.settings-actions { padding-top: 4px; }
+.account-settings :is(input, button):focus-visible { outline: 2px solid #111827; outline-offset: 3px; }
+@media (max-width: 767.98px) {
+    .account-settings { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+    .settings-panel-heading, .settings-form { padding: 18px; }
+    .account-settings .form-control { font-size: 16px; }
+}

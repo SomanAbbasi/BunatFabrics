@@ -15,6 +15,7 @@ $activeNav = $activeNav ?? 'dashboard';
     <title><?= e($title) ?> &middot; Bunat Fabrics Admin</title>
     <link rel="stylesheet" href="<?= e(url('/assets/vendor/tabler/tabler.min.css')) ?>">
     <link rel="stylesheet" href="<?= e(url('/assets/css/admin.css')) ?>">
+    <?php if (! empty($settingsPage)): ?><link rel="stylesheet" href="<?= e(url('/assets/css/settings.css')) ?>"><?php endif; ?>
     <script src="<?= e(url('/assets/vendor/tabler/tabler.min.js')) ?>" defer></script>
     <script src="<?= e(url('/assets/js/app.js')) ?>" defer></script>
 </head>
