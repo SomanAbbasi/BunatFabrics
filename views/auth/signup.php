@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use App\Core\Session;
 
+$authPage = true;
+
 /** @var array<string, string> $errors */
 
 ?>
@@ -15,6 +17,8 @@ use App\Core\Session;
             <h1>Create account</h1>
             <p class="muted">Open a wholesale account to browse fabrics.</p>
         </header>
+
+        <?php require base_path('views/partials/google-button.php'); ?>
 
         <form action="<?= e(url('/signup')) ?>" method="POST">
             <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">

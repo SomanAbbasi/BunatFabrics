@@ -8,10 +8,24 @@
 .account-settings .settings-panel { min-width: 0; padding: 0; }
 .settings-panel-heading { padding: 22px; border-bottom: 1px solid #e5e7eb; }
 .settings-panel-heading h2 { margin: 0 0 8px; font-size: 18px; font-weight: 600; }
+.settings-panel-heading h3 { margin: 0 0 8px; font-size: 16px; font-weight: 600; }
 .settings-panel-heading p { margin: 0; color: #6b7280; font-size: 13px; line-height: 1.5; }
 .settings-form { display: grid; gap: 18px; padding: 22px; }
+.settings-form > .settings-help { margin: 0; }
+.settings-signin { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: center; }
+.settings-signin .settings-panel-heading { border-bottom: 0; }
+.settings-signin .settings-panel-heading h2 { font-size: 16px; }
+.settings-signin-details { min-width: 0; padding: 22px; }
+.settings-signin-details p { margin: 0; }
+.settings-signin-details p + p { margin-top: 8px; }
+.settings-email-verification { border-top: 1px solid #e5e7eb; }
+.settings-email-verification .settings-panel-heading { padding-bottom: 0; border-bottom: 0; }
 .settings-field { min-width: 0; }
 .settings-field label { display: block; margin-bottom: 7px; font-size: 13px; font-weight: 600; }
+.settings-field-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 6px 12px; margin-bottom: 7px; }
+.settings-field-heading label { margin-bottom: 0; }
+.settings-recovery { color: #374151; font-size: 12px; text-decoration: underline; text-underline-offset: 3px; }
+.settings-recovery:hover { color: #111827; }
 .account-settings .form-control {
     display: block;
     width: 100%;
@@ -47,11 +61,16 @@
 .settings-help, .settings-error { margin: 7px 0 0; font-size: 12px; line-height: 1.5; }
 .settings-help { color: #6b7280; }
 .settings-error { color: #b42318; }
-.settings-notice { padding: 12px; border: 1px solid #fecdca; border-radius: 7px; background: #fef3f2; color: #b42318; font-size: 13px; }
+.settings-notice { margin: 0; padding: 12px; border: 1px solid #fecdca; border-radius: 7px; background: #fef3f2; color: #b42318; font-size: 13px; }
 .settings-actions { padding-top: 4px; }
-.account-settings :is(input, button):focus-visible { outline: 2px solid #111827; outline-offset: 3px; }
+.account-settings :is(input, button, a):focus-visible { outline: 2px solid #111827; outline-offset: 3px; }
+@media (min-width: 768px) {
+    .account-settings > .settings-panel:not(.settings-signin) > .settings-panel-heading { min-height: 120px; }
+}
 @media (max-width: 767.98px) {
     .account-settings { grid-template-columns: minmax(0, 1fr); gap: 20px; }
-    .settings-panel-heading, .settings-form { padding: 18px; }
+    .settings-signin { grid-template-columns: minmax(0, 1fr); }
+    .settings-panel-heading, .settings-form, .settings-signin-details { padding: 18px; }
+    .settings-signin .settings-form, .settings-signin-details { padding-top: 0; }
     .account-settings .form-control { font-size: 16px; }
 }

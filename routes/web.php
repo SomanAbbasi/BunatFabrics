@@ -40,6 +40,12 @@ $router->post('/checkout', [CartController::class, 'placeOrder']);
 $router->get('/checkout/success', [CartController::class, 'success']);
 
 // Authentication
+$router->post('/auth/google', [App\Auth\GoogleController::class, 'start']);
+$router->get('/auth/google/callback', [App\Auth\GoogleController::class, 'callback']);
+$router->get('/forgot-password', [App\Auth\RecoveryController::class, 'forgot']);
+$router->post('/forgot-password', [App\Auth\RecoveryController::class, 'request']);
+$router->get('/reset-password', [App\Auth\RecoveryController::class, 'form']);
+$router->post('/reset-password', [App\Auth\RecoveryController::class, 'reset']);
 $router->get('/signup', [AuthController::class, 'showSignup']);
 $router->post('/signup', [AuthController::class, 'signup']);
 $router->get('/login', [AuthController::class, 'showLogin']);
@@ -49,6 +55,7 @@ $router->post('/logout', [AuthController::class, 'logout']);
 // Customer Portal
 $router->get('/settings', [AccountSettingsController::class, 'index']);
 $router->post('/settings/profile', [AccountSettingsController::class, 'updateProfile']);
+$router->post('/settings/email/verify', [AccountSettingsController::class, 'verifyEmail']);
 $router->post('/settings/password', [AccountSettingsController::class, 'updatePassword']);
 $router->get('/dashboard', [DashboardController::class, 'index']);
 $router->get('/orders', [CustomerOrderController::class, 'index']);
@@ -61,6 +68,7 @@ $router->get('/admin/orders/show', [AdminOrderController::class, 'show']);
 $router->post('/admin/orders/status', [AdminOrderController::class, 'updateStatus']);
 $router->get('/admin/settings', [SettingsController::class, 'index']);
 $router->post('/admin/settings/profile', [SettingsController::class, 'updateProfile']);
+$router->post('/admin/settings/email/verify', [SettingsController::class, 'verifyEmail']);
 $router->post('/admin/settings/password', [SettingsController::class, 'updatePassword']);
 
 // Admin API

@@ -6,7 +6,7 @@ namespace App\Auth;
 
 use App\Core\Session;
 use App\Core\View;
-use PDOException;
+use Throwable;
 
 /** Shared request handling; the admin subclass requires administrator access. */
 class AccountSettingsController
@@ -28,6 +28,11 @@ class AccountSettingsController
         $this->update('password');
     }
 
+    public function verifyEmail(): void
+    {
+        $this->update('email');
+    }
+
     private function update(string $section): void
     {
         $user = $this->requireUser();
@@ -41,9 +46,9 @@ class AccountSettingsController
         $email = trim($this->input('email'));
         try {
             $service = new AccountSettingsService();
-            $errors = $section === 'profile'
+            $errors = $section === 'email' ? $service->verifyEmail((int) $user['id'], $this->input('code')) : ($section === 'profile'
                 ? $service->updateProfile((int) $user['id'], $name, $email, $this->input('current_password'))
-                : $service->updatePassword((int) $user['id'], $this->input('current_password'), $this->input('new_password'), $this->input('new_password_confirmation'));
+                : $service->updatePassword((int) $user['id'], $this->input('current_password'), $this->input('new_password'), $this->input('new_password_confirmation')));
             if ($errors === []) {
                 $freshUser = (new AuthService())->find((int) $user['id']);
                 if ($freshUser === null) {
@@ -53,12 +58,12 @@ class AccountSettingsController
                 // Keep this verified session signed in, with a new ID and CSRF token.
                 Guard::login($freshUser);
                 Session::forget('_csrf_token');
-                Session::flash('status', $section === 'profile' ? 'Your profile has been updated.' : 'Your password has been changed.');
+                Session::flash('status', $section === 'profile' ? ($service->pendingEmail((int) $user['id']) ? 'Name saved. Enter the code sent to your new email to finish changing it.' : 'Your profile has been updated.') : ($section === 'email' ? 'Your email address has been verified and updated.' : 'Your password has been changed.'));
                 redirect($this->path());
             }
             http_response_code(422);
-        } catch (PDOException $exception) {
-            error_log('Account settings update failed: ' . $exception->getCode());
+        } catch (Throwable $exception) {
+            error_log('Account settings update failed.');
             $errors = ['_form' => 'We could not save your changes. Please try again later.'];
             http_response_code(503);
         }
@@ -84,12 +89,17 @@ class AccountSettingsController
 
     private function render(array $user, array $errors = [], string $section = '', array $profile = []): void
     {
+        AuthSecurity::privateResponse();
         $safeUser = array_intersect_key($user, array_flip(['id', 'name', 'email', 'role', 'created_at']));
         View::render(static::ADMIN ? 'admin/settings/index' : 'settings/index', [
             'title' => 'Account settings', 'activeNav' => 'settings', 'user' => $safeUser,
             'settingsPath' => $this->path(), 'profile' => $profile + $safeUser,
             'profileErrors' => $section === 'profile' ? $errors : [],
             'passwordErrors' => $section === 'password' ? $errors : [],
+            'emailErrors' => $section === 'email' ? $errors : [],
+            'hasPassword' => $user['password'] !== null,
+            'googleLinked' => (new GoogleIdentityService())->linked((int) $user['id']),
+            'pendingEmail' => (new AccountSettingsService())->pendingEmail((int) $user['id']),
         ], static::ADMIN ? 'admin/layout' : 'layout');
     }
 

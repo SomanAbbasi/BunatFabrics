@@ -21,7 +21,7 @@ final class Guard
 
     public static function check(): bool
     {
-        return self::id() !== null;
+        return self::user() !== null;
     }
 
     public static function id(): ?int
@@ -43,7 +43,13 @@ final class Guard
             return null;
         }
 
-        return self::$cachedUser = (new AuthService())->find($id);
+        $user = (new AuthService())->find($id);
+        $stamp = Session::get('auth_stamp');
+        if (!$user || !is_string($stamp) || !hash_equals($stamp, AuthSecurity::stamp($user))) {
+            self::logout();
+            return null;
+        }
+        return self::$cachedUser = $user;
     }
 
     public static function isAdmin(): bool
@@ -72,8 +78,10 @@ final class Guard
 
     public static function login(array $user): void
     {
+        Session::forget('google_verified');
         Session::regenerate();
         Session::put(self::SESSION_KEY, (int) $user['id']);
+        Session::put('auth_stamp', AuthSecurity::stamp($user));
 
         self::$cachedUser = $user;
     }
@@ -83,5 +91,8 @@ final class Guard
         self::$cachedUser = null;
 
         Session::forget(self::SESSION_KEY);
+        Session::forget('auth_stamp');
+        Session::forget('google_verified');
+        Session::forget('google_flow');
     }
 }

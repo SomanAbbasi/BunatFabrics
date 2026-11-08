@@ -33,7 +33,9 @@ function verifySettings(bool $condition, string $label): void
     $checks[] = $label;
 }
 $auth = new AuthService($pdo);
-$settings = new AccountSettingsService($pdo);
+require_once __DIR__ . '/TestAccountMailer.php';
+$settingsMailer = new TestAccountMailer();
+$settings = new AccountSettingsService($pdo, $settingsMailer);
 $insert = $pdo->prepare('INSERT INTO users (name,email,password,role) VALUES (?,?,?,?)');
 foreach (['admin', 'user'] as $role) {
     $insert->execute(['Original Name', "$role@example.test", password_hash('Original123', PASSWORD_BCRYPT), $role]);
@@ -46,7 +48,10 @@ foreach (['admin', 'user'] as $role) {
     verifySettings(isset($settings->updateProfile($id, 'A', 'invalid', 'Original123')['name']), "$role rejects invalid profile");
     verifySettings($auth->find($id) === $original, "$role invalid profile makes no write");
     verifySettings($settings->updateProfile($id, 'Updated Name', "$role@example.test", 'Original123') === [], "$role name update succeeds");
-    verifySettings($settings->updateProfile($id, 'Updated Name', "new-$role@example.test", 'Original123') === [], "$role email update succeeds");
+    verifySettings($settings->updateProfile($id, 'Updated Name', "new-$role@example.test", 'Original123') === [], "$role email verification request succeeds");
+    verifySettings($auth->find($id)['email'] === "$role@example.test", "$role email stays unchanged until verification");
+    preg_match('/code is: ([0-9]{6})/', end($settingsMailer->messages)['body'], $code);
+    verifySettings($settings->verifyEmail($id, $code[1]) === [], "$role verified email update succeeds");
     verifySettings($settings->updateProfile($id, 'Updated Name', "new-$role@example.test", 'Original123') === [], "$role unchanged profile is accepted");
     $updated = $auth->find($id);
     verifySettings((int) $updated['id'] === $id && $updated['role'] === $role, "$role identity and role preserved");
@@ -74,6 +79,7 @@ verifySettings(isset($registered['user']) && $auth->attempt('signup@example.test
 Session::flashInput(['name'=>'Safe','current_password'=>'secret','new_password'=>'secret','new_password_confirmation'=>'secret','password'=>'secret','password_confirmation'=>'secret']);
 verifySettings(Session::get('_old_input') === ['name'=>'Safe'], 'flashed input excludes all password fields');
 Session::clearOldInput();
+$pdo->exec('DELETE FROM auth_limits');
 foreach ($checks as $label) {
     echo "PASS: $label\n";
 }

@@ -58,6 +58,8 @@ final class AuthService
             ],
         );
 
+        $errors += AuthSecurity::passwordErrors((string) ($data['password'] ?? ''), (string) ($data['password_confirmation'] ?? ''));
+
         $email = strtolower(trim((string) ($data['email'] ?? '')));
 
         if (! isset($errors['email']) && $this->findByEmail($email) !== null) {
@@ -90,16 +92,22 @@ final class AuthService
     {
         $user = $this->findByEmail($email);
 
+        if (strlen($password) > 4096 || str_contains($password, "\0")) { return null; }
+
         if ($user === null || ! password_verify($password, (string) $user['password'])) {
             return null;
         }
 
         if (password_needs_rehash((string) $user['password'], PASSWORD_BCRYPT)) {
-            $update = $this->pdo->prepare('UPDATE users SET password = :password WHERE id = :id');
+            $update = $this->pdo->prepare('UPDATE users SET password = :password WHERE id = :id AND password = :old_password');
+            $newHash = password_hash($password, PASSWORD_BCRYPT);
             $update->execute([
-                'password' => password_hash($password, PASSWORD_BCRYPT),
+                'password' => $newHash,
                 'id'       => $user['id'],
+                'old_password' => $user['password'],
             ]);
+            if ($update->rowCount() !== 1) { return null; }
+            $user['password'] = $newHash;
         }
 
         return $user;

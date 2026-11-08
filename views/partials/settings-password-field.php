@@ -14,7 +14,12 @@ if ($fieldError !== null) {
 }
 ?>
 <div class="settings-field">
-    <label for="<?= e($field['id']) ?>"><?= e($field['label']) ?></label>
+    <div class="settings-field-heading">
+        <label for="<?= e($field['id']) ?>"><?= e($field['label']) ?></label>
+        <?php if ($field['autocomplete'] === 'current-password'): ?>
+            <a class="settings-recovery" href="<?= e(url('/forgot-password')) ?>">Forgot password?</a>
+        <?php endif; ?>
+    </div>
     <div class="settings-password">
         <input class="form-control" type="password" id="<?= e($field['id']) ?>" name="<?= e($field['name']) ?>" autocomplete="<?= e($field['autocomplete']) ?>" required <?= $field['autocomplete'] === 'new-password' ? 'minlength="8" maxlength="72"' : '' ?> <?= $fieldError !== null ? 'aria-invalid="true"' : '' ?> <?= $descriptions !== [] ? 'aria-describedby="' . e(implode(' ', $descriptions)) . '"' : '' ?>>
         <button class="settings-toggle" type="button" data-toggle-password="<?= e($field['id']) ?>" aria-controls="<?= e($field['id']) ?>" aria-label="Show password" aria-pressed="false"><span class="settings-show">Show</span><span class="settings-hide">Hide</span></button>

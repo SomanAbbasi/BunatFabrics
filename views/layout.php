@@ -23,7 +23,7 @@ $cartCount = (new CartService())->count();
     <?php endif; ?>
     <script src="<?= e(url('/assets/js/app.js')) ?>" defer></script>
 </head>
-<body>
+<body<?= !empty($authPage) ? ' class="auth-page"' : '' ?>>
     <header class="site-header">
         <a class="brand" href="<?= e(url('/')) ?>">
             <span class="brand-mark" aria-hidden="true">B</span>

@@ -12,6 +12,10 @@ declare(strict_types=1);
 
 define('BASE_PATH', __DIR__);
 
+if (is_file(BASE_PATH . '/vendor/autoload.php')) {
+    require BASE_PATH . '/vendor/autoload.php';
+}
+
 /*
  * PSR-4 style autoloader: App\Core\Env -> src/Core/Env.php
  */

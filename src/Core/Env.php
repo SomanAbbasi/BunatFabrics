@@ -65,7 +65,8 @@ final class Env
      */
     public static function get(string $key, mixed $default = null): mixed
     {
-        return self::$items[$key] ?? $default;
+        $external = getenv($key);
+        return $external !== false ? $external : (self::$items[$key] ?? $default);
     }
 
     /**
@@ -73,7 +74,7 @@ final class Env
      */
     public static function bool(string $key, bool $default = false): bool
     {
-        $value = self::$items[$key] ?? null;
+        $value = self::get($key);
 
         if ($value === null) {
             return $default;

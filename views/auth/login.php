@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use App\Core\Session;
 
+$authPage = true;
+
 /** @var array<string, string> $errors */
 
 ?>
@@ -15,6 +17,8 @@ use App\Core\Session;
             <h1>Sign in</h1>
             <p class="muted">Access your wholesale account.</p>
         </header>
+
+        <?php require base_path('views/partials/google-button.php'); ?>
 
         <form action="<?= e(url('/login')) ?>" method="POST">
             <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
@@ -40,6 +44,7 @@ use App\Core\Session;
             <button type="submit" class="button">Sign in</button>
         </form>
 
+        <p class="center"><a href="<?= e(url('/forgot-password')) ?>">Forgot password?</a></p>
         <p class="muted center auth-foot">New to Bunat Fabrics? <a href="<?= e(url('/signup')) ?>">Create an account</a></p>
     </div>
 </section>
