@@ -11,7 +11,9 @@ composer.phar
 /storage/mail/*
 AGENTS.md
 
-# Uploaded product images are runtime data
+# Uploaded product images are runtime data, but catalog seeds are tracked
 public/uploads/*
 !public/uploads/.gitkeep
 !public/uploads/.htaccess
+!public/uploads/catalog/
+!public/uploads/catalog/**
