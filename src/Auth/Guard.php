@@ -64,6 +64,7 @@ final class Guard
 
         if ($user === null) {
             self::logout();
+            Session::setIntendedUrl($_SERVER['REQUEST_URI'] ?? '/admin');
             redirect('/login');
         }
 

@@ -103,7 +103,8 @@ final class AuthController
 
         Guard::login($user);
 
-        redirect(Session::pullIntendedUrl('/'));
+        $defaultTarget = ($user['role'] ?? '') === 'admin' ? '/admin' : '/';
+        redirect(Session::pullIntendedUrl($defaultTarget));
     }
 
     public function logout(): void

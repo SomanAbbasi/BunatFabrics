@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Orders;
 
 use App\Auth\Guard;
+use App\Core\Session;
 use App\Core\View;
 
 /**
@@ -24,6 +25,7 @@ final class CustomerOrderController
         $user = Guard::user();
 
         if ($user === null) {
+            Session::setIntendedUrl($_SERVER['REQUEST_URI'] ?? '/orders');
             redirect('/login');
         }
 
@@ -45,6 +47,7 @@ final class CustomerOrderController
         $user = Guard::user();
 
         if ($user === null) {
+            Session::setIntendedUrl($_SERVER['REQUEST_URI'] ?? '/orders');
             redirect('/login');
         }
 

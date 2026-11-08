@@ -52,7 +52,7 @@ $orders = $orders ?? [];
                 <a class="button button-compact" href="<?= e(url('/')) ?>"><?= icon('grid') ?><span>Browse Fabrics</span></a>
             </div>
         <?php else: ?>
-            <div class="account-orders-scroll" role="region" aria-labelledby="recent-orders-title" tabindex="0">
+            <div class="orders-desktop-view account-orders-scroll" role="region" aria-labelledby="recent-orders-title" tabindex="0">
                 <table style="width: 100%; border-collapse: collapse; font-size: 0.92rem;">
                     <thead>
                         <tr style="border-bottom: 2px solid var(--line); text-align: left;">
@@ -73,9 +73,9 @@ $orders = $orders ?? [];
                             ?>
                             <tr style="border-bottom: 1px solid var(--line);">
                                 <td style="padding: 14px; font-weight: 700; color: var(--ink);">
-                                    <?= e($orderNum) ?>
+                                    <a href="<?= e(url('/orders/show?id=' . $order['id'])) ?>"><?= e($orderNum) ?></a>
                                 </td>
-                                <td style="padding: 14px; color: var(--muted); font-size: 0.86rem;">
+                                <td style="padding: 14px; color: var(--muted); font-size: 0.86rem; white-space: nowrap;">
                                     <?= e(date('M d, Y', strtotime((string) $order['created_at']))) ?>
                                 </td>
                                 <td style="padding: 14px; font-weight: 500;">
@@ -84,15 +84,15 @@ $orders = $orders ?? [];
                                         <span class="text-secondary" style="font-size: 0.82rem; color: var(--muted);">(<?= e(number_format((int) $order['total_quantity'])) ?>m)</span>
                                     <?php endif; ?>
                                 </td>
-                                <td style="padding: 14px;">
+                                <td style="padding: 14px; white-space: nowrap;">
                                     <span class="status-badge <?= e($statusClass) ?>">
                                         <?= e(ucfirst($status)) ?>
                                     </span>
                                 </td>
-                                <td style="padding: 14px; text-align: right; font-weight: 700; color: var(--ink);">
+                                <td style="padding: 14px; text-align: right; font-weight: 700; color: var(--ink); white-space: nowrap;">
                                     <?= e(pkr((float) $order['subtotal_pkr'])) ?>
                                 </td>
-                                <td style="padding: 14px; text-align: center;">
+                                <td style="padding: 14px; text-align: center; white-space: nowrap;">
                                     <a class="button button-compact button-ghost" href="<?= e(url('/orders/show?id=' . $order['id'])) ?>" aria-label="<?= e('View order ' . $orderNum) ?>">
                                         View order
                                     </a>
@@ -101,6 +101,48 @@ $orders = $orders ?? [];
                         <?php endforeach; ?>
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Mobile Card Layout for Phone Screen Viewports -->
+            <div class="orders-mobile-cards" aria-label="Recent orders mobile list">
+                <?php foreach (array_slice($orders, 0, 5) as $order): ?>
+                    <?php
+                    $orderNum = ! empty($order['order_number']) ? $order['order_number'] : sprintf('BNT-%05d', $order['id']);
+                    $status = (string) ($order['status'] ?? 'pending');
+                    $statusClass = 'status-badge-' . $status;
+                    $orderDate = date('M d, Y, h:i A', strtotime((string) $order['created_at']));
+                    ?>
+                    <article class="order-card-mobile">
+                        <header class="order-card-head">
+                            <span class="order-id"><?= e($orderNum) ?></span>
+                            <span class="status-badge <?= e($statusClass) ?>"><?= e(ucfirst($status)) ?></span>
+                        </header>
+                        <div class="order-card-body">
+                            <div class="order-card-row">
+                                <span class="order-label">Placed on</span>
+                                <span class="order-val"><?= e($orderDate) ?></span>
+                            </div>
+                            <div class="order-card-row">
+                                <span class="order-label">Volume</span>
+                                <span class="order-val">
+                                    <strong><?= e((string) ($order['item_lines'] ?? 1)) ?></strong> lines
+                                    <?php if (! empty($order['total_quantity'])): ?>
+                                        (<?= e(number_format((int) $order['total_quantity'])) ?>m)
+                                    <?php endif; ?>
+                                </span>
+                            </div>
+                            <div class="order-card-row">
+                                <span class="order-label">Total Amount</span>
+                                <span class="order-val order-total"><?= e(pkr((float) $order['subtotal_pkr'])) ?></span>
+                            </div>
+                        </div>
+                        <footer class="order-card-footer">
+                            <a class="button button-compact button-ghost" href="<?= e(url('/orders/show?id=' . $order['id'])) ?>">
+                                View Order Details &rarr;
+                            </a>
+                        </footer>
+                    </article>
+                <?php endforeach; ?>
             </div>
         <?php endif; ?>
     </section>

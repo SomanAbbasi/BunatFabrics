@@ -194,8 +194,10 @@ final class CartController
             redirect('/checkout');
         }
 
+        $subtotal = $this->cart->subtotal();
+
         try {
-            $orderId = (new OrderService())->place((int) $user['id'], $items, $contact);
+            $orderId = (new OrderService())->place((int) $user['id'], $items, $subtotal, $contact);
         } catch (Throwable $exception) {
             error_log('Order placement failed: ' . $exception->getMessage());
             Session::flash('error', 'We could not place your order. Please try again.');

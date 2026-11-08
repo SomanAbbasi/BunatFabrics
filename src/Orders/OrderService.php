@@ -59,42 +59,51 @@ final class OrderService
 
         try {
             $order = $this->pdo->prepare(
-                "INSERT INTO orders (user_id, status, subtotal_pkr, contact_phone, shipping_address, order_number)
-                 VALUES (:user_id, 'pending', :subtotal, :phone, :address, '')"
+                "INSERT INTO orders (user_id, status, subtotal_pkr, subtotal, contact_phone, delivery_phone, shipping_address, delivery_address, city, payment_method, order_number, order_no, tracking_number)
+                 VALUES (:user_id, 'pending', :subtotal_pkr, :subtotal, :phone, :delivery_phone, :address, :delivery_address, :city, :payment_method, '', '', '')"
             );
             $order->execute([
-                'user_id'  => $userId,
-                'subtotal' => $subtotal,
-                'phone'    => $contact['phone'],
-                'address'  => $contact['address'],
+                'user_id'          => $userId,
+                'subtotal_pkr'     => $subtotal,
+                'subtotal'         => $subtotal,
+                'phone'            => $contact['phone'],
+                'delivery_phone'   => $contact['phone'],
+                'address'          => $contact['address'],
+                'delivery_address' => $contact['address'],
+                'city'             => $contact['city'] ?? null,
+                'payment_method'   => $contact['payment_method'] ?? null,
             ]);
 
             $orderId = (int) $this->pdo->lastInsertId();
             $orderNumber = sprintf('BNT-%05d', $orderId);
 
-            $updateNumber = $this->pdo->prepare('UPDATE orders SET order_number = :order_number WHERE id = :id');
+            $updateNumber = $this->pdo->prepare('UPDATE orders SET order_number = :order_number, order_no = :order_no WHERE id = :id');
             $updateNumber->execute([
                 'order_number' => $orderNumber,
+                'order_no'     => $orderNumber,
                 'id'           => $orderId,
             ]);
 
             $line = $this->pdo->prepare(
                 'INSERT INTO order_items
-                    (order_id, product_id, product_code, title, unit, unit_price_pkr, quantity, line_total_pkr)
+                    (order_id, product_id, product_code, title, fabric_title, unit, unit_price_pkr, unit_price, quantity, line_total_pkr, line_total)
                  VALUES
-                    (:order_id, :product_id, :product_code, :title, :unit, :unit_price, :quantity, :line_total)'
+                    (:order_id, :product_id, :product_code, :title, :fabric_title, :unit, :unit_price_pkr, :unit_price, :quantity, :line_total_pkr, :line_total)'
             );
 
             foreach ($items as $item) {
                 $line->execute([
-                    'order_id'     => $orderId,
-                    'product_id'   => (int) $item['id'],
-                    'product_code' => (string) $item['product_code'],
-                    'title'        => (string) $item['title'],
-                    'unit'         => (string) $item['unit'],
-                    'unit_price'   => (float) $item['price_pkr'],
-                    'quantity'     => (int) $item['quantity'],
-                    'line_total'   => (float) $item['line_total'],
+                    'order_id'       => $orderId,
+                    'product_id'     => (int) $item['id'],
+                    'product_code'   => (string) $item['product_code'],
+                    'title'          => (string) $item['title'],
+                    'fabric_title'   => (string) $item['title'],
+                    'unit'           => (string) $item['unit'],
+                    'unit_price_pkr' => (float) $item['price_pkr'],
+                    'unit_price'     => (float) $item['price_pkr'],
+                    'quantity'       => (int) $item['quantity'],
+                    'line_total_pkr' => (float) $item['line_total'],
+                    'line_total'     => (float) $item['line_total'],
                 ]);
             }
 
