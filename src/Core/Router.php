@@ -91,6 +91,10 @@ final class Router
         error_log('[Application Error] ' . $exception->getMessage() . ' in ' . $exception->getFile() . ':' . $exception->getLine());
         http_response_code(500);
 
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+
         $uri = $_SERVER['REQUEST_URI'] ?? '';
         if (str_starts_with($uri, '/api/')) {
             header('Content-Type: application/json; charset=utf-8');

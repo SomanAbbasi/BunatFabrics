@@ -14,9 +14,11 @@ $resultCount = array_sum(array_map(static fn (array $group): int => count($group
 ?>
 <section class="storefront">
     <header class="store-hero">
-        <span class="eyebrow">Wholesale Fabric Sourcing</span>
-        <h1>Fabric Collections</h1>
-        <p>Browse collections, review specifications (width, weight, composition), and enter custom wholesale meterage.</p>
+        <div class="store-hero-content">
+            <span class="eyebrow"><span class="eyebrow-dot"></span> B2B Wholesale Fabric Sourcing</span>
+            <h1>Fabric Collections</h1>
+            <p>Browse collections, review specifications (width, weight, composition), and enter custom wholesale meterage.</p>
+        </div>
     </header>
 
     <?php if ($unavailable): ?>
@@ -31,27 +33,28 @@ $resultCount = array_sum(array_map(static fn (array $group): int => count($group
         </div>
     <?php else: ?>
         <form class="catalog-search" action="<?= e(url('/')) ?>" method="get" role="search" aria-label="Fabric catalog">
-            <label for="fabric-search">Search fabrics</label>
+            <label for="fabric-search" class="visually-hidden">Search fabrics</label>
             <div class="catalog-search-controls">
-                <input id="fabric-search" type="search" name="q" value="<?= e($search) ?>" maxlength="100" placeholder="Try cotton or a product code">
+                <span class="catalog-search-icon" aria-hidden="true"><?= icon('search') ?></span>
+                <input id="fabric-search" type="search" name="q" value="<?= e($search) ?>" maxlength="100" placeholder="Try cotton, silk, or product code...">
                 <?php if ($activeCategory !== null): ?>
                     <input type="hidden" name="category" value="<?= e((string) $activeCategory) ?>">
                 <?php endif; ?>
-                <button type="submit">Search</button>
+                <button type="submit" class="search-submit-btn">Search</button>
                 <?php if ($search !== ''): ?>
-                    <a href="<?= e(url($activeCategory === null ? '/' : '/?category=' . $activeCategory)) ?>">Clear search</a>
+                    <a class="search-clear-link" href="<?= e(url($activeCategory === null ? '/' : '/?category=' . $activeCategory)) ?>">Clear</a>
                 <?php endif; ?>
             </div>
         </form>
         <nav class="category-nav" aria-label="Filter fabrics by category">
-            <a class="<?= $activeCategory === null ? 'is-active' : '' ?>" href="<?= e(url($search === '' ? '/' : '/?' . http_build_query(['q' => $search]))) ?>" <?= $activeCategory === null ? 'aria-current="page"' : '' ?>>
+            <a class="category-pill <?= $activeCategory === null ? 'is-active' : '' ?>" href="<?= e(url($search === '' ? '/' : '/?' . http_build_query(['q' => $search]))) ?>" <?= $activeCategory === null ? 'aria-current="page"' : '' ?>>
                 All Fabrics
-                <span><?= e((string) $totalProducts) ?></span>
+                <span class="pill-count"><?= e((string) $totalProducts) ?></span>
             </a>
             <?php foreach ($allGroups as $group): ?>
-                <a class="<?= $activeCategory === $group['id'] ? 'is-active' : '' ?>" href="<?= e(url('/?' . http_build_query(array_filter(['category' => $group['id'], 'q' => $search], static fn ($value): bool => $value !== '')))) ?>" <?= $activeCategory === $group['id'] ? 'aria-current="page"' : '' ?>>
+                <a class="category-pill <?= $activeCategory === $group['id'] ? 'is-active' : '' ?>" href="<?= e(url('/?' . http_build_query(array_filter(['category' => $group['id'], 'q' => $search], static fn ($value): bool => $value !== '')))) ?>" <?= $activeCategory === $group['id'] ? 'aria-current="page"' : '' ?>>
                     <?= e($group['name']) ?>
-                    <span><?= e((string) count($group['products'])) ?></span>
+                    <span class="pill-count"><?= e((string) count($group['products'])) ?></span>
                 </a>
             <?php endforeach; ?>
         </nav>

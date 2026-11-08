@@ -63,7 +63,7 @@ $formattedDate = date('F j, Y, g:i A', strtotime((string) $order['created_at']))
         </div>
     <?php endif; ?>
 
-    <div class="cart-layout" style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: start;">
+    <div class="cart-layout order-detail-layout">
         <div class="panel" style="padding: 0; overflow: hidden;">
             <div style="padding: 16px 20px; border-bottom: 1px solid var(--line); font-weight: 700; font-size: 1rem;">
                 Items in Order (<?= count($items) ?> <?= count($items) === 1 ? 'fabric' : 'fabrics' ?>)

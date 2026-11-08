@@ -43,6 +43,8 @@ final class GoogleOidc extends OpenIDConnectClient
 
     public static function enabled(): bool
     {
-        return Env::get('GOOGLE_CLIENT_ID', '') !== '' && Env::get('GOOGLE_CLIENT_SECRET', '') !== '';
+        return class_exists(OpenIDConnectClient::class)
+            && Env::get('GOOGLE_CLIENT_ID', '') !== ''
+            && Env::get('GOOGLE_CLIENT_SECRET', '') !== '';
     }
 }

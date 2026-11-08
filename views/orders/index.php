@@ -18,8 +18,8 @@ declare(strict_types=1);
             <a class="button button-compact" href="<?= e(url('/')) ?>"><?= icon('grid') ?><span>Browse Fabrics</span></a>
         </div>
     <?php else: ?>
-        <div class="panel" style="padding: 0; overflow: hidden;">
-            <div style="overflow-x: auto;">
+        <div class="panel orders-panel" style="padding: 0; overflow: hidden;">
+            <div class="orders-desktop-view" style="overflow-x: auto;">
                 <table class="orders-table" style="width: 100%; border-collapse: collapse; font-size: 0.92rem;">
                     <thead>
                         <tr style="background: var(--surface-soft); border-bottom: 2px solid var(--line); text-align: left;">
@@ -74,6 +74,46 @@ declare(strict_types=1);
                         <?php endforeach; ?>
                     </tbody>
                 </table>
+            </div>
+
+            <div class="orders-mobile-cards">
+                <?php foreach ($orders as $order): ?>
+                    <?php
+                    $orderNum = ! empty($order['order_number']) ? $order['order_number'] : sprintf('BNT-%05d', $order['id']);
+                    $status = (string) ($order['status'] ?? 'pending');
+                    $statusClass = 'status-badge-' . $status;
+                    $orderDate = date('M d, Y, h:i A', strtotime((string) $order['created_at']));
+                    $shippingShort = ! empty($order['shipping_address']) ? mb_strimwidth((string) $order['shipping_address'], 0, 48, '...') : '—';
+                    ?>
+                    <article class="order-mobile-card">
+                        <div class="order-card-header">
+                            <div>
+                                <span class="order-card-num"><a href="<?= e(url('/orders/show?id=' . $order['id'])) ?>"><?= e($orderNum) ?></a></span>
+                                <span class="order-card-date"><?= e($orderDate) ?></span>
+                            </div>
+                            <span class="status-badge <?= e($statusClass) ?>"><?= e(ucfirst($status)) ?></span>
+                        </div>
+                        <div class="order-card-body">
+                            <div class="order-card-detail">
+                                <span class="muted">Volume:</span>
+                                <strong><?= e((string) ($order['item_lines'] ?? 1)) ?> lines <?= !empty($order['total_quantity']) ? '(' . number_format((int) $order['total_quantity']) . 'm)' : '' ?></strong>
+                            </div>
+                            <div class="order-card-detail">
+                                <span class="muted">Destination:</span>
+                                <span><?= e($shippingShort) ?></span>
+                            </div>
+                            <div class="order-card-detail order-card-total-row">
+                                <span class="muted">Total:</span>
+                                <strong class="order-card-total"><?= e(pkr((float) $order['subtotal_pkr'])) ?></strong>
+                            </div>
+                        </div>
+                        <div class="order-card-footer">
+                            <a class="button button-compact button-ghost w-100" href="<?= e(url('/orders/show?id=' . $order['id'])) ?>">
+                                View Details &rarr;
+                            </a>
+                        </div>
+                    </article>
+                <?php endforeach; ?>
             </div>
 
             <?php if (($totalPages ?? 1) > 1): ?>

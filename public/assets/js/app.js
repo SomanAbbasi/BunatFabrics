@@ -96,27 +96,81 @@
     document.addEventListener('keydown', function (event) {
         if (event.key === 'Escape') {
             closeProfileMenus(null);
+            var siteHeader = document.querySelector('.site-header');
+            var navToggle = document.getElementById('nav-toggle');
+            if (siteHeader && siteHeader.classList.contains('is-nav-open')) {
+                siteHeader.classList.remove('is-nav-open');
+                if (navToggle) {
+                    navToggle.setAttribute('aria-expanded', 'false');
+                }
+            }
         }
     });
+
+    /* Admin sidebar collapse toggle fallback ------------------------------- */
+
+    document.addEventListener('click', function (event) {
+        var toggler = event.target.closest('[data-bs-toggle="collapse"]');
+        if (!toggler) {
+            return;
+        }
+
+        var targetSelector = toggler.getAttribute('data-bs-target') || toggler.getAttribute('href');
+        if (!targetSelector) {
+            return;
+        }
+
+        var target = document.querySelector(targetSelector);
+        if (!target) {
+            return;
+        }
+
+        // Progressive fallback if bootstrap event didn't fire
+        if (!window.bootstrap) {
+            event.preventDefault();
+            var isOpen = target.classList.toggle('show');
+            toggler.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        }
+    });
+
+    /* Mobile navigation toggle -------------------------------------------- */
+
+    var navToggle = document.getElementById('nav-toggle');
+    var siteHeader = document.querySelector('.site-header');
+
+    if (navToggle && siteHeader) {
+        navToggle.addEventListener('click', function (event) {
+            event.stopPropagation();
+            var isOpen = siteHeader.classList.toggle('is-nav-open');
+            navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+
+        document.addEventListener('click', function (event) {
+            if (!event.target.closest('.site-header') && siteHeader.classList.contains('is-nav-open')) {
+                siteHeader.classList.remove('is-nav-open');
+                navToggle.setAttribute('aria-expanded', 'false');
+            }
+        });
+    }
 
     /* Seamless Add-to-Cart (Stays on page, updates header count) ----------- */
 
     function updateHeaderCartCount(count) {
-        var badge = document.getElementById('header-cart-count');
-        var navCart = document.querySelector('.nav-cart');
+        var badges = document.querySelectorAll('#header-cart-count, #mobile-cart-count');
+        var navCarts = document.querySelectorAll('.nav-cart, .nav-cart-mobile');
 
-        if (badge) {
+        badges.forEach(function (badge) {
             badge.textContent = count;
             badge.style.display = count > 0 ? '' : 'none';
-        }
+        });
 
-        if (navCart) {
+        navCarts.forEach(function (navCart) {
             if (count > 0) {
                 navCart.classList.add('has-items');
             } else {
                 navCart.classList.remove('has-items');
             }
-        }
+        });
     }
 
     document.addEventListener('submit', function (event) {

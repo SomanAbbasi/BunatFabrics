@@ -25,25 +25,39 @@ $cartCount = (new CartService())->count();
 </head>
 <body<?= !empty($authPage) ? ' class="auth-page"' : '' ?>>
     <header class="site-header">
-        <a class="brand" href="<?= e(url('/')) ?>">
-            <span class="brand-mark" aria-hidden="true">B</span>
-            <span class="brand-name">Bunat <em>Fabrics</em></span>
-        </a>
-
-        <nav class="site-nav" aria-label="Site navigation">
-            <a class="nav-link" href="<?= e(url('/')) ?>"><?= icon('grid') ?><span>Fabrics</span></a>
-            <a class="nav-link nav-cart<?= $cartCount > 0 ? ' has-items' : '' ?>" href="<?= e(url('/cart')) ?>">
-                <?= icon('cart') ?>
-                <span>Cart</span>
-                <span class="cart-count" id="header-cart-count" <?= $cartCount > 0 ? '' : 'style="display:none"' ?>><?= e((string) $cartCount) ?></span>
+        <div class="site-header-inner">
+            <a class="brand" href="<?= e(url('/')) ?>">
+                <span class="brand-mark" aria-hidden="true">B</span>
+                <span class="brand-name">Bunat <em>Fabrics</em></span>
             </a>
-            <?php if ($currentUser !== null): ?>
-                <?php $profileUser = $currentUser; require base_path('views/partials/profile-menu.php'); ?>
-            <?php else: ?>
-                <a class="nav-link" href="<?= e(url('/login')) ?>"><?= icon('user') ?><span>Sign in</span></a>
-                <a class="nav-cta" href="<?= e(url('/signup')) ?>"><?= icon('user-plus') ?><span>Create account</span></a>
-            <?php endif; ?>
-        </nav>
+
+            <div class="header-actions">
+                <a class="nav-link nav-cart-mobile<?= $cartCount > 0 ? ' has-items' : '' ?>" href="<?= e(url('/cart')) ?>" aria-label="Cart">
+                    <?= icon('cart') ?>
+                    <span class="cart-count" id="mobile-cart-count" <?= $cartCount > 0 ? '' : 'style="display:none"' ?>><?= e((string) $cartCount) ?></span>
+                </a>
+
+                <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation menu">
+                    <span class="nav-toggle-icon icon-menu"><?= icon('menu') ?></span>
+                    <span class="nav-toggle-icon icon-close"><?= icon('x') ?></span>
+                </button>
+            </div>
+
+            <nav class="site-nav" id="primary-nav" aria-label="Site navigation">
+                <a class="nav-link" href="<?= e(url('/')) ?>"><?= icon('grid') ?><span>Fabrics</span></a>
+                <a class="nav-link nav-cart<?= $cartCount > 0 ? ' has-items' : '' ?>" href="<?= e(url('/cart')) ?>">
+                    <?= icon('cart') ?>
+                    <span>Cart</span>
+                    <span class="cart-count" id="header-cart-count" <?= $cartCount > 0 ? '' : 'style="display:none"' ?>><?= e((string) $cartCount) ?></span>
+                </a>
+                <?php if ($currentUser !== null): ?>
+                    <?php $profileUser = $currentUser; require base_path('views/partials/profile-menu.php'); ?>
+                <?php else: ?>
+                    <a class="nav-link nav-signin" href="<?= e(url('/login')) ?>"><?= icon('user') ?><span>Sign in</span></a>
+                    <a class="nav-cta" href="<?= e(url('/signup')) ?>"><?= icon('user-plus') ?><span>Create account</span></a>
+                <?php endif; ?>
+            </nav>
+        </div>
     </header>
 
     <main class="container">

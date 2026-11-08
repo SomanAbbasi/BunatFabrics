@@ -513,13 +513,32 @@ body {
     .dashboard-grid { grid-template-columns: minmax(0, 1fr); }
     .dashboard-side { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
     .dashboard-settings { grid-column: 1 / -1; }
-    .dashboard-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .dashboard-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 }
 
 @media (max-width: 991.98px) {
-    .admin-shell .navbar-vertical { padding: 10px 16px; }
-    .admin-shell .navbar-vertical .navbar-brand { padding: 0; }
-    .admin-shell .navbar-vertical .navbar-nav { padding-top: 12px; }
+    .admin-shell .navbar-vertical {
+        padding: 12px 16px;
+        background: #fff;
+        border-bottom: 1px solid var(--admin-line);
+    }
+    .admin-shell .navbar-vertical .navbar-brand {
+        padding: 0;
+    }
+    .admin-shell .navbar-vertical .navbar-collapse {
+        background: #fff;
+        padding: 12px 0 8px;
+        border-top: 1px solid var(--admin-line);
+        margin-top: 8px;
+    }
+    .admin-shell .navbar-vertical .navbar-nav {
+        padding-top: 0;
+        gap: 4px;
+    }
+    .admin-shell .navbar-vertical .nav-link {
+        padding: 10px 14px;
+        font-size: 14px;
+    }
 }
 
 @media (max-width: 575.98px) {
@@ -537,7 +556,7 @@ body {
     .dashboard-period { width: 100%; }
     .dashboard-period .form-select { flex: 1; min-width: 0; }
     .dashboard-kpis { gap: 10px; }
-    .dashboard-kpi { padding: 16px 10px; }
+    .dashboard-kpi { padding: 16px 12px; }
     .dashboard-kpi-label { align-items: start; }
     .dashboard-kpi-label .icon { display: none; }
     .dashboard-kpi-label h3 { font-size: 11px; }
@@ -566,4 +585,19 @@ body {
     .dashboard-orders td:nth-child(4) { grid-column: 2; grid-row: 2; text-align: right; }
     .dashboard-orders td:nth-child(5) { grid-column: 2; grid-row: 1; text-align: right; }
     .dashboard-summary-note { display: block; margin: 4px 0 0 14px; }
+}
+
+@media (max-width: 480px) {
+    .dashboard-kpis {
+        grid-template-columns: 1fr;
+    }
+    .dashboard-customer-metrics {
+        grid-template-columns: 1fr;
+    }
+    .dashboard-customer-metrics div + div {
+        padding-left: 0;
+        padding-top: 12px;
+        border-left: none;
+        border-top: 1px solid var(--admin-line);
+    }
 }
