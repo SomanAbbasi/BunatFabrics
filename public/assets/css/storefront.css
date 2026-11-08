@@ -1,0 +1,130 @@
+/* Catalog-only styling keeps checkout, account and admin pages independent. */
+.storefront-page { background: var(--bg); }
+
+.storefront-page .container {
+    width: 100%;
+    max-width: 1320px;
+    padding: 32px clamp(16px, 3vw, 40px) 64px;
+}
+
+.storefront { gap: 28px; min-width: 0; }
+.storefront-page .brand-mark { background: var(--ink); }
+.store-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    width: 100%;
+    max-width: none;
+    padding: clamp(24px, 4vw, 48px);
+    background: var(--surface-soft);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    text-align: left;
+}
+.store-hero-content { max-width: 680px; min-width: 0; }
+.store-hero .eyebrow {
+    padding: 0;
+    margin: 0 0 14px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--muted);
+    letter-spacing: 0.16em;
+}
+.store-hero h1 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(2.2rem, 4.3vw, 3.8rem);
+    font-weight: 400;
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+    margin-bottom: 20px;
+}
+.store-hero p { margin: 0; max-width: 570px; font-size: 1rem; }
+.store-hero-note {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-left: 28px;
+    border-left: 1px solid var(--line-strong);
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+.store-hero-note strong { font-family: Georgia, serif; font-size: 2.2rem; font-weight: 400; color: var(--ink); }
+.catalog-search { margin: 0; justify-content: flex-start; }
+.catalog-search-controls { max-width: none; margin: 0; border-radius: 6px; box-shadow: none; padding: 6px 8px 6px 14px; }
+.catalog-search-controls input { font-size: 16px; }
+.search-submit-btn { min-height: 44px; border-radius: 4px; background: var(--ink); border-color: var(--ink); }
+.catalog-collection-label { margin-bottom: -18px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; color: var(--muted); }
+.category-nav {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    overflow: visible;
+    gap: 8px;
+    padding: 0;
+}
+.category-nav .category-pill { min-height: 44px; max-width: 100%; white-space: normal; border-radius: 5px; padding: 9px 12px; font-size: 0.82rem; }
+.category-nav .category-pill.is-active { background: var(--ink); border-color: var(--ink); }
+.category-nav .pill-count { flex-shrink: 0; }
+.category-section { gap: 20px; margin-top: 12px; }
+.section-heading { align-items: center; margin: 0; padding-bottom: 14px; }
+.section-heading h2 { font-family: Georgia, serif; font-size: clamp(1.4rem, 2.4vw, 1.8rem); font-weight: 400; line-height: 1.25; }
+.section-heading > span { flex-shrink: 0; }
+.product-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
+.product-card { min-width: 0; border-radius: 6px; box-shadow: none; }
+.product-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(17, 24, 39, 0.05); }
+.product-media { aspect-ratio: 4 / 5; background: var(--surface-soft); }
+.product-media img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; min-height: 0; object-fit: contain; }
+.product-card:hover .product-media img { transform: none; }
+.product-body { padding: 16px; gap: 6px; }
+.product-code { font-size: 0.67rem; font-weight: 500; letter-spacing: 0.1em; }
+.product-body h3 { display: block; overflow: visible; overflow-wrap: anywhere; -webkit-line-clamp: unset; min-height: 0; margin: 0; font-size: 1rem; line-height: 1.5; font-weight: 600; }
+.product-price { font-size: 1.08rem; font-weight: 650; margin-top: 6px; }
+.unit-suffix { display: inline-block; font-size: 0.78rem; }
+.product-meta { grid-template-columns: 1fr; margin-top: 6px; padding-top: 10px; }
+.product-meta div { padding: 0; background: transparent; }
+.product-meta dd { overflow-wrap: anywhere; }
+.product-card-cart { padding: 0 16px 16px; }
+.card-order-controls { flex-direction: column; align-items: stretch; gap: 8px; }
+.card-qty-group { width: 100%; height: 44px; flex: 0 0 44px; justify-content: center; border-radius: 4px; }
+.card-qty-input { width: 80px; font-size: 16px; }
+.card-qty-unit { font-size: 0.8rem; }
+.product-card-cart .card-cart-button { flex: auto; height: auto; min-height: 44px; border-radius: 4px; background: var(--ink); border-color: var(--ink); color: #fff; font-size: 0.85rem; }
+.product-card-cart .card-cart-button:hover { background: #1f2937; }
+.product-card-cart .card-cart-button.is-added { background: var(--accent-soft); color: var(--ink); border-color: var(--line-strong); }
+.storefront :is(a, button, input):focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.storefront .card-qty-group:focus-within { outline: 3px solid var(--ink); outline-offset: 2px; }
+
+@media (max-width: 1050px) {
+    .product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .store-hero-note { display: none; }
+}
+@media (max-width: 760px) {
+    .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .storefront-page .container { padding-top: 20px; }
+    .store-hero { padding: 28px 24px; }
+    .store-hero h1 { font-size: clamp(2rem, 6vw, 2.8rem); }
+    .store-hero p { font-size: 0.92rem; }
+}
+@media (max-width: 480px) {
+    .storefront { gap: 22px; }
+    .category-nav { gap: 6px; }
+    .category-nav .category-pill { padding: 8px 10px; font-size: 0.76rem; }
+    .product-grid { gap: 12px; }
+    .product-body { padding: 12px; }
+    .product-body h3 { font-size: 0.95rem; }
+    .product-card-cart { padding: 0 12px 12px; }
+    .catalog-search-controls { flex-wrap: wrap; gap: 6px; }
+    .catalog-search-controls input { flex-basis: 100px; }
+    .search-submit-btn { padding: 8px 12px; }
+    .search-clear-link { width: 100%; padding: 6px; text-align: center; }
+}
+@media (max-width: 380px) {
+    .product-grid { grid-template-columns: minmax(0, 1fr); }
+    .product-media { aspect-ratio: 1 / 1; }
+    .store-hero { padding: 24px 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .storefront * { transition: none; }
+    .product-card:hover { transform: none; }
+}

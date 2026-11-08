@@ -99,11 +99,14 @@ php database/catalog-migrate.php
 
 ### 6. Seed Fabric Catalog & Swatches
 
-Populate the database with authentic fabric collections and high-resolution swatch images:
+Preview the bundled catalog, then import its categories, products, and swatch images:
 
 ```bash
-php database/seed-fabrics.php
+php database/import-image-products.php
+php database/import-image-products.php --apply
 ```
+
+The importer uses `database/image-products.json` and bundled images in `public/uploads/catalog/`; no separate source-image folder is needed. Existing product codes are preserved on repeat runs. Initial prices are estimates in PKR per meter; unverified composition and GSM are left blank.
 
 ### 7. Run the Application
 

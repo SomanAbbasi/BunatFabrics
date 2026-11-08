@@ -15,10 +15,11 @@ $resultCount = array_sum(array_map(static fn (array $group): int => count($group
 <section class="storefront">
     <header class="store-hero">
         <div class="store-hero-content">
-            <span class="eyebrow">B2B Wholesale Fabric Sourcing</span>
-            <h1>Fabric Collections</h1>
-            <p>Browse collections, review specifications (width, weight, composition), and enter custom wholesale meterage.</p>
+            <span class="eyebrow">The Bunat fabric edit</span>
+            <h1>Beautiful fabrics.<br>Endless possibilities.</h1>
+            <p>From everyday cottons to occasionwear silks, find the fabric for your next collection. Explore textures, choose your meterage, and make it yours.</p>
         </div>
+        <div class="store-hero-note"><span>Explore the collection</span><strong><?= e((string) $totalProducts) ?> fabrics</strong><span>Available by the meter or yard</span></div>
     </header>
 
     <?php if ($unavailable): ?>
@@ -46,6 +47,7 @@ $resultCount = array_sum(array_map(static fn (array $group): int => count($group
                 <?php endif; ?>
             </div>
         </form>
+        <div class="catalog-collection-label">Browse by collection</div>
         <nav class="category-nav" aria-label="Filter fabrics by category">
             <a class="category-pill <?= $activeCategory === null ? 'is-active' : '' ?>" href="<?= e(url($search === '' ? '/' : '/?' . http_build_query(['q' => $search]))) ?>" <?= $activeCategory === null ? 'aria-current="page"' : '' ?>>
                 All Fabrics
@@ -129,7 +131,7 @@ $resultCount = array_sum(array_map(static fn (array $group): int => count($group
 
                                 <div class="card-order-controls">
                                     <div class="card-qty-group">
-                                        <label for="qty-<?= e((string) $product['id']) ?>" class="visually-hidden">Quantity</label>
+                                        <label for="qty-<?= e((string) $product['id']) ?>" class="visually-hidden">Quantity in <?= e($unit) ?>s for <?= e($product['title']) ?></label>
                                         <input type="number" id="qty-<?= e((string) $product['id']) ?>" name="quantity" value="1" min="1" max="1000000" class="card-qty-input" inputmode="numeric" title="Enter quantity in <?= e($unit) ?>s">
                                         <span class="card-qty-unit"><?= e($unit) ?>s</span>
                                     </div>

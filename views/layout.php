@@ -18,12 +18,15 @@ $cartCount = (new CartService())->count();
     <meta name="app-url" content="<?= e(url('/')) ?>">
     <title><?= e($title) ?> &middot; <?= e(config('app.name')) ?></title>
     <link rel="stylesheet" href="<?= e(url('/assets/css/style.css')) ?>">
+    <?php if (!empty($storefrontPage)): ?>
+        <link rel="stylesheet" href="<?= e(url('/assets/css/storefront.css?v=' . filemtime(base_path('public/assets/css/storefront.css')))) ?>">
+    <?php endif; ?>
     <?php if (!empty($settingsPage)): ?>
         <link rel="stylesheet" href="<?= e(url('/assets/css/settings.css')) ?>">
     <?php endif; ?>
     <script src="<?= e(url('/assets/js/app.js')) ?>" defer></script>
 </head>
-<body<?= !empty($authPage) ? ' class="auth-page"' : '' ?>>
+<body<?= !empty($authPage) ? ' class="auth-page"' : (!empty($storefrontPage) ? ' class="storefront-page"' : '') ?>>
     <header class="site-header">
         <div class="site-header-inner">
             <a class="brand" href="<?= e(url('/')) ?>">

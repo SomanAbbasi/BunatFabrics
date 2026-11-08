@@ -38,6 +38,7 @@ final class HomeController
 
         View::render('home', [
             'title' => 'Wholesale fabric catalog',
+            'storefrontPage' => true,
             'allGroups' => $allGroups,
             'groups' => $groups,
             'activeCategory' => $activeCategory,
