@@ -72,6 +72,7 @@ final class Guard
 
     public static function login(array $user): void
     {
+        Session::forget('google_verified');
         Session::regenerate();
         Session::put(self::SESSION_KEY, (int) $user['id']);
 
@@ -83,5 +84,7 @@ final class Guard
         self::$cachedUser = null;
 
         Session::forget(self::SESSION_KEY);
+        Session::forget('google_verified');
+        Session::forget('google_flow');
     }
 }

@@ -16,6 +16,8 @@ use App\Core\Session;
             <p class="muted">Open a wholesale account to browse fabrics.</p>
         </header>
 
+        <?php require base_path('views/partials/google-button.php'); ?>
+
         <form action="<?= e(url('/signup')) ?>" method="POST">
             <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
 

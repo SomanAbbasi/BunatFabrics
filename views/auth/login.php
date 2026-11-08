@@ -16,6 +16,8 @@ use App\Core\Session;
             <p class="muted">Access your wholesale account.</p>
         </header>
 
+        <?php require base_path('views/partials/google-button.php'); ?>
+
         <form action="<?= e(url('/login')) ?>" method="POST">
             <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
 
