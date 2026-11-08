@@ -40,6 +40,7 @@ use App\Core\Session;
             <button type="submit" class="button">Sign in</button>
         </form>
 
+        <p class="center"><a href="<?= e(url('/forgot-password')) ?>">Forgot password?</a></p>
         <p class="muted center auth-foot">New to Bunat Fabrics? <a href="<?= e(url('/signup')) ?>">Create an account</a></p>
     </div>
 </section>

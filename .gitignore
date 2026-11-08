@@ -6,6 +6,8 @@
 # Ignore local logs / caches
 *.log
 storage/cache/*
+/vendor/
+/storage/mail/*
 AGENTS.md
 
 # Uploaded product images are runtime data

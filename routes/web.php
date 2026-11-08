@@ -40,6 +40,10 @@ $router->post('/checkout', [CartController::class, 'placeOrder']);
 $router->get('/checkout/success', [CartController::class, 'success']);
 
 // Authentication
+$router->get('/forgot-password', [App\Auth\RecoveryController::class, 'forgot']);
+$router->post('/forgot-password', [App\Auth\RecoveryController::class, 'request']);
+$router->get('/reset-password', [App\Auth\RecoveryController::class, 'form']);
+$router->post('/reset-password', [App\Auth\RecoveryController::class, 'reset']);
 $router->get('/signup', [AuthController::class, 'showSignup']);
 $router->post('/signup', [AuthController::class, 'signup']);
 $router->get('/login', [AuthController::class, 'showLogin']);

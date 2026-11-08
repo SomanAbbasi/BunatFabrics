@@ -1,0 +1,7 @@
+{
+    "name": "bunat/fabrics",
+    "description": "Bunat Fabrics authentication dependencies",
+    "type": "project",
+    "require": {"php": ">=8.1", "jumbojett/openid-connect-php": "^1.0", "phpmailer/phpmailer": "^7.0"},
+    "config": {"platform": {"php": "8.1.0"}, "allow-plugins": {}, "sort-packages": true}
+}
