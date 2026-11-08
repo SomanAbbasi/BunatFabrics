@@ -3,14 +3,6 @@
 declare(strict_types=1);
 require __DIR__ . '/account_settings.php';
 
-class TestAccountMailer extends App\Auth\AccountMailer
-{
-    public array $messages = [];
-    public function send(string $email, string $subject, string $body): void
-    {
-        $this->messages[] = compact('email', 'subject', 'body');
-    }
-}
 $mailer = new TestAccountMailer();
 $recovery = new App\Auth\RecoveryService($pdo, $mailer);
 foreach (['new-admin@example.test', 'new-user@example.test'] as $email) {

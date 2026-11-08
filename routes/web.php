@@ -55,6 +55,7 @@ $router->post('/logout', [AuthController::class, 'logout']);
 // Customer Portal
 $router->get('/settings', [AccountSettingsController::class, 'index']);
 $router->post('/settings/profile', [AccountSettingsController::class, 'updateProfile']);
+$router->post('/settings/email/verify', [AccountSettingsController::class, 'verifyEmail']);
 $router->post('/settings/password', [AccountSettingsController::class, 'updatePassword']);
 $router->get('/dashboard', [DashboardController::class, 'index']);
 $router->get('/orders', [CustomerOrderController::class, 'index']);
@@ -67,6 +68,7 @@ $router->get('/admin/orders/show', [AdminOrderController::class, 'show']);
 $router->post('/admin/orders/status', [AdminOrderController::class, 'updateStatus']);
 $router->get('/admin/settings', [SettingsController::class, 'index']);
 $router->post('/admin/settings/profile', [SettingsController::class, 'updateProfile']);
+$router->post('/admin/settings/email/verify', [SettingsController::class, 'verifyEmail']);
 $router->post('/admin/settings/password', [SettingsController::class, 'updatePassword']);
 
 // Admin API
