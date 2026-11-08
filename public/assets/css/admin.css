@@ -40,17 +40,12 @@ body {
     color: #111827;
 }
 
-.admin-monogram,
-.avatar.admin-monogram {
-    display: grid;
-    place-items: center;
+.admin-brand-logo {
+    display: block;
     width: 36px;
     height: 36px;
-    border-radius: 8px;
-    background: #111827;
-    color: #fff;
-    font-family: inherit;
-    font-weight: 800;
+    flex-shrink: 0;
+    object-fit: contain;
 }
 
 .admin-brand small {

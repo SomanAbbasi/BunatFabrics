@@ -11,10 +11,11 @@ $activeNav = $activeNav ?? 'dashboard';
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/png" sizes="64x64" href="<?= e(url('/assets/images/bunat-logo.png')) ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= e($title) ?> &middot; Bunat Fabrics Admin</title>
     <link rel="stylesheet" href="<?= e(url('/assets/vendor/tabler/tabler.min.css')) ?>">
-    <link rel="stylesheet" href="<?= e(url('/assets/css/admin.css')) ?>">
+    <link rel="stylesheet" href="<?= e(url('/assets/css/admin.css?v=' . filemtime(base_path('public/assets/css/admin.css')))) ?>">
     <?php if (! empty($settingsPage)): ?><link rel="stylesheet" href="<?= e(url('/assets/css/settings.css')) ?>"><?php endif; ?>
     <script src="<?= e(url('/assets/vendor/tabler/tabler.min.js')) ?>" defer></script>
     <script src="<?= e(url('/assets/js/app.js')) ?>" defer></script>
@@ -25,7 +26,7 @@ $activeNav = $activeNav ?? 'dashboard';
     <aside class="navbar navbar-vertical navbar-expand-lg" aria-label="Admin sidebar">
         <div class="container-fluid">
             <a class="navbar-brand admin-brand" href="<?= e(url('/admin')) ?>">
-                <span class="admin-monogram" aria-hidden="true">B</span>
+                <img class="admin-brand-logo" src="<?= e(url('/assets/images/bunat-logo.png')) ?>" alt="" width="36" height="36">
                 <span>Bunat Fabrics<small class="d-block text-secondary">Administration</small></span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#admin-menu" aria-controls="admin-menu" aria-expanded="false" aria-label="Toggle admin navigation">

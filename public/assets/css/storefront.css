@@ -8,7 +8,6 @@
 }
 
 .storefront { gap: 28px; min-width: 0; }
-.storefront-page .brand-mark { background: var(--ink); }
 .store-hero {
     display: flex;
     align-items: center;

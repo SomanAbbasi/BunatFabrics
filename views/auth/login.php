@@ -12,7 +12,7 @@ $authPage = true;
 <section class="auth auth-single">
     <div class="panel auth-card">
         <header class="auth-head">
-            <span class="brand-mark brand-mark-lg" aria-hidden="true">B</span>
+            <img class="brand-logo brand-logo-lg" src="<?= e(url('/assets/images/bunat-logo.png')) ?>" alt="" width="64" height="64">
             <span class="eyebrow">Bunat Fabrics</span>
             <h1>Sign in</h1>
             <p class="muted">Access your wholesale account.</p>

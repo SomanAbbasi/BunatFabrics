@@ -13,11 +13,12 @@ $cartCount = (new CartService())->count();
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/png" sizes="64x64" href="<?= e(url('/assets/images/bunat-logo.png')) ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="<?= e(Session::csrfToken()) ?>">
     <meta name="app-url" content="<?= e(url('/')) ?>">
     <title><?= e($title) ?> &middot; <?= e(config('app.name')) ?></title>
-    <link rel="stylesheet" href="<?= e(url('/assets/css/style.css')) ?>">
+    <link rel="stylesheet" href="<?= e(url('/assets/css/style.css?v=' . filemtime(base_path('public/assets/css/style.css')))) ?>">
     <?php if (!empty($storefrontPage)): ?>
         <link rel="stylesheet" href="<?= e(url('/assets/css/storefront.css?v=' . filemtime(base_path('public/assets/css/storefront.css')))) ?>">
     <?php endif; ?>
@@ -30,7 +31,7 @@ $cartCount = (new CartService())->count();
     <header class="site-header">
         <div class="site-header-inner">
             <a class="brand" href="<?= e(url('/')) ?>">
-                <span class="brand-mark" aria-hidden="true">B</span>
+                <img class="brand-logo" src="<?= e(url('/assets/images/bunat-logo.png')) ?>" alt="" width="36" height="36">
                 <span class="brand-name">Bunat <em>Fabrics</em></span>
             </a>
 

@@ -92,25 +92,18 @@ img {
     text-decoration: none;
 }
 
-.brand-mark {
-    display: grid;
-    place-items: center;
-    width: 34px;
-    height: 34px;
-    border-radius: 8px;
-    background: var(--ink);
-    color: #fff;
-    font-size: 0.98rem;
-    font-weight: 800;
-    box-shadow: 0 2px 6px rgba(17, 24, 39, 0.16);
+.brand-logo {
+    display: block;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    object-fit: contain;
 }
 
-.brand-mark-lg {
-    width: 48px;
-    height: 48px;
-    font-size: 1.35rem;
+.brand-logo-lg {
+    width: 64px;
+    height: 64px;
     margin: 0 auto 14px;
-    border-radius: 12px;
 }
 
 .brand-name {
@@ -1229,14 +1222,18 @@ img {
 }
 
 .button-google {
-    background: #fff !important;
-    border: 1px solid var(--line-strong) !important;
-    color: #1f2937 !important;
+    background: #fff;
+    border: 1px solid var(--line-strong);
+    color: #1f2937;
     border-radius: 8px;
+    font: inherit;
     font-weight: 600;
     font-size: 0.92rem;
     padding: 10px 16px;
     width: 100%;
+    min-height: 48px;
+    cursor: pointer;
+    text-align: center;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1245,14 +1242,25 @@ img {
     transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.button-google:hover {
-    background: #f9fafb !important;
-    border-color: #9ca3af !important;
+.button-google:hover,
+.button-google:focus-visible,
+.button-google:active {
+    background: #f9fafb;
+    border-color: #9ca3af;
+    color: #1f2937;
     box-shadow: 0 2px 4px rgba(16, 24, 40, 0.08);
     text-decoration: none;
 }
 
-.google-icon {
+.button-google:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+}
+
+.button-google .google-icon {
+    display: block;
+    width: 20px;
+    height: 20px;
     flex-shrink: 0;
 }
 
