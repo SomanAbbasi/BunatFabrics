@@ -15,7 +15,7 @@ $resultCount = array_sum(array_map(static fn (array $group): int => count($group
 <section class="storefront">
     <header class="store-hero">
         <div class="store-hero-content">
-            <span class="eyebrow"><span class="eyebrow-dot"></span> B2B Wholesale Fabric Sourcing</span>
+            <span class="eyebrow">B2B Wholesale Fabric Sourcing</span>
             <h1>Fabric Collections</h1>
             <p>Browse collections, review specifications (width, weight, composition), and enter custom wholesale meterage.</p>
         </div>

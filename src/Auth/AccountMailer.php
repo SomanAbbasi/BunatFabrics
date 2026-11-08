@@ -20,8 +20,15 @@ class AccountMailer
             $mail->addAddress($email);
             $mail->Subject = $subject;
             $mail->Body = $body;
-            $driver = Env::get('MAIL_DRIVER', 'disabled');
-            if ($driver === 'file' && Env::get('APP_ENV') !== 'production') {
+            $defaultDriver = Env::get('APP_ENV') === 'production' ? 'smtp' : 'file';
+            $driver = (string) Env::get('MAIL_DRIVER', $defaultDriver);
+
+            if ($driver === 'log') {
+                error_log("[Mail] To: {$email} | Subject: {$subject} | Message: {$body}");
+                return;
+            }
+
+            if ($driver === 'file' || ($driver === 'disabled' && Env::get('APP_ENV') !== 'production')) {
                 // Deliberate local mailbox, outside the public document root and Git.
                 $directory = base_path('storage/mail');
                 if (!is_dir($directory) && !mkdir($directory, 0700, true)) {
@@ -34,6 +41,7 @@ class AccountMailer
                 chmod($file, 0600);
                 fwrite($handle, $mail->getSentMIMEMessage());
                 fclose($handle);
+                error_log("[Mail:file] To: {$email} | Subject: {$subject} | Link/Body: {$body}");
                 return;
             }
             if ($driver !== 'smtp') { throw new RuntimeException('Mail unavailable'); }
