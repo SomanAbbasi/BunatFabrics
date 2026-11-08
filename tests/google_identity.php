@@ -25,3 +25,22 @@ try {
 } catch (DomainException) {}
 verifySettings($auth->attempt('google@example.test', '') === null, 'Google-only account rejects password login');
 echo "PASS: Google subject identity, no email auto-linking, ownership and role preservation\n";
+$started = time();
+$google->verifySettingsResponse((int) $created['id'], $claims + ['iat' => $started], $started);
+$google->verifySettingsResponse((int) $created['id'], $claims + ['iat' => $started, 'auth_time' => $started - 86400], $started);
+foreach ([
+    ['sub'=>'admin-subject', 'iat'=>$started],
+    ['sub'=>'test-google-subject'],
+    ['sub'=>'test-google-subject', 'iat'=>$started-300],
+    ['sub'=>'test-google-subject', 'iat'=>$started+300],
+] as $invalid) {
+    $rejected = false;
+    try { $google->verifySettingsResponse((int) $created['id'], $invalid, $started); }
+    catch (DomainException) { $rejected = true; }
+    verifySettings($rejected, 'wrong subject or non-fresh Google response rejected');
+}
+$rejected = false;
+try { $google->verifySettingsResponse((int) $created['id'], $claims + ['iat'=>$started], $started-601); }
+catch (DomainException) { $rejected = true; }
+verifySettings($rejected, 'expired settings verification request rejected');
+echo "PASS: Google verification accepts optional/old auth_time while requiring the linked subject and fresh response\n";

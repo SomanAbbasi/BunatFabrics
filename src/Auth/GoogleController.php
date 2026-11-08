@@ -19,6 +19,7 @@ final class GoogleController
         $mode = AuthSecurity::input('mode');
         if (!in_array($mode, ['login', 'link', 'verify'], true)) { $mode = 'login'; }
         $user = Guard::user();
+        Session::forget('google_verified');
         try {
             $this->configuration();
             if (!AuthSecurity::allow(Database::connection(), 'google:' . AuthSecurity::ip(), 20, 900)) {
@@ -36,8 +37,8 @@ final class GoogleController
             // Never pass arbitrary request parameters into the library on initiation.
             $_REQUEST = [];
             $client = new GoogleOidc();
-            $client->addAuthParam(['prompt' => $mode === 'verify' ? 'login' : 'select_account']);
-            if ($mode === 'verify') { $client->addAuthParam(['max_age' => 0]); }
+            // Google supports account selection, not forced Google-password reauthentication.
+            $client->addAuthParam(['prompt' => 'select_account']);
             $client->authenticate();
         } catch (Throwable $exception) { $this->failure($exception, $user); }
     }
@@ -48,6 +49,7 @@ final class GoogleController
         $flow = Session::get('google_flow');
         Session::forget('google_flow');
         $user = Guard::user();
+        Session::forget('google_verified');
         try {
             $this->configuration();
             $state = AuthSecurity::input('state', $_GET);
@@ -66,10 +68,7 @@ final class GoogleController
             $claims = (array) $client->getVerifiedClaims();
             $identities = new GoogleIdentityService();
             if ($flow['mode'] === 'verify') {
-                if (!$identities->matches((int) $user['id'], (string) ($claims['sub'] ?? ''))
-                    || !is_int($claims['auth_time'] ?? null) || $claims['auth_time'] < $flow['started'] - 60 || $claims['auth_time'] > time() + 60) {
-                    throw new DomainException('Please verify using your connected Google account.');
-                }
+                $identities->verifySettingsResponse((int) $user['id'], $claims, (int) $flow['started']);
             } else {
                 $user = $identities->resolve($claims, $flow['mode'] === 'link' ? $user : null);
             }
@@ -77,6 +76,7 @@ final class GoogleController
             Session::forget('_csrf_token');
             if ($flow['mode'] === 'verify') {
                 Session::put('google_verified', ['id' => $user['id'], 'stamp' => AuthSecurity::stamp($user), 'until' => time() + 300]);
+                Session::flash('status', 'Google account verified. You can save your changes within five minutes.');
             }
             $this->clear();
             redirect($flow['mode'] === 'login' ? ($user['role'] === 'admin' ? '/admin' : '/dashboard') : $this->settings($user));
@@ -111,6 +111,7 @@ final class GoogleController
     private function failure(Throwable $exception, ?array $user): never
     {
         $this->clear();
+        Session::forget('google_verified');
         Session::flash('error', $exception instanceof DomainException ? $exception->getMessage() : 'Google sign-in could not be completed. Please try again.');
         redirect($user ? $this->settings($user) : '/login');
     }

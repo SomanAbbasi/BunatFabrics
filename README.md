@@ -152,7 +152,7 @@ MAIL_DRIVER=file
 MAIL_FROM_ADDRESS=accounts@example.test
 ```
 
-Server environment variables override the local file. Blank Google credentials hide the sign-in option. The library checks signatures and issuer/audience; application checks additionally require nonce, expiry and issued-at claims. State is checked before token exchange, PKCE S256 is used, and fresh verification requires a recent `auth_time`. Real provider behavior still requires an OAuth smoke test after credentials are configured.
+Server environment variables override the local file. Blank Google credentials hide the sign-in option. The library checks signatures and issuer/audience; application checks additionally require nonce, expiry and issued-at claims. State is checked before token exchange, PKCE S256 is used, and settings verification requires the linked subject and a newly issued, nonce-bound response for the current request. Google does not support forced Google-account reauthentication; this verifies the connected Google session, not a fresh password entry. Optional `auth_time` is not required. Real provider behavior still requires an OAuth smoke test after credentials are configured.
 
 ### Email delivery
 

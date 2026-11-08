@@ -18,50 +18,31 @@ $panelClass = $settingsAdmin ? 'card' : 'panel';
 $buttonClass = $settingsAdmin ? 'btn btn-primary' : 'button button-compact';
 ?>
 <div class="account-settings">
-    <?php if (!$hasPassword || $googleLinked || App\Auth\GoogleOidc::enabled()): ?>
-    <section class="<?= e($panelClass) ?> settings-panel">
-        <header class="settings-panel-heading"><h2>Sign-in methods</h2><p><?= $hasPassword ? 'Email and password' : 'Google account' ?><?= $googleLinked && $hasPassword ? ' · Google connected' : '' ?></p></header>
-        <?php if (App\Auth\GoogleOidc::enabled()): ?>
-        <form class="settings-form" action="<?= e(url('/auth/google')) ?>" method="post">
-            <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
-            <input type="hidden" name="mode" value="<?= $googleLinked ? 'verify' : 'link' ?>">
-            <?php if (!$googleLinked): ?>
-            <?php $fieldErrors = []; $field = ['id'=>'google-link-password','name'=>'current_password','label'=>'Current password','autocomplete'=>'current-password']; require __DIR__ . '/settings-password-field.php'; ?>
-            <?php endif; ?>
-            <p class="settings-help"><?= $googleLinked ? 'Google-only accounts must verify again before changing their profile or setting a password. Verification lasts five minutes and is cleared after saving.' : 'Confirm your password, then choose the Google account to connect.' ?></p>
-            <button class="<?= e($buttonClass) ?>" type="submit"><?= $googleLinked ? 'Verify with Google' : 'Connect Google' ?></button>
-        </form>
-        <?php else: ?><p class="settings-form">Google verification is currently unavailable. Contact the business for help.</p><?php endif; ?>
-    </section>
-    <?php endif; ?>
-    <?php if ($pendingEmail || $emailErrors !== []): ?>
-    <section class="<?= e($panelClass) ?> settings-panel">
-        <header class="settings-panel-heading"><h2>Verify new email</h2><p>Your current email stays active until verification succeeds.</p></header>
-        <form class="settings-form" action="<?= e(url($settingsPath . '/email/verify')) ?>" method="post">
-            <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
-            <?php foreach ($emailErrors as $error): ?><p class="settings-notice" role="alert"><?= e($error) ?></p><?php endforeach; ?>
-            <p class="settings-help">Enter the code sent to <?= e($pendingEmail ?? 'your requested address') ?>. It expires after 10 minutes and allows five attempts. To resend, submit your profile again after one minute.</p>
-            <div class="settings-field"><label for="email-code">Verification code</label><input class="form-control" id="email-code" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required></div>
-            <button class="<?= e($buttonClass) ?>" type="submit">Verify email</button>
-        </form>
-    </section>
+    <?php if (!$hasPassword): ?>
+        <?php require __DIR__ . '/settings-signin-methods.php'; ?>
     <?php endif; ?>
     <section class="<?= e($panelClass) ?> settings-panel" aria-labelledby="profile-heading">
         <header class="settings-panel-heading">
             <h2 id="profile-heading">Profile details</h2>
-            <p><?= $hasPassword ? 'Confirm your current password to save changes.' : 'Verify with Google before saving changes.' ?> New email addresses must also be verified.</p>
+            <p><?= $hasPassword ? 'Use your current password to update your name or email.' : 'Verify with Google, then update your name or email.' ?></p>
         </header>
         <form class="settings-form" action="<?= e(url($settingsPath . '/profile')) ?>" method="POST">
             <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
             <?php if ($profileErrors !== []): ?><div class="settings-notice" role="alert"><?= e($profileErrors['_form'] ?? 'Your profile was not saved. Check the fields below.') ?></div><?php endif; ?>
             <?php foreach (['name' => ['Name', 'text', 100], 'email' => ['Email address', 'email', 190]] as $name => [$label, $type, $limit]): ?>
+                <?php
+                $descriptionIds = $name === 'email' ? ['profile-email-help'] : [];
+                if (isset($profileErrors[$name])) {
+                    $descriptionIds[] = 'profile-' . $name . '-error';
+                }
+                ?>
                 <div class="settings-field">
                     <label for="profile-<?= e($name) ?>"><?= e($label) ?></label>
-                    <input class="form-control" type="<?= e($type) ?>" id="profile-<?= e($name) ?>" name="<?= e($name) ?>" value="<?= e($profile[$name]) ?>" autocomplete="<?= e($name) ?>" required maxlength="<?= e((string) $limit) ?>" <?= $name === 'name' ? 'minlength="2"' : '' ?> <?= isset($profileErrors[$name]) ? 'aria-invalid="true" aria-describedby="profile-' . e($name) . '-error"' : '' ?>>
+                    <input class="form-control" type="<?= e($type) ?>" id="profile-<?= e($name) ?>" name="<?= e($name) ?>" value="<?= e($profile[$name]) ?>" autocomplete="<?= e($name) ?>" required maxlength="<?= e((string) $limit) ?>" <?= $name === 'name' ? 'minlength="2"' : '' ?> <?= isset($profileErrors[$name]) ? 'aria-invalid="true"' : '' ?> <?= $descriptionIds !== [] ? 'aria-describedby="' . e(implode(' ', $descriptionIds)) . '"' : '' ?>>
+                    <?php if ($name === 'email'): ?><p class="settings-help" id="profile-email-help">Your sign-in address. We will send a code to verify any new address.</p><?php endif; ?>
                     <?php if (isset($profileErrors[$name])): ?><p class="settings-error" id="profile-<?= e($name) ?>-error"><?= e($profileErrors[$name]) ?></p><?php endif; ?>
                 </div>
             <?php endforeach; ?>
-            <p class="settings-help">Use this email address to sign in.</p>
             <?php
             $fieldErrors = $profileErrors;
             $field = ['id' => 'profile-password', 'name' => 'current_password', 'label' => 'Current password', 'autocomplete' => 'current-password'];
@@ -70,12 +51,25 @@ $buttonClass = $settingsAdmin ? 'btn btn-primary' : 'button button-compact';
             <?php if (!$hasPassword && isset($profileErrors['current_password'])): ?><p class="settings-error" role="alert"><?= e($profileErrors['current_password']) ?></p><?php endif; ?>
             <div class="settings-actions"><button class="<?= e($buttonClass) ?>" type="submit">Save profile</button></div>
         </form>
+        <?php if ($pendingEmail || $emailErrors !== []): ?>
+        <section class="settings-email-verification" aria-labelledby="email-verification-heading">
+            <header class="settings-panel-heading"><h3 id="email-verification-heading">Verify new email</h3><p>Your current email stays active until verification succeeds.</p></header>
+            <form class="settings-form" action="<?= e(url($settingsPath . '/email/verify')) ?>" method="post">
+                <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
+                <?php foreach ($emailErrors as $error): ?><p class="settings-notice" role="alert"><?= e($error) ?></p><?php endforeach; ?>
+                <p class="settings-help">Enter the code sent to <?= e($pendingEmail ?? 'your requested address') ?>. It expires in 10 minutes. You have five attempts.</p>
+                <div class="settings-field"><label for="email-code">Verification code</label><input class="form-control" id="email-code" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required></div>
+                <div class="settings-actions"><button class="<?= e($buttonClass) ?>" type="submit">Verify email</button></div>
+                <p class="settings-help">Need another code? Wait one minute, then submit the new address in Profile details again.</p>
+            </form>
+        </section>
+        <?php endif; ?>
     </section>
 
     <section class="<?= e($panelClass) ?> settings-panel" aria-labelledby="password-heading">
         <header class="settings-panel-heading">
-            <h2 id="password-heading">Change password</h2>
-            <p>Choose a new password that you do not use elsewhere.</p>
+            <h2 id="password-heading"><?= $hasPassword ? 'Change password' : 'Set a password' ?></h2>
+            <p><?= $hasPassword ? 'Choose a password you do not use elsewhere.' : 'Add a password to sign in with your email as well as Google.' ?></p>
         </header>
         <form class="settings-form" action="<?= e(url($settingsPath . '/password')) ?>" method="POST">
             <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
@@ -92,9 +86,12 @@ $buttonClass = $settingsAdmin ? 'btn btn-primary' : 'button button-compact';
                 require __DIR__ . '/settings-password-field.php';
             }
             ?>
-            <p class="settings-help">You will stay signed in after changing your password.</p>
+            <p class="settings-help"><?= $hasPassword ? 'You will stay signed in after saving.' : 'Verify with Google above before saving. Google sign-in will remain available.' ?></p>
             <?php if (!$hasPassword && isset($passwordErrors['current_password'])): ?><p class="settings-error" role="alert"><?= e($passwordErrors['current_password']) ?></p><?php endif; ?>
-            <div class="settings-actions"><button class="<?= e($buttonClass) ?>" type="submit">Change password</button></div>
+            <div class="settings-actions"><button class="<?= e($buttonClass) ?>" type="submit"><?= $hasPassword ? 'Change password' : 'Set password' ?></button></div>
         </form>
     </section>
+    <?php if ($hasPassword && ($googleLinked || App\Auth\GoogleOidc::enabled())): ?>
+        <?php require __DIR__ . '/settings-signin-methods.php'; ?>
+    <?php endif; ?>
 </div>

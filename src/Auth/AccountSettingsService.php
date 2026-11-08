@@ -56,6 +56,7 @@ final class AccountSettingsService
             }
             $this->pdo->prepare('UPDATE users SET name=? WHERE id=?')->execute([$name, $id]);
             $this->pdo->commit();
+            Session::forget('google_verified');
             return [];
         } catch (Throwable $exception) {
             if ($this->pdo->inTransaction()) { $this->pdo->rollBack(); }

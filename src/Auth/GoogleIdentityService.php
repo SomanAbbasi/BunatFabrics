@@ -69,6 +69,23 @@ final class GoogleIdentityService
         }
     }
 
+    /** Called only after signature, issuer, audience, state and nonce validation. */
+    public function verifySettingsResponse(int $id, array $claims, int $started): void
+    {
+        $subject = $claims['sub'] ?? null;
+        if (!is_string($subject) || !$this->matches($id, $subject)) {
+            throw new DomainException('Please select the Google account connected to your Bunat account.');
+        }
+        // iat dates this nonce-bound response, not the user's last Google password entry.
+        // auth_time is optional and Google cannot force a new account login for this action.
+        $issued = $claims['iat'] ?? null;
+        $now = time();
+        if ($started > $now + 60 || $started < $now - 600 || !is_int($issued)
+            || $issued < $started - 60 || $issued > $now + 60) {
+            throw new DomainException('Google verification expired. Start verification again from Account settings.');
+        }
+    }
+
     public function linked(int $id): bool
     {
         $statement = $this->pdo->prepare('SELECT 1 FROM google_identities WHERE user_id=?');

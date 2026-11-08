@@ -24,6 +24,9 @@ verifySettings($settings->updatePassword($googleId, '', 'Established123', 'Estab
 App\Core\Session::put('google_verified', ['id'=>$googleId, 'stamp'=>App\Auth\AuthSecurity::stamp($created), 'until'=>time()-1]);
 verifySettings($settings->updatePassword($googleId, '', 'Established123', 'Established123') !== [], 'expired Google reauthentication rejected');
 App\Core\Session::put('google_verified', ['id'=>$googleId, 'stamp'=>App\Auth\AuthSecurity::stamp($created), 'until'=>time()+300]);
+verifySettings($settings->updateProfile($googleId, 'Updated Google Customer', $created['email'], '') === [], 'verified Google-only profile update succeeds');
+verifySettings(!App\Core\Session::has('google_verified'), 'profile update consumes Google proof');
+App\Core\Session::put('google_verified', ['id'=>$googleId, 'stamp'=>App\Auth\AuthSecurity::stamp($created), 'until'=>time()+300]);
 verifySettings($settings->updatePassword($googleId, '', 'Established123', 'Established123') === [], 'fresh verified Google identity can establish password');
 verifySettings(!App\Core\Session::has('google_verified'), 'Google proof consumed');
 verifySettings($auth->attempt('google@example.test', 'Established123') !== null, 'established local password authenticates');
