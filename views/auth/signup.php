@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use App\Core\Session;
 
+$authPage = true;
+
 /** @var array<string, string> $errors */
 
 ?>

@@ -79,6 +79,7 @@ verifySettings(isset($registered['user']) && $auth->attempt('signup@example.test
 Session::flashInput(['name'=>'Safe','current_password'=>'secret','new_password'=>'secret','new_password_confirmation'=>'secret','password'=>'secret','password_confirmation'=>'secret']);
 verifySettings(Session::get('_old_input') === ['name'=>'Safe'], 'flashed input excludes all password fields');
 Session::clearOldInput();
+$pdo->exec('DELETE FROM auth_limits');
 foreach ($checks as $label) {
     echo "PASS: $label\n";
 }

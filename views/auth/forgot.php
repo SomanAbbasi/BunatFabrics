@@ -1,4 +1,4 @@
-<?php declare(strict_types=1); use App\Core\Session; ?>
+<?php declare(strict_types=1); use App\Core\Session; $authPage = true; ?>
 <section class="auth auth-single"><div class="panel auth-card">
     <header class="auth-head"><h1>Forgot password?</h1><p class="muted">Enter your account email to request a password reset link.</p></header>
     <form action="<?= e(url('/forgot-password')) ?>" method="post">

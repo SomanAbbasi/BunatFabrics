@@ -21,6 +21,16 @@ final class GoogleOidc extends OpenIDConnectClient
         $this->setTimeout(10);
     }
 
+    public function verifyJWTSignature(string $jwt): bool
+    {
+        $header = json_decode(base64_decode(strtr(explode('.', $jwt)[0], '-_', '+/'), true) ?: '', true);
+        if (!is_array($header) || ($header['alg'] ?? '') !== 'RS256' || !is_string($header['kid'] ?? null)
+            || isset($header['jwk']) || isset($header['jku']) || isset($header['x5u'])) {
+            throw new \RuntimeException('Unsupported Google token signature.');
+        }
+        return parent::verifyJWTSignature($jwt);
+    }
+
     protected function verifyJWTClaims($claims, string $accessToken = null): bool
     {
         return isset($claims->nonce, $claims->exp, $claims->iat, $claims->sub, $claims->aud, $claims->iss)

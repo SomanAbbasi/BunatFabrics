@@ -36,10 +36,10 @@ final class AuthController
         $this->requireCsrf('/signup');
 
         $data = [
-            'name'                  => trim((string) ($_POST['name'] ?? '')),
-            'email'                 => trim((string) ($_POST['email'] ?? '')),
-            'password'              => (string) ($_POST['password'] ?? ''),
-            'password_confirmation' => (string) ($_POST['password_confirmation'] ?? ''),
+            'name'                  => trim(AuthSecurity::input('name')),
+            'email'                 => trim(AuthSecurity::input('email')),
+            'password'              => AuthSecurity::input('password'),
+            'password_confirmation' => AuthSecurity::input('password_confirmation'),
         ];
 
         $result = $this->auth->register($data);
@@ -72,8 +72,8 @@ final class AuthController
     {
         $this->requireCsrf('/login');
 
-        $email    = trim((string) ($_POST['email'] ?? ''));
-        $password = (string) ($_POST['password'] ?? '');
+        $email    = trim(AuthSecurity::input('email'));
+        $password = AuthSecurity::input('password');
 
         $errors = [];
 
@@ -85,7 +85,10 @@ final class AuthController
             $errors['password'] = 'Password is required.';
         }
 
-        $user = $errors === [] ? $this->auth->attempt($email, $password) : null;
+        $pdo = \App\Core\Database::connection();
+        $allowed = AuthSecurity::allow($pdo, 'login-ip:' . AuthSecurity::ip(), 60, 900)
+            && AuthSecurity::allow($pdo, 'login-email:' . strtolower($email), 20, 900);
+        $user = $errors === [] && $allowed ? $this->auth->attempt($email, $password) : null;
 
         if ($user === null && $errors === []) {
             $errors['email'] = 'These credentials do not match our records.';
@@ -118,7 +121,7 @@ final class AuthController
      */
     private function requireCsrf(string $fallback): void
     {
-        if (! Session::verifyCsrf($_POST['_token'] ?? null)) {
+        if (! Session::verifyCsrf(AuthSecurity::input('_token'))) {
             Session::flash('error', 'Your session expired. Please try again.');
 
             redirect($fallback);

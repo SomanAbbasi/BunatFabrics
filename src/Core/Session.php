@@ -18,6 +18,7 @@ final class Session
 
         session_set_cookie_params([
             'httponly' => true,
+            'secure' => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
             'samesite' => 'Lax',
         ]);
 
@@ -66,7 +67,7 @@ final class Session
      */
     public static function flashInput(array $input): void
     {
-        unset($input['password'], $input['password_confirmation'], $input['current_password'], $input['new_password'], $input['new_password_confirmation']);
+        unset($input['code'], $input['token'], $input['otp'], $input['password'], $input['password_confirmation'], $input['current_password'], $input['new_password'], $input['new_password_confirmation']);
 
         self::put('_old_input', $input);
     }
